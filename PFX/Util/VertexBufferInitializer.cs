@@ -43,7 +43,7 @@ namespace PFX.Util
 
         public void AddVertex(Vector3 pos, Vector3 normal, Vector2 texCoord, int color)
         {
-            AddVertex(pos, normal, texCoord, 0xFFFFFF, Indices.Count);
+            AddVertex(pos, normal, texCoord, color, Indices.Count);
         }
 
         public void AddVertex(Vector3 pos, Vector3 normal, Vector2 texCoord, int color, int index)
