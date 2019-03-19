@@ -118,7 +118,7 @@ namespace TerrainBuilder
             var n = GetWorleyNoise(x, z) / 2;
             if (octaves <= 1)
                 return n;
-            return n + GetOctaveNoise((x + octaves * 100) * 2, (z + octaves * 100) * 2, octaves - 1) / 2;
+            return n + GetOctaveWorley((x + octaves * 100) * 2, (z + octaves * 100) * 2, octaves - 1) / 2;
         }
 
         private double GetOctaveInvWorley(double x, double z, int octaves)

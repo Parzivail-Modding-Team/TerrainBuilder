@@ -8,15 +8,13 @@ namespace PFX.Util
     {
         public List<Vector3> Vertices { get; private set; }
         public List<Vector3> Normals { get; private set; }
-        public List<Vector2> TexCoords { get; private set; }
         public List<int> Indices { get; private set; }
         public List<int> Colors { get; private set; }
 
-        public VertexBufferInitializer(List<Vector3> vertices, List<Vector3> normals, List<Vector2> texCoords, List<int> colors, List<int> indices)
+        public VertexBufferInitializer(List<Vector3> vertices, List<Vector3> normals, List<int> colors, List<int> indices)
         {
             Vertices = vertices;
             Normals = normals;
-            TexCoords = texCoords;
             Colors = colors;
             Indices = indices;
         }
@@ -33,24 +31,18 @@ namespace PFX.Util
 
         public void AddVertex(Vector3 pos, Vector3 normal)
         {
-            AddVertex(pos, normal, Vector2.Zero);
+            AddVertex(pos, normal, 0xFFFFFF);
         }
 
-        public void AddVertex(Vector3 pos, Vector3 normal, Vector2 texCoord)
+        public void AddVertex(Vector3 pos, Vector3 normal, int color)
         {
-            AddVertex(pos, normal, texCoord, 0xFFFFFF);
+            AddVertex(pos, normal, color, Indices.Count);
         }
 
-        public void AddVertex(Vector3 pos, Vector3 normal, Vector2 texCoord, int color)
-        {
-            AddVertex(pos, normal, texCoord, color, Indices.Count);
-        }
-
-        public void AddVertex(Vector3 pos, Vector3 normal, Vector2 texCoord, int color, int index)
+        public void AddVertex(Vector3 pos, Vector3 normal, int color, int index)
         {
             Vertices.Add(pos);
             Normals.Add(normal);
-            TexCoords.Add(texCoord);
             Colors.Add(color);
             Indices.Add(index);
         }
@@ -59,7 +51,6 @@ namespace PFX.Util
         {
             Vertices = new List<Vector3>();
             Normals = new List<Vector3>();
-            TexCoords = new List<Vector2>();
             Colors = new List<int>();
             Indices = new List<int>();
         }
