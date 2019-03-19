@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
@@ -84,19 +86,16 @@ namespace TerrainBuilder
         private readonly SimpleVertexBuffer _decorVbo = new SimpleVertexBuffer();
         private readonly BackgroundWorker _backgroundDecorator = new BackgroundWorker();
 
+        private readonly Stopwatch _renderStopwatch = new Stopwatch();
+
         /*
          * Terrain-related
          */
         private int _numVerts;
         private Color _tintColor;
         private Vector3 _tintColorVector;
-        private int _sideLength = 64;
 
-        public int SideLength
-        {
-            get { return _sideLength; }
-            set { _sideLength = (int)(value / 2f); }
-        }
+        public int SideLength { get; set; } = 64;
 
         public Color TintColor
         {
@@ -282,6 +281,9 @@ namespace TerrainBuilder
 
             _terrainLayerList.pbRenderStatus.Visible = true;
 
+            _renderStopwatch.Reset();
+            _renderStopwatch.Start();
+
             // Fire up the render
             _backgroundRenderer.RunWorkerAsync(new BackgroundRenderArgs(_voxels, regenHeightmap));
         }
@@ -314,7 +316,11 @@ namespace TerrainBuilder
 
             // If the render was manually cancelled, go no further
             if (_scriptWatcher.GetScriptId() == 0 || e.Cancelled || e.Result is null)
+            {
+                _renderStopwatch.Stop();
+                Lumberjack.Info($"Render cancelled after {_renderStopwatch.Elapsed}");
                 return;
+            }
 
             // Take the render result and upload it to the VBO
             var result = (VertexBufferInitializer)e.Result;
@@ -327,6 +333,9 @@ namespace TerrainBuilder
 
             // Add chunk decor
             //ReDecorate();
+
+            _renderStopwatch.Stop();
+            Lumberjack.Info($"Render finished after {_renderStopwatch.Elapsed}");
         }
 
         private void DoBackgroundRender(object sender, DoWorkEventArgs e)
@@ -351,8 +360,8 @@ namespace TerrainBuilder
                     // Init a new heightmap
                     Heightmap = new double[2 * SideLength + 2, 2 * SideLength + 2];
 
-                    // Iterate over the map
-                    for (var x = 0; x < 2 * SideLength + 2; x++)
+                    var done = 0;
+                    Parallel.For(0, 2 * SideLength + 2, x =>
                     {
                         for (var z = 0; z < 2 * SideLength + 2; z++)
                         {
@@ -364,12 +373,12 @@ namespace TerrainBuilder
                             }
 
                             // Set the heightmap at (x, z)
-                            Heightmap[x, z] = (int)ScriptedTerrainGenerator.GetValue(x - _sideLength, z - _sideLength);
+                            Heightmap[x, z] = (int)ScriptedTerrainGenerator.GetValue(x - SideLength, z - SideLength);
                         }
 
-                        // Report progress every "scanline"
-                        worker.ReportProgress((int)(x / (2f * SideLength + 2) * 50));
-                    }
+                        done++;
+                        worker.ReportProgress((int)(done / (2f * SideLength + 2) * 50));
+                    });
                 }
 
                 // Report progress with a new status message
@@ -735,14 +744,17 @@ namespace TerrainBuilder
             var delta = e.Time;
             var amount = _keyboard[Key.LShift] || _keyboard[Key.RShift] ? 45 : 90;
 
-            if (Keyboard[Key.Left])
-                _angle += amount * delta;
-            if (Keyboard[Key.Right])
-                _angle -= amount * delta;
-            if (Keyboard[Key.Up])
-                _angleY += amount * delta;
-            if (Keyboard[Key.Down])
-                _angleY -= amount * delta;
+            if (Focused)
+            {
+                if (Keyboard[Key.Left])
+                    _angle += amount * delta;
+                if (Keyboard[Key.Right])
+                    _angle -= amount * delta;
+                if (Keyboard[Key.Up])
+                    _angleY += amount * delta;
+                if (Keyboard[Key.Down])
+                    _angleY -= amount * delta;
+            }
         }
 
         public void ReDecorate()
@@ -851,7 +863,7 @@ namespace TerrainBuilder
 
             // Render diagnostic data
             GL.Enable(EnableCap.Texture2D);
-            if (_keyboard[Key.D])
+            if (Focused && _keyboard[Key.D])
             {
                 // Static diagnostic header
                 GL.PushMatrix();

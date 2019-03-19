@@ -46,7 +46,7 @@ namespace TerrainBuilder
 
         private void nudSideLength_ValueChanged(object sender, EventArgs e)
         {
-            _parent.SideLength = (int) nudSideLength.Value;
+            _parent.SideLength = (int) (nudSideLength.Value / 2);
             _parent.ReRender();
         }
 

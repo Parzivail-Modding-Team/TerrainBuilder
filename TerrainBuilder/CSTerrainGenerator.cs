@@ -39,9 +39,7 @@ namespace TerrainBuilder
             {
                 var errorMessage = "Compilation failed.\r\n";
                 foreach (var error in compilerResults.Output)
-                {
                     errorMessage += error + "\r\n";
-                }
 
                 Lumberjack.Error(errorMessage);
                 return false;

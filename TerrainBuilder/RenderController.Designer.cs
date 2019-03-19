@@ -102,7 +102,7 @@
             0});
             this.nudSideLength.Location = new System.Drawing.Point(125, 48);
             this.nudSideLength.Maximum = new decimal(new int[] {
-            1024,
+            2048,
             0,
             0,
             0});

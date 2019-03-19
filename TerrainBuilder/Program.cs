@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using OpenTK;
 
 namespace TerrainBuilder
 {
@@ -10,7 +11,10 @@ namespace TerrainBuilder
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            new WindowVisualize().Run(40, 60);
+            new WindowVisualize
+            {
+                VSync = VSyncMode.On
+            }.Run(40);
         }
     }
 }

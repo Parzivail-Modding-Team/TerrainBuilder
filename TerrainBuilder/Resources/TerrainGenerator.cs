@@ -1,4 +1,5 @@
-﻿using TerrainGenCore;
+﻿using System;
+using TerrainGenCore;
 
 /// <summary>
 /// Stores a collection of methods to generate terrain
