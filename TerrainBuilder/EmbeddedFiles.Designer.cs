@@ -117,6 +117,26 @@ namespace TerrainBuilder {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap dina_bmp {
+            get {
+                object obj = ResourceManager.GetObject("dina_bmp", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] dina_fnt {
+            get {
+                object obj = ResourceManager.GetObject("dina_fnt", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap folder_brick {
             get {
                 object obj = ResourceManager.GetObject("folder_brick", resourceCulture);
@@ -148,6 +168,15 @@ namespace TerrainBuilder {
         internal static string Info_WindowLoaded {
             get {
                 return ResourceManager.GetString("Info_WindowLoaded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to [{0}{1}] {2}.
+        /// </summary>
+        internal static string Log_Format {
+            get {
+                return ResourceManager.GetString("Log_Format", resourceCulture);
             }
         }
         
@@ -189,25 +218,22 @@ namespace TerrainBuilder {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to using PFX.Util;
+        ///   Looks up a localized string similar to using System;
+        ///using TerrainGenCore;
         ///
+        ////// &lt;summary&gt;
+        ////// Stores a collection of methods to generate terrain
+        ////// &lt;/summary&gt;
         ///class TerrainGenerator
         ///{
-        ///    double GetTerrain(int x, int z)
-        ///    {
-        ///        return 0;
-        ///    }
-        ///
-        ///    int GetTree(int x, int y, int z)
-        ///    {
-        ///        return 0;
-        ///    }
-        ///
-        ///    int GetWaterLevel()
-        ///    {
-        ///        return 0;
-        ///    }
-        ///}.
+        ///    /// &lt;summary&gt;
+        ///    /// Returns the height of the terrain at a given point
+        ///    /// &lt;/summary&gt;
+        ///    /// &lt;param name=&quot;x&quot;&gt;The x coordiate of the point to sample&lt;/param&gt;
+        ///    /// &lt;param name=&quot;z&quot;&gt;The z coordiate of the point to sample&lt;/param&gt;
+        ///    /// &lt;returns&gt;A height between 0 and 255, inclusive&lt;/returns&gt;
+        ///    public double GetTerrain(int x, int z)
+        ///    { [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string terrain {
             get {

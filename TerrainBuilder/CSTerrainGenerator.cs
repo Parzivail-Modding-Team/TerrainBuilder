@@ -6,8 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using PFX;
-using PFX.Util;
+using TerrainBuilder.RenderUtil;
 using TerrainGenCore;
 
 namespace TerrainBuilder

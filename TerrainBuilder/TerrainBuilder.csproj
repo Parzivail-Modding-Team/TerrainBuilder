@@ -59,14 +59,11 @@
     <ApplicationIcon>Resources\logo.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MoonSharp.Interpreter, Version=2.0.0.0, Culture=neutral, PublicKeyToken=921e73ce94aa17f8, processorArchitecture=MSIL">
-      <HintPath>..\packages\MoonSharp.2.0.0.0\lib\net40-client\MoonSharp.Interpreter.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="OpenTK, Version=2.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
-      <HintPath>..\packages\OpenTK.2.0.0\lib\net20\OpenTK.dll</HintPath>
+    <Reference Include="OpenTK, Version=3.0.1.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenTK.3.0.1\lib\net20\OpenTK.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -107,6 +104,19 @@
     <Compile Include="RenderController.Designer.cs">
       <DependentUpon>RenderController.cs</DependentUpon>
     </Compile>
+    <Compile Include="RenderUtil\BmFont\BitmapFont.cs" />
+    <Compile Include="RenderUtil\BmFont\BmExtensions.cs" />
+    <Compile Include="RenderUtil\BmFont\FontChar.cs" />
+    <Compile Include="RenderUtil\BmFont\FontCommon.cs" />
+    <Compile Include="RenderUtil\BmFont\FontInfo.cs" />
+    <Compile Include="RenderUtil\BmFont\FontKerning.cs" />
+    <Compile Include="RenderUtil\BmFont\FontPages.cs" />
+    <Compile Include="Lumberjack.cs" />
+    <Compile Include="RenderUtil\Shader\DefaultShaderProgram.cs" />
+    <Compile Include="RenderUtil\Shader\ShaderProgram.cs" />
+    <Compile Include="RenderUtil\Shader\Uniform.cs" />
+    <Compile Include="RenderUtil\Buffer\SimpleVertexBuffer.cs" />
+    <Compile Include="RenderUtil\Buffer\VertexBufferInitializer.cs" />
     <Compile Include="WorldGen\TreeDecorator.cs" />
     <Compile Include="Util.cs" />
     <Compile Include="WindowVisualize.cs" />
@@ -116,8 +126,9 @@
     <None Include="App.config" />
     <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />
-    <None Include="Shaders\default.fs" />
+    <None Include="Resources\Shaders\default.fs" />
     <None Include="Resources\TerrainGenerator.cs" />
+    <None Include="Resources\dina.fnt" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="EmbeddedFiles.resx">
@@ -132,10 +143,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PFX\PFX.csproj">
-      <Project>{4ECCD5A4-2F81-4693-BCAB-2306BB96A1DA}</Project>
-      <Name>PFX</Name>
-    </ProjectReference>
     <ProjectReference Include="..\TerrainGenCore\TerrainGenCore.csproj">
       <Project>{AE4FE686-53D5-4E73-BFDC-FC8CDA9155BA}</Project>
       <Name>TerrainGenCore</Name>
@@ -173,6 +180,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\wrench.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\dina_0.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

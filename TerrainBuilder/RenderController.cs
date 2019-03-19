@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using PFX;
+using TerrainBuilder.RenderUtil;
 
 namespace TerrainBuilder
 {

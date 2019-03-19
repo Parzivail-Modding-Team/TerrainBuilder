@@ -6,7 +6,7 @@ using System.Text;
 using OpenTK.Graphics.OpenGL;
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
-namespace PFX.BmFont
+namespace TerrainBuilder.RenderUtil.BmFont
 {
     internal static class BmExtensions
     {

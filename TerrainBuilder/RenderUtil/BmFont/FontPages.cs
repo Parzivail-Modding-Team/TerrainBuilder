@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 
-namespace PFX.BmFont
+namespace TerrainBuilder.RenderUtil.BmFont
 {
     public class FontPages
     {

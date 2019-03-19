@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
-namespace PFX.Util
+namespace TerrainBuilder.RenderUtil.Buffer
 {
     public class SimpleVertexBuffer
     {

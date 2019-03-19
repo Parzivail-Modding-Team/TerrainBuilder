@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PFX
+namespace TerrainBuilder
 {
     public class Lumberjack
     {
@@ -27,11 +27,11 @@ namespace PFX
         public static void Log(string message, ConsoleColor color, string header = "")
         {
             if (Console.ForegroundColor == color)
-                Console.WriteLine(Resources.Log_Format, DateTime.Now, header.Length > 0 ? " " + header : header, message);
+                Console.WriteLine(EmbeddedFiles.Log_Format, DateTime.Now, (header.Length > 0 ? " " + header : header), message);
             else
             {
                 Console.ForegroundColor = color;
-                Console.WriteLine(Resources.Log_Format, DateTime.Now, header.Length > 0 ? " " + header : header, message);
+                Console.WriteLine(EmbeddedFiles.Log_Format, DateTime.Now, header.Length > 0 ? " " + header : header, message);
             }
         }
     }

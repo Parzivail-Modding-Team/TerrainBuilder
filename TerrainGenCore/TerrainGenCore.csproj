@@ -41,15 +41,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="InfiniteWorleyNoise.cs" />
+    <Compile Include="MathUtil.cs" />
+    <Compile Include="OpenSimplexNoise.cs" />
     <Compile Include="TreeType.cs" />
     <Compile Include="ProcNoise.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\PFX\PFX.csproj">
-      <Project>{4ECCD5A4-2F81-4693-BCAB-2306BB96A1DA}</Project>
-      <Name>PFX</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="OpenTK">

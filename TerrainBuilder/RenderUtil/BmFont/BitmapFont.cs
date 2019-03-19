@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using OpenTK.Graphics.OpenGL;
 
-namespace PFX.BmFont
+namespace TerrainBuilder.RenderUtil.BmFont
 {
     public class BitmapFont
     {

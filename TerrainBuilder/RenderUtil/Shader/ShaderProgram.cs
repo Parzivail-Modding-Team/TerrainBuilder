@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
-namespace PFX.Shader
+namespace TerrainBuilder.RenderUtil.Shader
 {
     public abstract class ShaderProgram
     {

@@ -1,4 +1,4 @@
-namespace PFX.BmFont
+namespace TerrainBuilder.RenderUtil.BmFont
 {
     public class FontInfo
     {

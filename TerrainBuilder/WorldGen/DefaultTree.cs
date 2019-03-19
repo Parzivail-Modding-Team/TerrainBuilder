@@ -1,6 +1,6 @@
 ﻿using System;
 using OpenTK;
-using PFX.Util;
+using TerrainBuilder.RenderUtil.Buffer;
 
 namespace TerrainBuilder.WorldGen
 {

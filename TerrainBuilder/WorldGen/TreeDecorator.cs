@@ -1,7 +1,7 @@
 ﻿using System;
 using OpenTK;
-using PFX;
-using PFX.Util;
+using TerrainBuilder.RenderUtil;
+using TerrainBuilder.RenderUtil.Buffer;
 using TerrainGenCore;
 
 namespace TerrainBuilder.WorldGen

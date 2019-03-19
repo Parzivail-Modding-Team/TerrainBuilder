@@ -1,6 +1,6 @@
 ﻿using OpenTK.Graphics.OpenGL;
 
-namespace PFX.Shader
+namespace TerrainBuilder.RenderUtil.Shader
 {
     public class DefaultShaderProgram : ShaderProgram
     {

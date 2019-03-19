@@ -9,10 +9,10 @@ using System.Windows.Forms;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
-using PFX;
-using PFX.BmFont;
-using PFX.Shader;
-using PFX.Util;
+using TerrainBuilder.RenderUtil;
+using TerrainBuilder.RenderUtil.BmFont;
+using TerrainBuilder.RenderUtil.Buffer;
+using TerrainBuilder.RenderUtil.Shader;
 using TerrainBuilder.WorldGen;
 using TerrainGenCore;
 
@@ -71,8 +71,8 @@ namespace TerrainBuilder
          * Render-related
          */
         private float _zoom = 1;
-        private double _angle = 45;
-        private double _angleY = 160;
+        private double _yaw = 45;
+        private double _pitch = 160;
 
         private bool _voxels = true;
 
@@ -99,7 +99,7 @@ namespace TerrainBuilder
 
         public Color TintColor
         {
-            get { return _tintColor; }
+            get => _tintColor;
             set
             {
                 _tintColor = value;
@@ -114,12 +114,8 @@ namespace TerrainBuilder
          * Window-related
          */
         private bool _shouldDie;
-        private Sparkline _fpsSparkline;
-        private Sparkline _renderTimeSparkline;
-        private readonly Profiler _profiler = new Profiler();
         private static KeyboardState _keyboard;
         private static BitmapFont _font;
-        private Dictionary<string, TimeSpan> _profile = new Dictionary<string, TimeSpan>();
 
         public WindowVisualize() : base(800, 600)
         {
@@ -130,6 +126,7 @@ namespace TerrainBuilder
             UpdateFrame += UpdateHandler;
             RenderFrame += RenderHandler;
             MouseWheel += WindowVisualize_MouseWheel;
+            MouseMove += WindowVisualize_MouseMove;
 
             // Wire up background worker
             _backgroundRenderer.WorkerReportsProgress = true;
@@ -178,23 +175,18 @@ namespace TerrainBuilder
 
             // Set up blending
             GL.Enable(EnableCap.Blend);
-            GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 
             // Set background color
             GL.ClearColor(Color.FromArgb(255, 13, 13, 13));
 
             // Load fonts
-            _font = BitmapFont.LoadBinaryFont("dina", FontBank.FontDina, FontBank.BmDina);
-
-            // Load sparklines
-            _fpsSparkline = new Sparkline(_font, $"0-{(int)TargetRenderFrequency}fps", 50,
-                (float)TargetRenderFrequency, Sparkline.SparklineStyle.Area);
-            _renderTimeSparkline = new Sparkline(_font, "0-50ms", 50, 50, Sparkline.SparklineStyle.Area);
+            _font = BitmapFont.LoadBinaryFont("dina", EmbeddedFiles.dina_fnt, EmbeddedFiles.dina_bmp);
 
             // Init keyboard to ensure first frame won't NPE
             _keyboard = Keyboard.GetState();
 
-            // Load shaders
+            // Load shadersyeah
             _shaderProgram = new DefaultShaderProgram(EmbeddedFiles.default_fs);
             _shaderProgram.InitProgram();
 
@@ -209,6 +201,15 @@ namespace TerrainBuilder
                 _zoom = 0.5f;
             if (_zoom > 20)
                 _zoom = 20;
+        }
+
+        private void WindowVisualize_MouseMove(object sender, MouseMoveEventArgs e)
+        {
+            if (e.Mouse.IsButtonDown(MouseButton.Left))
+            {
+                _yaw -= e.XDelta / 2f;
+                _pitch -= e.YDelta / 2f;
+            }
         }
 
         private void CloseHandler(object sender, CancelEventArgs e)
@@ -335,7 +336,7 @@ namespace TerrainBuilder
             //ReDecorate();
 
             _renderStopwatch.Stop();
-            Lumberjack.Info($"Render finished after {_renderStopwatch.Elapsed}");
+            Lumberjack.Log($"Render finished after {_renderStopwatch.Elapsed}");
         }
 
         private void DoBackgroundRender(object sender, DoWorkEventArgs e)
@@ -746,14 +747,14 @@ namespace TerrainBuilder
 
             if (Focused)
             {
-                if (Keyboard[Key.Left])
-                    _angle += amount * delta;
-                if (Keyboard[Key.Right])
-                    _angle -= amount * delta;
-                if (Keyboard[Key.Up])
-                    _angleY += amount * delta;
-                if (Keyboard[Key.Down])
-                    _angleY -= amount * delta;
+                if (_keyboard[Key.Left])
+                    _yaw += amount * delta;
+                if (_keyboard[Key.Right])
+                    _yaw -= amount * delta;
+                if (_keyboard[Key.Up])
+                    _pitch += amount * delta;
+                if (_keyboard[Key.Down])
+                    _pitch -= amount * delta;
             }
         }
 
@@ -782,15 +783,6 @@ namespace TerrainBuilder
 
         private void RenderHandler(object sender, FrameEventArgs e)
         {
-            // Start profiling
-            _profiler.Start("render");
-
-            // Update sparklines
-            if (_profile.ContainsKey("render"))
-                _renderTimeSparkline.Enqueue((float)_profile["render"].TotalMilliseconds);
-
-            _fpsSparkline.Enqueue((float)RenderFrequency);
-
             // Reset the view
             GL.Clear(ClearBufferMask.ColorBufferBit |
                      ClearBufferMask.DepthBufferBit |
@@ -812,8 +804,8 @@ namespace TerrainBuilder
             // Zoom and scale the terrain
             var scale = new Vector3(4 * (1 / _zoom), -4 * (1 / _zoom), 4 * (1 / _zoom));
             GL.Scale(scale);
-            GL.Rotate(_angleY, 1.0f, 0.0f, 0.0f);
-            GL.Rotate(_angle, 0.0f, 1.0f, 0.0f);
+            GL.Rotate(_pitch, 1.0f, 0.0f, 0.0f);
+            GL.Rotate(_yaw, 0.0f, 1.0f, 0.0f);
 
             // Wireframe mode if selected
             GL.PolygonMode(MaterialFace.FrontAndBack,
@@ -869,14 +861,10 @@ namespace TerrainBuilder
                 GL.PushMatrix();
                 _font.RenderString($"FPS: {(int)Math.Ceiling(RenderFrequency)}");
                 GL.Translate(0, _font.Common.LineHeight, 0);
+                _font.RenderString($"Render Time: {RenderTime * 1000}ms");
+                GL.Translate(0, _font.Common.LineHeight, 0);
                 _font.RenderString($"Verts: {_numVerts}");
                 GL.PopMatrix();
-
-                // Sparklines
-                GL.Translate(0, Height - _font.Common.LineHeight * 1.4f * 2, 0);
-                _fpsSparkline.Render();
-                GL.Translate(0, _font.Common.LineHeight * 1.4f, 0);
-                _renderTimeSparkline.Render();
             }
             else
             {
@@ -884,7 +872,7 @@ namespace TerrainBuilder
                 GL.PushMatrix();
                 _font.RenderString($"{EmbeddedFiles.AppName} - Development Build");
                 GL.Translate(0, Height - _font.Common.LineHeight, 0);
-                _font.RenderString("PRESS 'D' FOR DIAGNOSTICS");
+                _font.RenderString("Press 'D' for info");
                 GL.PopMatrix();
             }
 
@@ -897,10 +885,6 @@ namespace TerrainBuilder
 
             // Swap the graphics buffer
             SwapBuffers();
-
-            // Stop profiling and get the results
-            _profiler.End();
-            _profile = _profiler.Reset();
         }
 
         public static void DrawBox(VertexBufferInitializer vbi, Vector3 position, int color = 0xFF0000)

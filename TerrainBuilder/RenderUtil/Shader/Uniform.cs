@@ -1,4 +1,4 @@
-﻿namespace PFX.Shader
+﻿namespace TerrainBuilder.RenderUtil.Shader
 {
     public class Uniform
     {

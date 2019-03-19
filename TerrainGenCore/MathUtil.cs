@@ -1,7 +1,7 @@
 using System;
 using OpenTK;
 
-namespace PFX.Util
+namespace TerrainGenCore
 {
     public class MathUtil
     {

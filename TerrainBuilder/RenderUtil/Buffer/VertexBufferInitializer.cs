@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using OpenTK;
 
-namespace PFX.Util
+namespace TerrainBuilder.RenderUtil.Buffer
 {
     public class VertexBufferInitializer
     {

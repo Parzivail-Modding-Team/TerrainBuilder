@@ -14,7 +14,7 @@
  *   will be the same when ported to other languages.
  */
 
-namespace PFX.Util
+namespace TerrainGenCore
 {
     public class OpenSimplexNoise
     {
