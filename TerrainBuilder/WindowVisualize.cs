@@ -12,6 +12,7 @@ using PFX.BmFont;
 using PFX.Shader;
 using PFX.Util;
 using TerrainBuilder.WorldGen;
+using TerrainGenCore;
 
 namespace TerrainBuilder
 {
@@ -61,7 +62,7 @@ namespace TerrainBuilder
          * Script-related
          */
         private bool _dirty;
-        public ScriptedTerrainGenerator ScriptedTerrainGenerator = new ScriptedTerrainGenerator();
+        public CsTerrainGenerator ScriptedTerrainGenerator = new CsTerrainGenerator();
         private readonly ScriptWatcher _scriptWatcher = new ScriptWatcher();
 
         /*
@@ -240,7 +241,7 @@ namespace TerrainBuilder
         private void ScriptWatcherOnFileChanged(object sender, ScriptChangedEventArgs e)
         {
             Lumberjack.Info(string.Format(EmbeddedFiles.Info_FileReloaded, e.Filename));
-            _dirty = ScriptedTerrainGenerator.LoadScript(e.Script, e.ScriptCode);
+            _dirty = ScriptedTerrainGenerator.LoadScript(e.ScriptCode);
         }
 
         public bool IsRendering()
@@ -673,7 +674,7 @@ namespace TerrainBuilder
                     var worldZ = z - SideLength - 1;
 
                     var treeHere = GetTreeAt(worldX, worldY, worldZ);
-                    if (treeHere == 0)
+                    if (treeHere == TreeType.None)
                         continue;
 
                     TreeDecorator.BuildTree(vbi, new Vector3(worldX, worldY, worldZ), treeHere);
@@ -709,7 +710,7 @@ namespace TerrainBuilder
             GC.Collect();
         }
 
-        private int GetTreeAt(int worldX, int worldY, int worldZ)
+        private TreeType GetTreeAt(int worldX, int worldY, int worldZ)
         {
             return ScriptedTerrainGenerator.GetTree(worldX, worldY, worldZ);
         }
@@ -825,12 +826,14 @@ namespace TerrainBuilder
             // Render the ocean
             GL.Color3(Color.MediumBlue);
 
+            var waterLevel = ScriptedTerrainGenerator.GetWaterLevel();
+
             GL.Begin(PrimitiveType.Quads);
             GL.Normal3(UpVector);
-            GL.Vertex3(-SideLength, ScriptedTerrainGenerator.WaterLevel - 0.1, -SideLength);
-            GL.Vertex3(SideLength, ScriptedTerrainGenerator.WaterLevel - 0.1, -SideLength);
-            GL.Vertex3(SideLength, ScriptedTerrainGenerator.WaterLevel - 0.1, SideLength);
-            GL.Vertex3(-SideLength, ScriptedTerrainGenerator.WaterLevel - 0.1, SideLength);
+            GL.Vertex3(-SideLength, waterLevel - 0.1, -SideLength);
+            GL.Vertex3(SideLength, waterLevel - 0.1, -SideLength);
+            GL.Vertex3(SideLength, waterLevel - 0.1, SideLength);
+            GL.Vertex3(-SideLength, waterLevel - 0.1, SideLength);
             GL.End();
 
             // Set up 2D mode

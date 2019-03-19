@@ -2,6 +2,7 @@
 using OpenTK;
 using PFX;
 using PFX.Util;
+using TerrainGenCore;
 
 namespace TerrainBuilder.WorldGen
 {
@@ -14,11 +15,11 @@ namespace TerrainBuilder.WorldGen
 
         protected static readonly TreeDecorator DefaultTree = new DefaultTree(6);
 
-        public static void BuildTree(VertexBufferInitializer vbi, Vector3 pos, int type)
+        public static void BuildTree(VertexBufferInitializer vbi, Vector3 pos, TreeType type)
         {
             switch (type)
             {
-                case 1:
+                case TreeType.Minecraft:
                     DefaultTree.Generate(vbi, pos);
                     break;
                 default:

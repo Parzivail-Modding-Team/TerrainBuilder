@@ -189,21 +189,25 @@ namespace TerrainBuilder {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to -- Controls the Y at which water starts
-        ///waterLevel = 0
+        ///   Looks up a localized string similar to using PFX.Util;
         ///
-        ///-- This is the main method that gets called to
-        ///-- find the height of the terrain at each point.
-        ///function terrain(x, z)
+        ///class TerrainGenerator
+        ///{
+        ///    double GetTerrain(int x, int z)
+        ///    {
+        ///        return 0;
+        ///    }
         ///
-        ///	-- First, we sample the noise with a scale factor of 100.
-        ///	-- The global function `noise` returns a sampled Simplex
-        ///	-- heightmap with values between 0 and 1.
-        ///	local h = noise(x / 100, z / 100);
+        ///    int GetTree(int x, int y, int z)
+        ///    {
+        ///        return 0;
+        ///    }
         ///
-        ///	-- Then, we scale the resulting noise by 10, creating a
-        ///	-- maximum elevation change of 10 blocks, and return it
-        ///	-- back to [rest of string was truncated]&quot;;.
+        ///    int GetWaterLevel()
+        ///    {
+        ///        return 0;
+        ///    }
+        ///}.
         /// </summary>
         internal static string terrain {
             get {

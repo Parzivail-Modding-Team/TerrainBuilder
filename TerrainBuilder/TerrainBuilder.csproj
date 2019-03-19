@@ -59,10 +59,6 @@
     <ApplicationIcon>Resources\logo.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Costura, Version=1.6.2.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
-      <HintPath>..\packages\Costura.Fody.1.6.2\lib\dotnet\Costura.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="MoonSharp.Interpreter, Version=2.0.0.0, Culture=neutral, PublicKeyToken=921e73ce94aa17f8, processorArchitecture=MSIL">
       <HintPath>..\packages\MoonSharp.2.0.0.0\lib\net40-client\MoonSharp.Interpreter.dll</HintPath>
     </Reference>
@@ -87,6 +83,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BackgroundRenderArgs.cs" />
+    <Compile Include="CSTerrainGenerator.cs" />
     <Compile Include="HeightmapViewer.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -103,10 +100,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>EmbeddedFiles.resx</DependentUpon>
     </Compile>
-    <Compile Include="ScriptedTerrainGenerator.cs" />
     <Compile Include="ScriptWatcher.cs" />
-    <Compile Include="TerrainStore.cs" />
-    <Compile Include="TerrainLayer.cs" />
     <Compile Include="RenderController.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -123,7 +117,7 @@
     <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />
     <None Include="Shaders\default.fs" />
-    <None Include="terrain.lua" />
+    <None Include="Resources\TerrainGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="EmbeddedFiles.resx">
@@ -142,6 +136,10 @@
       <Project>{4ECCD5A4-2F81-4693-BCAB-2306BB96A1DA}</Project>
       <Name>PFX</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TerrainGenCore\TerrainGenCore.csproj">
+      <Project>{AE4FE686-53D5-4E73-BFDC-FC8CDA9155BA}</Project>
+      <Name>TerrainGenCore</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\cancel.png" />
@@ -157,9 +155,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\hourglass.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="FodyWeavers.xml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\logo.ico" />
@@ -180,15 +175,6 @@
     <None Include="Resources\wrench.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets'))" />
-    <Error Condition="!Exists('..\packages\Fody.2.3.23\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.2.3.23\build\Fody.targets'))" />
-  </Target>
-  <Import Project="..\packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets" Condition="Exists('..\packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets')" />
-  <Import Project="..\packages\Fody.2.3.23\build\Fody.targets" Condition="Exists('..\packages\Fody.2.3.23\build\Fody.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

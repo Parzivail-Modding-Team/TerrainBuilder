@@ -12,7 +12,7 @@ namespace TerrainBuilder
 {
     public partial class HeightmapViewer : Form
     {
-        public ScriptedTerrainGenerator ScriptedTerrainGenerator = new ScriptedTerrainGenerator();
+        public CsTerrainGenerator ScriptedTerrainGenerator = new CsTerrainGenerator();
         private readonly ScriptWatcher _scriptWatcher = new ScriptWatcher();
         private readonly BackgroundWorker _backgroundRenderer = new BackgroundWorker();
 
@@ -37,7 +37,7 @@ namespace TerrainBuilder
 
         private void bCreate_Click(object sender, EventArgs e)
         {
-            var sfd = new SaveFileDialog { Filter = "Lua Files|*.lua" };
+            var sfd = new SaveFileDialog { Filter = "C# Files|*.cs" };
 
             if (sfd.ShowDialog() == DialogResult.Cancel) return;
 
@@ -48,7 +48,7 @@ namespace TerrainBuilder
 
         private void bOpen_Click(object sender, EventArgs e)
         {
-            var ofd = new OpenFileDialog { Filter = "Lua Files|*.lua" };
+            var ofd = new OpenFileDialog { Filter = "C# Files|*.cs" };
 
             if (ofd.ShowDialog() == DialogResult.Cancel) return;
 
@@ -175,7 +175,7 @@ namespace TerrainBuilder
                 // Grab worker and report progress
                 var worker = (BackgroundWorker)sender;
                 var bitmap = (Bitmap)e.Argument;
-                var v = (double)(nudSideLength.Value / 2);
+                var v = (int)(nudSideLength.Value / 2);
                 worker.ReportProgress(0, EmbeddedFiles.Status_GenHeightmap);
 
                 for (var x = 0; x < bitmap.Width; x++)
@@ -220,7 +220,7 @@ namespace TerrainBuilder
         private void ScriptWatcherOnFileChanged(object sender, ScriptChangedEventArgs e)
         {
             Lumberjack.Info(string.Format(EmbeddedFiles.Info_FileReloaded, e.Filename));
-            if (ScriptedTerrainGenerator.LoadScript(e.Script, e.ScriptCode))
+            if (ScriptedTerrainGenerator.LoadScript(e.ScriptCode))
                 ReRenderNoiseImage();
         }
 

@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TerrainBuilder", "TerrainBu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PFX", "PFX\PFX.csproj", "{4ECCD5A4-2F81-4693-BCAB-2306BB96A1DA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TerrainGenCore", "TerrainGenCore\TerrainGenCore.csproj", "{AE4FE686-53D5-4E73-BFDC-FC8CDA9155BA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,14 @@ Global
 		{4ECCD5A4-2F81-4693-BCAB-2306BB96A1DA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4ECCD5A4-2F81-4693-BCAB-2306BB96A1DA}.Release|x64.ActiveCfg = Release|x64
 		{4ECCD5A4-2F81-4693-BCAB-2306BB96A1DA}.Release|x64.Build.0 = Release|x64
+		{AE4FE686-53D5-4E73-BFDC-FC8CDA9155BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE4FE686-53D5-4E73-BFDC-FC8CDA9155BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE4FE686-53D5-4E73-BFDC-FC8CDA9155BA}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{AE4FE686-53D5-4E73-BFDC-FC8CDA9155BA}.Debug|x64.Build.0 = Debug|Any CPU
+		{AE4FE686-53D5-4E73-BFDC-FC8CDA9155BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE4FE686-53D5-4E73-BFDC-FC8CDA9155BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE4FE686-53D5-4E73-BFDC-FC8CDA9155BA}.Release|x64.ActiveCfg = Release|Any CPU
+		{AE4FE686-53D5-4E73-BFDC-FC8CDA9155BA}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

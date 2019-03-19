@@ -80,7 +80,7 @@ namespace TerrainBuilder
 
         private void bCreateTerrain_Click(object sender, EventArgs e)
         {
-            var sfd = new SaveFileDialog { Filter = "Lua Files|*.lua" };
+            var sfd = new SaveFileDialog { Filter = "C# Files|*.cs" };
 
             if (sfd.ShowDialog() == DialogResult.Cancel) return;
 
@@ -92,7 +92,7 @@ namespace TerrainBuilder
 
         private void bOpenTerrain_Click(object sender, EventArgs e)
         {
-            var ofd = new OpenFileDialog { Filter = "Lua Files|*.lua" };
+            var ofd = new OpenFileDialog { Filter = "C# Files|*.cs" };
 
             if (ofd.ShowDialog() == DialogResult.Cancel) return;
 

@@ -88,17 +88,9 @@ namespace TerrainBuilder
                 return;
 
             _stringHash = scriptCode.GetHashCode();
-            var script = new Script
-            {
-                Options =
-                {
-                    DebugPrint = s => { Lumberjack.Log(s, ConsoleColor.Cyan, "LUA"); }
-                }
-            };
 
             OnFileChanged(new ScriptChangedEventArgs
             {
-                Script = script,
                 ScriptCode = scriptCode,
                 Filename = filename
             });
@@ -117,7 +109,6 @@ namespace TerrainBuilder
 
     internal class ScriptChangedEventArgs : EventArgs
     {
-        public Script Script { get; set; }
         public string ScriptCode { get; set; }
         public string Filename { get; set; }
     }
