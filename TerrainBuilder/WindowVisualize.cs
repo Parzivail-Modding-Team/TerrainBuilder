@@ -73,6 +73,7 @@ namespace TerrainBuilder
         private float _zoom = 1;
         private double _yaw = 45;
         private double _pitch = 160;
+        private Vector3 _translation = new Vector3(0, -25, 0);
 
         private bool _voxels = true;
 
@@ -199,13 +200,20 @@ namespace TerrainBuilder
 
             if (_zoom < 0.5f)
                 _zoom = 0.5f;
-            if (_zoom > 20)
-                _zoom = 20;
+            if (_zoom > 35)
+                _zoom = 35;
         }
 
         private void WindowVisualize_MouseMove(object sender, MouseMoveEventArgs e)
         {
-            if (e.Mouse.IsButtonDown(MouseButton.Left))
+            if (!e.Mouse.IsButtonDown(MouseButton.Left)) return;
+
+            if (_keyboard[Key.ShiftLeft])
+            {
+                _translation.X += e.XDelta / 2f;
+                _translation.Y -= e.YDelta / 2f;
+            }
+            else
             {
                 _yaw -= e.XDelta / 2f;
                 _pitch -= e.YDelta / 2f;
@@ -319,7 +327,7 @@ namespace TerrainBuilder
             if (_scriptWatcher.GetScriptId() == 0 || e.Cancelled || e.Result is null)
             {
                 _renderStopwatch.Stop();
-                Lumberjack.Info($"Render cancelled after {_renderStopwatch.Elapsed}");
+                Lumberjack.Log($"Render cancelled after {_renderStopwatch.Elapsed}");
                 return;
             }
 
@@ -362,7 +370,7 @@ namespace TerrainBuilder
                     Heightmap = new double[2 * SideLength + 2, 2 * SideLength + 2];
 
                     var done = 0;
-                    Parallel.For(0, 2 * SideLength + 2, x =>
+                    Parallel.For(0, 2 * SideLength + 2, (x, state) =>
                     {
                         for (var z = 0; z < 2 * SideLength + 2; z++)
                         {
@@ -370,7 +378,7 @@ namespace TerrainBuilder
                             if (worker.CancellationPending)
                             {
                                 e.Cancel = true;
-                                return;
+                                state.Stop();
                             }
 
                             // Set the heightmap at (x, z)
@@ -755,6 +763,12 @@ namespace TerrainBuilder
                     _pitch += amount * delta;
                 if (_keyboard[Key.Down])
                     _pitch -= amount * delta;
+                if (_keyboard[Key.R])
+                {
+                    _yaw = 45;
+                    _pitch = 160;
+                    _translation = new Vector3(0, -25, 0);
+                }
             }
         }
 
@@ -799,7 +813,7 @@ namespace TerrainBuilder
             GL.LoadMatrix(ref lookat);
 
             // "Center" the terrain
-            GL.Translate(0, -25, 0);
+            GL.Translate(_translation);
 
             // Zoom and scale the terrain
             var scale = new Vector3(4 * (1 / _zoom), -4 * (1 / _zoom), 4 * (1 / _zoom));

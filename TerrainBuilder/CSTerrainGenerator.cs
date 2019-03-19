@@ -18,22 +18,25 @@ namespace TerrainBuilder
         private MethodInfo _methodGetTree;
         private MethodInfo _methodGetWaterLevel;
 
+        private static readonly List<RequiredMethodEntry> RequiredMethods = new List<RequiredMethodEntry>
+        {
+            new RequiredMethodEntry("GetTerrain", typeof(double), typeof(int), typeof(int)),
+            new RequiredMethodEntry("GetWaterLevel", typeof(int))
+        };
+
         public bool LoadScript(string code)
         {
             var codeDomProvider = CodeDomProvider.CreateProvider("CSharp");
 
-            //2- Fill compiler parameters
             var compilerParameters = new CompilerParameters();
             compilerParameters.ReferencedAssemblies.Add("system.dll");
             compilerParameters.ReferencedAssemblies.Add("TerrainGenCore.dll");
 
             compilerParameters.GenerateExecutable = false;
             compilerParameters.GenerateInMemory = true;
-
-            //3- Compile the script
+            
             var compilerResults = codeDomProvider.CompileAssemblyFromSource(compilerParameters, code);
-
-            //4- Check if compilation has errors
+            
             if (compilerResults.Errors.HasErrors)
             {
                 var errorMessage = "Compilation failed.\r\n";
@@ -43,21 +46,62 @@ namespace TerrainBuilder
                 Lumberjack.Error(errorMessage);
                 return false;
             }
-
-            //5- Get the generated assembly
+            
             var compiledAssembly = compilerResults.CompiledAssembly;
 
-            //Create an instace of the class that contains the script method
-            _generatorInstance = compiledAssembly.CreateInstance("TerrainGenerator");
+            try
+            {
+                var types = compiledAssembly.DefinedTypes;
+                foreach (var type in types)
+                {
+                    if (type.FullName is null || !type.IsDefined(typeof(TerrainProviderAttribute))) continue;
+                    
+                    _generatorInstance = compiledAssembly.CreateInstance(type.FullName);
+                    Lumberjack.Log($"Creating instance of {type.FullName}");
+                    break;
+                }
 
-            if (_generatorInstance is null)
+                if (_generatorInstance is null)
+                {
+                    Lumberjack.Log($"No classes found in assembly with the TerrainProvider attribute");
+                    return false;
+                }
+
+                var typeInfo = _generatorInstance.GetType();
+                var methods = typeInfo.GetMethods();
+
+                foreach (var requiredMethod in RequiredMethods)
+                {
+                    if (methods.All(method => method.Name != requiredMethod.Name))
+                    {
+                        Lumberjack.Error($"Required method {requiredMethod.Name} not found in instantiated class");
+                        return false;
+                    }
+
+                    var foundMethod = typeInfo.GetMethod(requiredMethod.Name, requiredMethod.ParameterTypes);
+
+                    if (foundMethod is null)
+                    {
+                        Lumberjack.Error($"Required method {requiredMethod.Name} does not have required signature {string.Join(", ", requiredMethod.ParameterTypes.Select(type => type.Name))}");
+                        return false;
+                    }
+
+                    if (foundMethod.ReturnType != requiredMethod.ReturnType)
+                    {
+                        Lumberjack.Error($"Required method {requiredMethod.Name} does not have required return type {requiredMethod.ReturnType.Name}");
+                        return false;
+                    }
+                }
+
+                _methodGetValue = typeInfo.GetMethod("GetTerrain");
+                _methodGetTree = typeInfo.GetMethod("GetTree");
+                //_methodGetWaterLevel = typeInfo.GetMethod("GetWaterLevel");
+            }
+            catch (Exception e)
+            {
+                Lumberjack.Error(e.Message);
                 return false;
-
-            var typeInfo = _generatorInstance.GetType();
-
-            _methodGetValue = typeInfo.GetMethod("GetTerrain");
-            _methodGetTree = typeInfo.GetMethod("GetTree");
-            _methodGetWaterLevel = typeInfo.GetMethod("GetWaterLevel");
+            }
 
             return true;
         }
@@ -92,7 +136,7 @@ namespace TerrainBuilder
 
         public int GetWaterLevel()
         {
-            if (_methodGetTree is null)
+            if (_methodGetWaterLevel is null)
                 return 0;
             return (int)_methodGetWaterLevel.Invoke(_generatorInstance, null);
         }

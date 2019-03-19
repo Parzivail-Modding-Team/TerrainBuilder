@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using TerrainBuilder.RenderUtil;
 
@@ -22,16 +25,6 @@ namespace TerrainBuilder
         public HeightmapViewer()
         {
             InitializeComponent();
-
-            nudSeed.Minimum = 0;
-            nudSeed.Maximum = int.MaxValue;
-            nudSeed.Value = _random.Next();
-
-            Text = EmbeddedFiles.AppName;
-            Icon = EmbeddedFiles.logo;
-
-            for (var i = 0; i < 256; i++)
-                Colors.Add(i, Color.FromArgb(i, i, i));
         }
 
         private void bCreate_Click(object sender, EventArgs e)
@@ -73,7 +66,6 @@ namespace TerrainBuilder
         private void WatchTerrainScript(string filename)
         {
             _scriptWatcher.WatchTerrainScript(filename);
-            ReRenderNoiseImage();
         }
 
         private void ReRenderNoiseImage()
@@ -174,25 +166,50 @@ namespace TerrainBuilder
                 // Grab worker and report progress
                 var worker = (BackgroundWorker)sender;
                 var bitmap = (Bitmap)e.Argument;
-                var v = (int)(nudSideLength.Value / 2);
+                var s = (int)(nudSideLength.Value / 2);
                 worker.ReportProgress(0, EmbeddedFiles.Status_GenHeightmap);
 
-                for (var x = 0; x < bitmap.Width; x++)
+                var rect = new Rectangle(0, 0, bitmap.Width, bitmap.Height);
+                var data = bitmap.LockBits(rect, ImageLockMode.ReadWrite, bitmap.PixelFormat);
+                var depth = Image.GetPixelFormatSize(data.PixelFormat) / 8; //bytes per pixel
+
+                var buffer = new byte[data.Width * data.Height * depth];
+                Marshal.Copy(data.Scan0, buffer, 0, buffer.Length);
+
+                var w = bitmap.Width;
+                var h = bitmap.Height;
+                var done = 0;
+                var r = Parallel.For(0, bitmap.Width, (x, state) =>
                 {
-                    for (var y = 0; y < bitmap.Height; y++)
+                    for (var y = 0; y < h; y++)
                     {
                         // Cancel if requested
                         if (worker.CancellationPending)
                         {
                             e.Cancel = true;
-                            return;
+                            state.Stop();
                         }
 
-                        var n = ScriptedTerrainGenerator.GetValue(x - v, y - v);
-                        bitmap.SetPixel(x, y, Colors[(int)n]);
+                        var n = ScriptedTerrainGenerator.GetValue(x - s, y - s);
+                        var v = (int) n;
+                        if (v > 255)
+                            v = 255;
+                        if (v < 0)
+                            v = 0;
+
+                        var offset = (y * w + x) * depth;
+                        buffer[offset] = (byte) v;
+                        buffer[offset + 1] = (byte) v;
+                        buffer[offset + 2] = (byte) v;
+                        buffer[offset + 3] = 255;
                     }
-                    worker.ReportProgress((int)(x / (float)bitmap.Width * 100));
-                }
+
+                    done++;
+                    worker.ReportProgress((int) (done / (float) w * 100));
+                });
+
+                Marshal.Copy(buffer, 0, data.Scan0, buffer.Length);
+                bitmap.UnlockBits(data);
 
                 // Send the result back to the worker
                 e.Result = bitmap;
@@ -206,6 +223,16 @@ namespace TerrainBuilder
 
         private void HeightmapViewer_Load(object sender, EventArgs e)
         {
+            nudSeed.Minimum = 0;
+            nudSeed.Maximum = int.MaxValue;
+            nudSeed.Value = _random.Next();
+
+            Text = EmbeddedFiles.AppName;
+            Icon = EmbeddedFiles.logo;
+
+            for (var i = 0; i < 256; i++)
+                Colors.Add(i, Color.FromArgb(i, i, i));
+
             _scriptWatcher.FileChanged += ScriptWatcherOnFileChanged;
 
             // Wire up background worker

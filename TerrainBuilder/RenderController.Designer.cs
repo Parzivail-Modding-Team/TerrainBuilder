@@ -193,9 +193,9 @@
             this.cbPauseGen.AutoSize = true;
             this.cbPauseGen.Location = new System.Drawing.Point(6, 65);
             this.cbPauseGen.Name = "cbPauseGen";
-            this.cbPauseGen.Size = new System.Drawing.Size(163, 17);
+            this.cbPauseGen.Size = new System.Drawing.Size(135, 17);
             this.cbPauseGen.TabIndex = 24;
-            this.cbPauseGen.Text = "Pause Generation on Reload";
+            this.cbPauseGen.Text = "Don\'t Auto-Regenerate";
             this.cbPauseGen.UseVisualStyleBackColor = true;
             this.cbPauseGen.CheckedChanged += new System.EventHandler(this.cbPauseGen_CheckedChanged);
             // 
@@ -329,6 +329,7 @@
             this.Name = "RenderController";
             this.Text = "RenderController";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.TerrainLayerList_FormClosing);
+            this.Load += new System.EventHandler(this.RenderController_Load);
             ((System.ComponentModel.ISupportInitialize)(this.nudSeed)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudSideLength)).EndInit();
             this.groupBox1.ResumeLayout(false);

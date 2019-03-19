@@ -2,8 +2,9 @@
 using TerrainGenCore;
 
 /// <summary>
-/// Stores a collection of methods to generate terrain
+/// Stores a collection of methods to generate terrain.
 /// </summary>
+[TerrainProvider]
 class TerrainGenerator
 {
     /// <summary>
@@ -12,9 +13,9 @@ class TerrainGenerator
     /// <param name="x">The x coordiate of the point to sample</param>
     /// <param name="z">The z coordiate of the point to sample</param>
     /// <returns>A height between 0 and 255, inclusive</returns>
-    public double GetTerrain(int x, int z)
+    public double GetTerrain(double x, double z)
     {
-        var h = ProcNoise.Noise(x / 100f, z / 100f);
+        var h = ProcNoise.Noise(x / 100, z / 100);
 
         return h * 100;
     }

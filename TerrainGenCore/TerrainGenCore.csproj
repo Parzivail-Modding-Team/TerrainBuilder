@@ -44,6 +44,7 @@
     <Compile Include="InfiniteWorleyNoise.cs" />
     <Compile Include="MathUtil.cs" />
     <Compile Include="OpenSimplexNoise.cs" />
+    <Compile Include="TerrainProviderAttribute.cs" />
     <Compile Include="TreeType.cs" />
     <Compile Include="ProcNoise.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -97,6 +97,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>EmbeddedFiles.resx</DependentUpon>
     </Compile>
+    <Compile Include="RequiredMethodEntry.cs" />
     <Compile Include="ScriptWatcher.cs" />
     <Compile Include="RenderController.cs">
       <SubType>Form</SubType>

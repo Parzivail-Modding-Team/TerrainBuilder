@@ -14,12 +14,17 @@ namespace TerrainBuilder
         private readonly Random _random = new Random();
 
         public Dictionary<int, Color> Colors = new Dictionary<int, Color>();
+        private bool _frozen;
 
         public RenderController(WindowVisualize parent)
         {
             _parent = parent;
             InitializeComponent();
-            
+        }
+
+        private void RenderController_Load(object sender, EventArgs e)
+        {
+            _frozen = true;
             nudSeed.Minimum = 0;
             nudSeed.Maximum = int.MaxValue;
             nudSeed.Value = _random.Next();
@@ -31,7 +36,7 @@ namespace TerrainBuilder
 
             for (var i = 0; i < 256; i++)
                 Colors.Add(i, Color.FromArgb(i, i, i));
-
+            _frozen = false;
         }
 
         private void bRandomize_Click(object sender, EventArgs e)
@@ -52,6 +57,9 @@ namespace TerrainBuilder
 
         private void nudSeed_ValueChanged(object sender, EventArgs e)
         {
+            if (_frozen)
+                return;
+
             if (_parent.IsRendering())
             {
                 Lumberjack.Warn("Seed change request denied, render thread busy");
