@@ -3,26 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OpenTK;
 
 namespace TerrainGen.Job
 {
-    class JobSetSideLength : IJob
+    class JobSetTintColor : IJob
     {
-        private readonly int _sideLength;
+        private readonly Vector3 _tintColor;
 
-        public JobSetSideLength(int sideLength)
+        public JobSetTintColor(Vector3 tintColor)
         {
-            _sideLength = sideLength;
+            _tintColor = tintColor;
         }
 
-        /// <inheritdoc />
         public void Execute(RenderManager renderManager)
         {
-            renderManager.SideLength = _sideLength;
-            renderManager.CreateChunks();
+            renderManager.TintColor = _tintColor;
         }
 
-        /// <inheritdoc />
         public bool CanExecuteInBackground()
         {
             return true;

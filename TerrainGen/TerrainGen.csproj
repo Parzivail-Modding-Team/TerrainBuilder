@@ -56,8 +56,12 @@
       <DependentUpon>EmbeddedFiles.resx</DependentUpon>
     </Compile>
     <Compile Include="Job\IJob.cs" />
+    <Compile Include="Job\JobPregenerateChunk.cs" />
+    <Compile Include="Job\JobRebuildChunks.cs" />
+    <Compile Include="Job\JobRenderChunk.cs" />
     <Compile Include="Job\JobSetSeed.cs" />
     <Compile Include="Job\JobSetSideLength.cs" />
+    <Compile Include="Job\JobSetTintColor.cs" />
     <Compile Include="Lumberjack.cs" />
     <Compile Include="MainWindow.cs" />
     <Compile Include="Program.cs" />

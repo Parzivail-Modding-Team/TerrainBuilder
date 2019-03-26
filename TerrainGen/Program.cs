@@ -10,6 +10,7 @@ namespace TerrainGen
 {
     class Program
     {
+        [STAThread]
         public static void Main(string[] args)
         {
             Application.EnableVisualStyles();

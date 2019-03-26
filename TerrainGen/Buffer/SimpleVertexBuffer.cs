@@ -11,7 +11,8 @@ namespace TerrainGen.Buffer
         public int ElementBufferId = -1;
         public int NormalBufferId = -1;
         public int VertexBufferId = -1;
-        private readonly object _lock = new object();
+
+        public bool Initialized { get; private set; }
 
         public int NumElements;
 
@@ -29,119 +30,118 @@ namespace TerrainGen.Buffer
             if (vertices == null) return;
             if (indices == null) return;
 
-            lock (_lock)
+            try
             {
-                try
+                // Vertex Array Buffer
+                if (vertexColors != null)
                 {
-                    // Vertex Array Buffer
-                    if (vertexColors != null)
-                    {
-                        // Generate Array Buffer Id
-                        if (ColorBufferId == -1)
-                            GL.GenBuffers(1, out ColorBufferId);
+                    // Generate Array Buffer Id
+                    if (ColorBufferId == -1)
+                        GL.GenBuffers(1, out ColorBufferId);
 
-                        // Bind current context to Array Buffer ID
-                        GL.BindBuffer(BufferTarget.ArrayBuffer, ColorBufferId);
+                    // Bind current context to Array Buffer ID
+                    GL.BindBuffer(BufferTarget.ArrayBuffer, ColorBufferId);
 
-                        // Send data to buffer
-                        GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr) (vertexColors.Count * sizeof(int)),
-                            vertexColors.ToArray(),
-                            BufferUsageHint.StaticDraw);
+                    // Send data to buffer
+                    GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr) (vertexColors.Count * sizeof(int)),
+                        vertexColors.ToArray(),
+                        BufferUsageHint.StaticDraw);
 
-                        // Validate that the buffer is the correct size
-                        GL.GetBufferParameter(BufferTarget.ArrayBuffer, BufferParameterName.BufferSize,
-                            out int bufferSize);
-                        if (vertexColors.Count * sizeof(int) != bufferSize)
-                            throw new ApplicationException("Vertex color array not uploaded correctly");
+                    // Validate that the buffer is the correct size
+                    GL.GetBufferParameter(BufferTarget.ArrayBuffer, BufferParameterName.BufferSize,
+                        out int bufferSize);
+                    if (vertexColors.Count * sizeof(int) != bufferSize)
+                        throw new ApplicationException("Vertex color array not uploaded correctly");
 
-                        // Clear the buffer Binding
-                        GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-                    }
-
-                    // Normal Array Buffer
-                    if (vertexNormals != null)
-                    {
-                        // Generate Array Buffer Id
-                        if (NormalBufferId == -1)
-                            GL.GenBuffers(1, out NormalBufferId);
-
-                        // Bind current context to Array Buffer ID
-                        GL.BindBuffer(BufferTarget.ArrayBuffer, NormalBufferId);
-
-                        // Send data to buffer
-                        GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr) (vertexNormals.Count * Vector3.SizeInBytes),
-                            vertexNormals.ToArray(), BufferUsageHint.StaticDraw);
-
-                        // Validate that the buffer is the correct size
-                        GL.GetBufferParameter(BufferTarget.ArrayBuffer, BufferParameterName.BufferSize,
-                            out int bufferSize);
-                        if (vertexNormals.Count * Vector3.SizeInBytes != bufferSize)
-                            throw new ApplicationException("Normal array not uploaded correctly");
-
-                        // Clear the buffer Binding
-                        GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-                    }
-
-                    // Vertex Array Buffer
-                    {
-                        // Generate Array Buffer Id
-                        if (VertexBufferId == -1)
-                            GL.GenBuffers(1, out VertexBufferId);
-
-                        // Bind current context to Array Buffer ID
-                        GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferId);
-
-                        // Send data to buffer
-                        GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr) (vertices.Count * Vector3.SizeInBytes),
-                            vertices.ToArray(),
-                            BufferUsageHint.DynamicDraw);
-
-                        // Validate that the buffer is the correct size
-                        GL.GetBufferParameter(BufferTarget.ArrayBuffer, BufferParameterName.BufferSize,
-                            out int bufferSize);
-                        if (vertices.Count * Vector3.SizeInBytes != bufferSize)
-                            throw new ApplicationException("Vertex array not uploaded correctly");
-
-                        // Clear the buffer Binding
-                        GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-                    }
-
-                    // Element Array Buffer
-                    {
-                        // Generate Array Buffer Id
-                        if (ElementBufferId == -1)
-                            GL.GenBuffers(1, out ElementBufferId);
-
-                        // Bind current context to Array Buffer ID
-                        GL.BindBuffer(BufferTarget.ElementArrayBuffer, ElementBufferId);
-
-                        // Send data to buffer
-                        GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr) (indices.Count * sizeof(int)),
-                            indices.ToArray(),
-                            BufferUsageHint.StreamDraw);
-
-                        // Validate that the buffer is the correct size
-                        GL.GetBufferParameter(BufferTarget.ElementArrayBuffer, BufferParameterName.BufferSize,
-                            out int bufferSize);
-                        if (indices.Count * sizeof(int) != bufferSize)
-                            throw new ApplicationException("Element array not uploaded correctly");
-
-                        // Clear the buffer Binding
-                        GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
-                    }
-                }
-                catch (ApplicationException ex)
-                {
-                    Lumberjack.Error($"{ex.Message}. Try re-rendering.");
-                }
-                finally
-                {
+                    // Clear the buffer Binding
                     GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
                 }
 
-                // Store the number of elements for the DrawElements call
-                NumElements = indices.Count;
+                // Normal Array Buffer
+                if (vertexNormals != null)
+                {
+                    // Generate Array Buffer Id
+                    if (NormalBufferId == -1)
+                        GL.GenBuffers(1, out NormalBufferId);
+
+                    // Bind current context to Array Buffer ID
+                    GL.BindBuffer(BufferTarget.ArrayBuffer, NormalBufferId);
+
+                    // Send data to buffer
+                    GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr) (vertexNormals.Count * Vector3.SizeInBytes),
+                        vertexNormals.ToArray(), BufferUsageHint.StaticDraw);
+
+                    // Validate that the buffer is the correct size
+                    GL.GetBufferParameter(BufferTarget.ArrayBuffer, BufferParameterName.BufferSize,
+                        out int bufferSize);
+                    if (vertexNormals.Count * Vector3.SizeInBytes != bufferSize)
+                        throw new ApplicationException("Normal array not uploaded correctly");
+
+                    // Clear the buffer Binding
+                    GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+                }
+
+                // Vertex Array Buffer
+                {
+                    // Generate Array Buffer Id
+                    if (VertexBufferId == -1)
+                        GL.GenBuffers(1, out VertexBufferId);
+
+                    // Bind current context to Array Buffer ID
+                    GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferId);
+
+                    // Send data to buffer
+                    GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr) (vertices.Count * Vector3.SizeInBytes),
+                        vertices.ToArray(),
+                        BufferUsageHint.DynamicDraw);
+
+                    // Validate that the buffer is the correct size
+                    GL.GetBufferParameter(BufferTarget.ArrayBuffer, BufferParameterName.BufferSize,
+                        out int bufferSize);
+                    if (vertices.Count * Vector3.SizeInBytes != bufferSize)
+                        throw new ApplicationException("Vertex array not uploaded correctly");
+
+                    // Clear the buffer Binding
+                    GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+                }
+
+                // Element Array Buffer
+                {
+                    // Generate Array Buffer Id
+                    if (ElementBufferId == -1)
+                        GL.GenBuffers(1, out ElementBufferId);
+
+                    // Bind current context to Array Buffer ID
+                    GL.BindBuffer(BufferTarget.ElementArrayBuffer, ElementBufferId);
+
+                    // Send data to buffer
+                    GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr) (indices.Count * sizeof(int)),
+                        indices.ToArray(),
+                        BufferUsageHint.StreamDraw);
+
+                    // Validate that the buffer is the correct size
+                    GL.GetBufferParameter(BufferTarget.ElementArrayBuffer, BufferParameterName.BufferSize,
+                        out int bufferSize);
+                    if (indices.Count * sizeof(int) != bufferSize)
+                        throw new ApplicationException("Element array not uploaded correctly");
+
+                    // Clear the buffer Binding
+                    GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
+                }
+
+                Initialized = true;
             }
+            catch (ApplicationException ex)
+            {
+                Lumberjack.Error($"{ex.Message}. Try re-rendering.");
+            }
+            finally
+            {
+                GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+            }
+
+            // Store the number of elements for the DrawElements call
+            NumElements = indices.Count;
         }
 
         public void Render(PrimitiveType type = PrimitiveType.Quads)

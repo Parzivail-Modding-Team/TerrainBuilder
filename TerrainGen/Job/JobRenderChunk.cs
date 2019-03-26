@@ -6,31 +6,28 @@ using System.Threading.Tasks;
 
 namespace TerrainGen.Job
 {
-    class JobSetSideLength : IJob
+    class JobRenderChunk : IJob
     {
-        private readonly int _sideLength;
+        private readonly Chunk _chunk;
 
-        public JobSetSideLength(int sideLength)
+        public JobRenderChunk(Chunk chunk)
         {
-            _sideLength = sideLength;
+            _chunk = chunk;
         }
 
-        /// <inheritdoc />
         public void Execute(RenderManager renderManager)
         {
-            renderManager.SideLength = _sideLength;
-            renderManager.CreateChunks();
+            _chunk.Render();
         }
 
-        /// <inheritdoc />
         public bool CanExecuteInBackground()
         {
-            return true;
+            return false;
         }
 
         public bool IsCancellable()
         {
-            return false;
+            return true;
         }
     }
 }

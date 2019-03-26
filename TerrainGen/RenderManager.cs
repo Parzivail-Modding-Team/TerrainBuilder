@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -16,57 +17,70 @@ namespace TerrainGen
 {
     public class RenderManager
     {
-        private readonly Queue<IJob> _jobs;
+        private BlockingCollection<IJob> _fgJobs;
+        private BlockingCollection<IJob> _bgJobs;
         private readonly CsTerrainGenerator _generator;
         private readonly ShaderProgram _shaderProgram;
         private readonly Uniform _tintUniform = new Uniform("tint");
 
         private Thread _worker;
-        private Chunk[] _chunks;
 
+        public Chunk[] Chunks { get; private set; }
         public Vector3 TintColor { get; set; }
         public int SideLength { get; set; }
         public long Seed { get; set; }
 
         public RenderManager(CsTerrainGenerator generator)
         {
-            _jobs = new Queue<IJob>();
+            _fgJobs = new BlockingCollection<IJob>();
+            _bgJobs = new BlockingCollection<IJob>();
             _generator = generator;
             _shaderProgram = new DefaultShaderProgram(EmbeddedFiles.default_fs);
             _shaderProgram.InitProgram();
             CreateChunks();
         }
 
-        private void CreateChunks()
+        public void CreateChunks()
         {
-            _chunks = new Chunk[SideLength * SideLength];
+            Chunks = new Chunk[SideLength * SideLength];
             for (var i = 0; i < SideLength; i++)
-            for (var j = 0; j < SideLength; j++)
-            {
-                _chunks[i * SideLength + j] = new Chunk(i, j);
-            }
+                for (var j = 0; j < SideLength; j++)
+                {
+                    Chunks[i * SideLength + j] = new Chunk(i, j);
+                }
         }
 
         public void EnqueueJob(IJob job)
         {
-            _jobs.Enqueue(job);
+            if (job.CanExecuteInBackground())
+                _bgJobs.Add(job);
+            else
+                _fgJobs.Add(job);
         }
 
         public void UpdateJobs()
         {
-            if (_worker != null && _worker.IsAlive) return;
-
-            var nextJob = _jobs.Dequeue();
-            if (nextJob.CanExecuteInBackground())
+            if (_worker is null)
             {
-                _worker = new Thread(() => nextJob.Execute(this));
+                _worker = new Thread(() =>
+                {
+                    while (true)
+                    {
+                        if (_bgJobs.Count > 0)
+                            Parallel.ForEach(_bgJobs.GetConsumingEnumerable(), job =>
+                            {
+                                job.Execute(this);
+                            });
+                    }
+                });
                 _worker.Start();
             }
-            else
-            {
-                _worker = null;
-                nextJob.Execute(this);
-            }
+
+            if (_fgJobs.Count > 0)
+                Parallel.ForEach(_fgJobs.GetConsumingEnumerable(), job =>
+                {
+                    job.Execute(this);
+                });
         }
 
         public void Render()
@@ -76,11 +90,14 @@ namespace TerrainGen
 
             GL.Color3(Color.White);
 
+            GL.PushMatrix();
+            GL.Translate(-SideLength * 8, 0, -SideLength * 8);
             // Engage shader, render, disengage
             _shaderProgram.Use(_tintUniform);
-            foreach (var chunk in _chunks)
-                chunk.Render();
+            foreach (var chunk in Chunks)
+                chunk?.Draw();
             GL.UseProgram(0);
+            GL.PopMatrix();
 
             // Render the ocean
             GL.Color3(Color.MediumBlue);
@@ -89,11 +106,21 @@ namespace TerrainGen
 
             GL.Begin(PrimitiveType.Quads);
             GL.Normal3(Vector3.UnitY);
-            GL.Vertex3(-SideLength / 2f, waterLevel - 0.1, -SideLength / 2f);
-            GL.Vertex3(SideLength / 2f, waterLevel - 0.1, -SideLength / 2f);
-            GL.Vertex3(SideLength / 2f, waterLevel - 0.1, SideLength / 2f);
-            GL.Vertex3(-SideLength / 2f, waterLevel - 0.1, SideLength / 2f);
+            GL.Vertex3(-SideLength * 8, waterLevel - 0.4, -SideLength * 8);
+            GL.Vertex3(SideLength * 8, waterLevel - 0.4, -SideLength * 8);
+            GL.Vertex3(SideLength * 8, waterLevel - 0.4, SideLength * 8);
+            GL.Vertex3(-SideLength * 8, waterLevel - 0.4, SideLength * 8);
             GL.End();
+        }
+
+        public void Rebuild()
+        {
+            CancelJobs();
+            EnqueueJob(new JobRebuildChunks(_generator));
+        }
+
+        private void CancelJobs()
+        {
         }
     }
 }

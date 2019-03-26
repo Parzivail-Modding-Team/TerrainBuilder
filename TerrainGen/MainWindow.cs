@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
+using TerrainGen.Generator;
 using TerrainGen.Job;
 using TerrainGen.Shader;
 
@@ -18,6 +19,8 @@ namespace TerrainGen
         private bool _shouldDie;
         private KeyboardState _keyboard;
         private RenderController _terrainLayerList;
+        private ScriptWatcher _scriptWatcher;
+        private CsTerrainGenerator _terrainGenerator;
         private RenderManager _renderManager;
 
         private float _zoom = 1;
@@ -40,6 +43,25 @@ namespace TerrainGen
             Title = $"{EmbeddedFiles.AppName} | {EmbeddedFiles.Title_Unsaved}";
             Icon = EmbeddedFiles.logo;
 
+            // Set up lights
+            const float diffuse = 0.9f;
+            float[] matDiffuse = { diffuse, diffuse, diffuse };
+            GL.Material(MaterialFace.FrontAndBack, MaterialParameter.Diffuse, matDiffuse);
+            GL.Light(LightName.Light0, LightParameter.Position, new[] { 0.0f, 0.0f, 0.0f, 10.0f });
+            GL.Light(LightName.Light0, LightParameter.Diffuse, new[] { diffuse, diffuse, diffuse, diffuse });
+
+            // Set up lighting
+            GL.Enable(EnableCap.Lighting);
+            GL.Enable(EnableCap.Light0);
+            GL.ShadeModel(ShadingModel.Smooth);
+            GL.Enable(EnableCap.ColorMaterial);
+
+            // Set up caps
+            GL.Enable(EnableCap.DepthTest);
+            GL.Enable(EnableCap.RescaleNormal);
+            GL.Disable(EnableCap.Texture2D);
+            GL.Disable(EnableCap.CullFace);
+
             // Set up blending
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
@@ -49,15 +71,15 @@ namespace TerrainGen
 
             // Init keyboard to ensure first frame won't NPE
             _keyboard = Keyboard.GetState();
-
-            // Load shaders
-            _shaderProgram = new DefaultShaderProgram(EmbeddedFiles.default_fs);
-            _shaderProgram.InitProgram();
+            
+            _terrainGenerator = new CsTerrainGenerator();
+            _renderManager = new RenderManager(_terrainGenerator);
 
             _terrainLayerList = new RenderController(this);
             _terrainLayerList.Show();
 
-            _renderManager = new RenderManager();
+            _scriptWatcher = new ScriptWatcher();
+            _scriptWatcher.FileChanged += OnScriptChanged;
 
             Lumberjack.Info(EmbeddedFiles.Info_WindowLoaded);
         }
@@ -107,6 +129,8 @@ namespace TerrainGen
                     _translation = new Vector2(0, -25);
                 }
             }
+
+            _renderManager.UpdateJobs();
         }
 
         private void OnRender(object sender, FrameEventArgs e)
@@ -135,7 +159,7 @@ namespace TerrainGen
             GL.Rotate(_rotation.X, 1.0f, 0.0f, 0.0f);
             GL.Rotate(_rotation.Y, 0.0f, 1.0f, 0.0f);
 
-            
+            _renderManager.Render();
 
             // Swap the graphics buffer
             SwapBuffers();
@@ -172,13 +196,29 @@ namespace TerrainGen
             _shouldDie = true;
         }
 
-        public void WatchTerrainScript(string fileName)
+        private void OnScriptChanged(object sender, ScriptChangedEventArgs e)
         {
+            Lumberjack.Info(string.Format(EmbeddedFiles.Info_FileReloaded, e.Filename));
+            var success = _terrainGenerator.LoadScript(e.ScriptCode);
+            if (!success)
+                return;
+
+            _renderManager.Rebuild();
+        }
+
+        public void WatchTerrainScript(string filename)
+        {
+            _scriptWatcher.WatchTerrainScript(filename);
         }
 
         public void EnqueueJob(IJob job)
         {
             _renderManager.EnqueueJob(job);
+        }
+
+        public void RebuildChunks()
+        {
+            _renderManager.Rebuild();
         }
     }
 }

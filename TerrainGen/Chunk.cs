@@ -4,7 +4,7 @@ using TerrainGen.Generator;
 
 namespace TerrainGen
 {
-    internal class Chunk
+    public class Chunk
     {
         public int X { get; }
         public int Z { get; }
@@ -233,6 +233,9 @@ namespace TerrainGen
         /// </summary>
         public void Draw()
         {
+            if (!_vbo.Initialized)
+                return;
+
             _vbo.Render();
         }
     }

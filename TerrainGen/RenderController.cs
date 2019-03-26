@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using OpenTK;
 using TerrainGen.Job;
 
 namespace TerrainGen
@@ -19,6 +21,15 @@ namespace TerrainGen
 
         private void RenderController_Load(object sender, EventArgs e)
         {
+            _parent.EnqueueJob(new JobSetSeed((long)nudSeed.Value));
+            _parent.EnqueueJob(new JobSetSideLength((int)nudSideLength.Value));
+            SetTintColor(Color.LimeGreen);
+        }
+
+        private void SetTintColor(Color c)
+        {
+            pbTerrainColor.BackColor = c;
+            _parent.EnqueueJob(new JobSetTintColor(new Vector3(c.R / 255f, c.G / 255f, c.B / 255f)));
         }
 
         private void bRandomize_Click(object sender, EventArgs e)
@@ -34,11 +45,13 @@ namespace TerrainGen
         private void nudSideLength_ValueChanged(object sender, EventArgs e)
         {
             _parent.EnqueueJob(new JobSetSideLength((int) nudSideLength.Value));
+            _parent.RebuildChunks();
         }
 
         private void nudSeed_ValueChanged(object sender, EventArgs e)
         {
             _parent.EnqueueJob(new JobSetSeed((long)nudSeed.Value));
+            _parent.RebuildChunks();
         }
 
         private void bCreateTerrain_Click(object sender, EventArgs e)
@@ -79,6 +92,7 @@ namespace TerrainGen
         {
             if (colorPicker.ShowDialog() != DialogResult.OK)
                 return;
+            SetTintColor(colorPicker.Color);
         }
 
         private void heightmapViewerToolStripMenuItem_Click(object sender, EventArgs e)

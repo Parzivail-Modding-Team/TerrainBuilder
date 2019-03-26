@@ -20,5 +20,11 @@ namespace TerrainGen.Job
         /// </summary>
         /// <returns></returns>
         bool CanExecuteInBackground();
+
+        /// <summary>
+        /// True if the job can be prematurely removed from the queue
+        /// </summary>
+        /// <returns></returns>
+        bool IsCancellable();
     }
 }

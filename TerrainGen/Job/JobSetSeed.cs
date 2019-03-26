@@ -26,5 +26,10 @@ namespace TerrainGen.Job
         {
             return true;
         }
+
+        public bool IsCancellable()
+        {
+            return false;
+        }
     }
 }
