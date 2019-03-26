@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
+using TerrainGen.Job;
 using TerrainGen.Shader;
 
 namespace TerrainGen
@@ -173,6 +174,11 @@ namespace TerrainGen
 
         public void WatchTerrainScript(string fileName)
         {
+        }
+
+        public void EnqueueJob(IJob job)
+        {
+            _renderManager.EnqueueJob(job);
         }
     }
 }

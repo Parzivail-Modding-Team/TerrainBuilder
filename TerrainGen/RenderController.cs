@@ -2,12 +2,14 @@
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
+using TerrainGen.Job;
 
 namespace TerrainGen
 {
     public partial class RenderController : Form
     {
         private readonly MainWindow _parent;
+        private readonly Random _random = new Random();
 
         public RenderController(MainWindow parent)
         {
@@ -21,6 +23,7 @@ namespace TerrainGen
 
         private void bRandomize_Click(object sender, EventArgs e)
         {
+            nudSeed.Value = _random.Next();
         }
 
         private void TerrainLayerList_FormClosing(object sender, FormClosingEventArgs e)
@@ -30,10 +33,12 @@ namespace TerrainGen
 
         private void nudSideLength_ValueChanged(object sender, EventArgs e)
         {
+            _parent.EnqueueJob(new JobSetSideLength((int) nudSideLength.Value));
         }
 
         private void nudSeed_ValueChanged(object sender, EventArgs e)
         {
+            _parent.EnqueueJob(new JobSetSeed((long)nudSeed.Value));
         }
 
         private void bCreateTerrain_Click(object sender, EventArgs e)

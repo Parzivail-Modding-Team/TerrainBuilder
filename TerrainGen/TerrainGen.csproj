@@ -56,6 +56,8 @@
       <DependentUpon>EmbeddedFiles.resx</DependentUpon>
     </Compile>
     <Compile Include="Job\IJob.cs" />
+    <Compile Include="Job\JobSetSeed.cs" />
+    <Compile Include="Job\JobSetSideLength.cs" />
     <Compile Include="Lumberjack.cs" />
     <Compile Include="MainWindow.cs" />
     <Compile Include="Program.cs" />
