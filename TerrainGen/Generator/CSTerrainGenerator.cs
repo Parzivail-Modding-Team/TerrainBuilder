@@ -3,19 +3,14 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using TerrainBuilder.RenderUtil;
 using TerrainGenCore;
 
-namespace TerrainBuilder
+namespace TerrainGen.Generator
 {
     public class CsTerrainGenerator
     {
         private object _generatorInstance;
         private MethodInfo _methodGetValue;
-        private MethodInfo _methodGetTree;
         private MethodInfo _methodGetWaterLevel;
 
         private static readonly List<RequiredMethodEntry> RequiredMethods = new List<RequiredMethodEntry>
@@ -63,7 +58,7 @@ namespace TerrainBuilder
 
                 if (_generatorInstance is null)
                 {
-                    Lumberjack.Log($"No classes found in assembly with the TerrainProvider attribute");
+                    Lumberjack.Log("No classes found in assembly with the TerrainProvider attribute");
                     return false;
                 }
 
@@ -94,7 +89,6 @@ namespace TerrainBuilder
                 }
 
                 _methodGetValue = typeInfo.GetMethod("GetTerrain");
-                //_methodGetTree = typeInfo.GetMethod("GetTree");
                 _methodGetWaterLevel = typeInfo.GetMethod("GetWaterLevel");
             }
             catch (Exception e)
@@ -124,14 +118,6 @@ namespace TerrainBuilder
                 value = 255;
 
             return value;
-        }
-
-        public TreeType GetTree(int x, int y, int z)
-        {
-            return TreeType.None;
-//            if (_methodGetValue is null)
-//                return TreeType.None;
-//            return (TreeType)_methodGetValue.Invoke(_generatorInstance, new object[] { x, y, z });
         }
 
         public int GetWaterLevel()
