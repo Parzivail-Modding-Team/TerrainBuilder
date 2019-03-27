@@ -20,7 +20,10 @@ namespace TerrainGen.Buffer
 
         public VertexBufferInitializer()
         {
-            Reset();
+            Vertices = new List<Vector3>();
+            Normals = new List<Vector3>();
+            Colors = new List<int>();
+            Indices = new List<int>();
         }
 
         public void AddVertex(Vector3 pos)
@@ -48,10 +51,14 @@ namespace TerrainGen.Buffer
 
         public void Reset()
         {
-            Vertices = new List<Vector3>();
-            Normals = new List<Vector3>();
-            Colors = new List<int>();
-            Indices = new List<int>();
+            Vertices.Clear();
+            Vertices.TrimExcess();
+            Normals.Clear();
+            Normals.TrimExcess();
+            Colors.Clear();
+            Colors.TrimExcess();
+            Indices.Clear();
+            Indices.TrimExcess();
         }
     }
 }

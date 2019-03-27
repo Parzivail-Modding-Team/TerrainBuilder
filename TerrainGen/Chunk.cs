@@ -11,8 +11,7 @@ namespace TerrainGen
 
         private readonly byte[,] _heightmap = new byte[18,18];
         private readonly SimpleVertexBuffer _vbo = new SimpleVertexBuffer();
-
-        private VertexBufferInitializer _vbi;
+        private readonly ChunkBuffer _vbi = new ChunkBuffer();
 
         public Chunk(int x, int z)
         {
@@ -38,7 +37,7 @@ namespace TerrainGen
         {
             const int color = 0xFFFFFF;
             var occludedColor = 0xC0C0C0;
-            _vbi = new VertexBufferInitializer();
+            _vbi.Reset();
 
             for (var x = X * 16; x < X * 16 + 16; x++)
             for (var z = Z * 16; z < Z * 16 + 16; z++)
@@ -82,54 +81,54 @@ namespace TerrainGen
                 var isNegXNegZLower = valueNegXNegZ < valueHere;
 
                 // Always draw a top face for a block
-                _vbi.AddVertex(
-                    new Vector3(x, valueHere, z),
-                    Vector3.UnitY,
+                _vbi.Append(
+                    new Vertex(x, valueHere, z),
+                    SmallVertex.UnitY,
                     isPosXHigher || isPosZHigher || isPosXPosZHigher ? occludedColor : color
                 );
 
-                _vbi.AddVertex(
-                    new Vector3(x - 1, valueHere, z),
-                    Vector3.UnitY,
+                _vbi.Append(
+                    new Vertex(x - 1, valueHere, z),
+                    SmallVertex.UnitY,
                     isNegXHigher || isPosZHigher || isNegXPosZHigher ? occludedColor : color
                 );
 
-                _vbi.AddVertex(
-                    new Vector3(x - 1, valueHere, z - 1),
-                    Vector3.UnitY,
+                _vbi.Append(
+                    new Vertex(x - 1, valueHere, z - 1),
+                    SmallVertex.UnitY,
                     isNegXHigher || isNegZHigher || isNegXNegZHigher ? occludedColor : color
                 );
 
-                _vbi.AddVertex(
-                    new Vector3(x, valueHere, z - 1),
-                    Vector3.UnitY,
+                _vbi.Append(
+                    new Vertex(x, valueHere, z - 1),
+                    SmallVertex.UnitY,
                     isPosXHigher || isNegZHigher || isPosXNegZHigher ? occludedColor : color
                 );
 
                 // Try and draw the PosZ face
                 if (valuePosZ < valueHere)
                 {
-                    _vbi.AddVertex(
-                        new Vector3(x, valueHere, z),
-                        Vector3.UnitZ,
+                    _vbi.Append(
+                        new Vertex(x, valueHere, z),
+                        SmallVertex.UnitZ,
                         color
                     );
 
-                    _vbi.AddVertex(
-                        new Vector3(x, valuePosZ, z),
-                        Vector3.UnitZ,
+                    _vbi.Append(
+                        new Vertex(x, valuePosZ, z),
+                        SmallVertex.UnitZ,
                         isPosXLower || isPosZLower || isPosXPosZLower ? occludedColor : color
                     );
 
-                    _vbi.AddVertex(
-                        new Vector3(x - 1, valuePosZ, z),
-                        Vector3.UnitZ,
+                    _vbi.Append(
+                        new Vertex(x - 1, valuePosZ, z),
+                        SmallVertex.UnitZ,
                         isNegXLower || isPosZLower || isNegXPosZLower ? occludedColor : color
                     );
 
-                    _vbi.AddVertex(
-                        new Vector3(x - 1, valueHere, z),
-                        Vector3.UnitZ,
+                    _vbi.Append(
+                        new Vertex(x - 1, valueHere, z),
+                        SmallVertex.UnitZ,
                         color
                     );
                 }
@@ -137,27 +136,27 @@ namespace TerrainGen
                 // Try and draw the NegZ face
                 if (valueNegZ < valueHere)
                 {
-                    _vbi.AddVertex(
-                        new Vector3(x, valueHere, z - 1),
-                        -Vector3.UnitZ,
+                    _vbi.Append(
+                        new Vertex(x, valueHere, z - 1),
+                        SmallVertex.UnitNZ,
                         color
                     );
 
-                    _vbi.AddVertex(
-                        new Vector3(x, valueNegZ, z - 1),
-                        -Vector3.UnitZ,
+                    _vbi.Append(
+                        new Vertex(x, valueNegZ, z - 1),
+                        SmallVertex.UnitNZ,
                         isPosXLower || isNegZLower || isPosXNegZLower ? occludedColor : color
                     );
 
-                    _vbi.AddVertex(
-                        new Vector3(x - 1, valueNegZ, z - 1),
-                        -Vector3.UnitZ,
+                    _vbi.Append(
+                        new Vertex(x - 1, valueNegZ, z - 1),
+                        SmallVertex.UnitNZ,
                         isNegXLower || isNegZLower || isNegXNegZLower ? occludedColor : color
                     );
 
-                    _vbi.AddVertex(
-                        new Vector3(x - 1, valueHere, z - 1),
-                        -Vector3.UnitZ,
+                    _vbi.Append(
+                        new Vertex(x - 1, valueHere, z - 1),
+                        SmallVertex.UnitNZ,
                         color
                     );
                 }
@@ -165,27 +164,27 @@ namespace TerrainGen
                 // Try and draw the PosX face
                 if (valuePosX < valueHere)
                 {
-                    _vbi.AddVertex(
-                        new Vector3(x, valueHere, z),
-                        Vector3.UnitX,
+                    _vbi.Append(
+                        new Vertex(x, valueHere, z),
+                        SmallVertex.UnitX,
                         color
                     );
 
-                    _vbi.AddVertex(
-                        new Vector3(x, valuePosX, z),
-                        Vector3.UnitX,
+                    _vbi.Append(
+                        new Vertex(x, valuePosX, z),
+                        SmallVertex.UnitX,
                         isPosXLower || isPosZLower || isPosXPosZLower ? occludedColor : color
                     );
 
-                    _vbi.AddVertex(
-                        new Vector3(x, valuePosX, z - 1),
-                        Vector3.UnitX,
+                    _vbi.Append(
+                        new Vertex(x, valuePosX, z - 1),
+                        SmallVertex.UnitX,
                         isPosXLower || isNegZLower || isPosXNegZLower ? occludedColor : color
                     );
 
-                    _vbi.AddVertex(
-                        new Vector3(x, valueHere, z - 1),
-                        Vector3.UnitX,
+                    _vbi.Append(
+                        new Vertex(x, valueHere, z - 1),
+                        SmallVertex.UnitX,
                         color
                     );
                 }
@@ -193,27 +192,27 @@ namespace TerrainGen
                 // Try and draw the NegX face
                 if (valueNegX < valueHere)
                 {
-                    _vbi.AddVertex(
-                        new Vector3(x - 1, valueHere, z),
-                        -Vector3.UnitX,
+                    _vbi.Append(
+                        new Vertex(x - 1, valueHere, z),
+                        SmallVertex.UnitNX,
                         color
                     );
 
-                    _vbi.AddVertex(
-                        new Vector3(x - 1, valueNegX, z),
-                        -Vector3.UnitX,
+                    _vbi.Append(
+                        new Vertex(x - 1, valueNegX, z),
+                        SmallVertex.UnitNX,
                         isNegXLower || isPosZLower || isNegXPosZLower ? occludedColor : color
                     );
 
-                    _vbi.AddVertex(
-                        new Vector3(x - 1, valueNegX, z - 1),
-                        -Vector3.UnitX,
+                    _vbi.Append(
+                        new Vertex(x - 1, valueNegX, z - 1),
+                        SmallVertex.UnitNX,
                         isNegXLower || isNegZLower || isNegXNegZLower ? occludedColor : color
                     );
 
-                    _vbi.AddVertex(
-                        new Vector3(x - 1, valueHere, z - 1),
-                        -Vector3.UnitX,
+                    _vbi.Append(
+                        new Vertex(x - 1, valueHere, z - 1),
+                        SmallVertex.UnitNX,
                         color
                     );
                 }
@@ -226,6 +225,7 @@ namespace TerrainGen
         public void Render()
         {
             _vbo.InitializeVbo(_vbi);
+            _vbi.Reset();
         }
 
         /// <summary>

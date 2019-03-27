@@ -7,22 +7,23 @@ using TerrainGen.Generator;
 
 namespace TerrainGen.Job
 {
-    class JobPregenerateChunk : IJob
+    class JobPregenerateChunks : IJob
     {
-        private readonly Chunk _chunk;
         private readonly CsTerrainGenerator _generator;
 
-        public JobPregenerateChunk(Chunk chunk, CsTerrainGenerator generator)
+        public JobPregenerateChunks(CsTerrainGenerator generator)
         {
-            _chunk = chunk;
             _generator = generator;
         }
 
         public void Execute(RenderManager renderManager)
         {
-            _chunk.Generate(_generator);
-            _chunk.Prerender();
-            renderManager.EnqueueJob(new JobRenderChunk(_chunk));
+            Parallel.ForEach(renderManager.Chunks, chunk =>
+            {
+                chunk.Generate(_generator);
+                chunk.Prerender();
+                renderManager.EnqueueJob(new JobRenderChunk(chunk));
+            });
         }
 
         public bool CanExecuteInBackground()

@@ -7,36 +7,39 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using TerrainGen.Generator;
 using TerrainGen.Job;
 using TerrainGen.Shader;
+using TerrainGenCore;
 
 namespace TerrainGen
 {
     public class RenderManager
     {
-        private BlockingCollection<IJob> _fgJobs;
-        private BlockingCollection<IJob> _bgJobs;
+        private readonly ConcurrentQueue<IJob> _fgJobs;
+        private readonly ConcurrentQueue<IJob> _bgJobs;
         private readonly CsTerrainGenerator _generator;
         private readonly ShaderProgram _shaderProgram;
         private readonly Uniform _tintUniform = new Uniform("tint");
 
         private Thread _worker;
+        private EventWaitHandle _workerHandle;
 
         public Chunk[] Chunks { get; private set; }
         public Vector3 TintColor { get; set; }
         public int SideLength { get; set; }
-        public long Seed { get; set; }
 
         public RenderManager(CsTerrainGenerator generator)
         {
-            _fgJobs = new BlockingCollection<IJob>();
-            _bgJobs = new BlockingCollection<IJob>();
+            _fgJobs = new ConcurrentQueue<IJob>();
+            _bgJobs = new ConcurrentQueue<IJob>();
             _generator = generator;
             _shaderProgram = new DefaultShaderProgram(EmbeddedFiles.default_fs);
             _shaderProgram.InitProgram();
+            _workerHandle = new EventWaitHandle(false, EventResetMode.ManualReset);
             CreateChunks();
         }
 
@@ -53,9 +56,12 @@ namespace TerrainGen
         public void EnqueueJob(IJob job)
         {
             if (job.CanExecuteInBackground())
-                _bgJobs.Add(job);
+            {
+                _bgJobs.Enqueue(job);
+                _workerHandle.Set();
+            }
             else
-                _fgJobs.Add(job);
+                _fgJobs.Enqueue(job);
         }
 
         public void UpdateJobs()
@@ -66,21 +72,33 @@ namespace TerrainGen
                 {
                     while (true)
                     {
-                        if (_bgJobs.Count > 0)
-                            Parallel.ForEach(_bgJobs.GetConsumingEnumerable(), job =>
+                        while (!_bgJobs.IsEmpty)
+                        {
+                            if (!_bgJobs.TryDequeue(out var job))
                             {
-                                job.Execute(this);
-                            });
+                                Lumberjack.Warn("Unable to dequeue BG job");
+                                return;
+                            }
+                            job.Execute(this);
+                        }
+
+                        _workerHandle.Reset();
+                        _workerHandle.WaitOne();
                     }
                 });
                 _worker.Start();
             }
 
-            if (_fgJobs.Count > 0)
-                Parallel.ForEach(_fgJobs.GetConsumingEnumerable(), job =>
+            while (!_fgJobs.IsEmpty)
+            {
+                if (!_fgJobs.TryDequeue(out var job))
                 {
-                    job.Execute(this);
-                });
+                    Lumberjack.Warn("Unable to dequeue FG job");
+                    return;
+                }
+                job.Execute(this);
+                Application.DoEvents();
+            }
         }
 
         public void Render()
@@ -119,8 +137,40 @@ namespace TerrainGen
             EnqueueJob(new JobRebuildChunks(_generator));
         }
 
-        private void CancelJobs()
+        public void CancelJobs()
         {
+            var fgJobs = new List<IJob>();
+            var bgJobs = new List<IJob>();
+
+            while (!_fgJobs.IsEmpty)
+            {
+                if (!_fgJobs.TryDequeue(out var j))
+                    continue;
+                fgJobs.Add(j);
+            }
+
+            while (!_bgJobs.IsEmpty)
+            {
+                if (!_bgJobs.TryDequeue(out var j))
+                    continue;
+                bgJobs.Add(j);
+            }
+
+            foreach (var job in fgJobs)
+                _fgJobs.Enqueue(job);
+
+            foreach (var job in bgJobs)
+                _bgJobs.Enqueue(job);
+        }
+
+        public void SetSeed(long seed)
+        {
+            ProcNoise.SetSeed(seed);
+        }
+
+        public void Kill()
+        {
+            _worker.Abort();
         }
     }
 }

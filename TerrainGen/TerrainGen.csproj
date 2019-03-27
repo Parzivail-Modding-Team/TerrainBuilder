@@ -49,6 +49,7 @@
     <Compile Include="Buffer\SimpleVertexBuffer.cs" />
     <Compile Include="Buffer\VertexBufferInitializer.cs" />
     <Compile Include="Chunk.cs" />
+    <Compile Include="ChunkBuffer.cs" />
     <Compile Include="Generator\CSTerrainGenerator.cs" />
     <Compile Include="EmbeddedFiles.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -62,6 +63,7 @@
     <Compile Include="Job\JobSetSeed.cs" />
     <Compile Include="Job\JobSetSideLength.cs" />
     <Compile Include="Job\JobSetTintColor.cs" />
+    <Compile Include="ListExtensions.cs" />
     <Compile Include="Lumberjack.cs" />
     <Compile Include="MainWindow.cs" />
     <Compile Include="Program.cs" />
@@ -72,6 +74,8 @@
     <Compile Include="RenderController.Designer.cs">
       <DependentUpon>RenderController.cs</DependentUpon>
     </Compile>
+    <Compile Include="SmallVertex.cs" />
+    <Compile Include="Vertex.cs" />
     <None Include="Resources\TerrainGenerator.cs" />
     <Compile Include="RenderManager.cs" />
     <Compile Include="Generator\RequiredMethodEntry.cs" />

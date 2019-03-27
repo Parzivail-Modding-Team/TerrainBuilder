@@ -18,7 +18,7 @@ namespace TerrainGen.Job
         /// <inheritdoc />
         public void Execute(RenderManager renderManager)
         {
-            renderManager.Seed = _seed;
+            renderManager.SetSeed(_seed);
         }
 
         /// <inheritdoc />

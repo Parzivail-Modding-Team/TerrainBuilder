@@ -20,8 +20,7 @@ namespace TerrainGen.Job
         {
             if (renderManager.Chunks.Length != renderManager.SideLength * renderManager.SideLength)
                 renderManager.CreateChunks();
-            foreach (var chunk in renderManager.Chunks)
-                renderManager.EnqueueJob(new JobPregenerateChunk(chunk, _generator));
+            renderManager.EnqueueJob(new JobPregenerateChunks(_generator));
         }
 
         public bool CanExecuteInBackground()

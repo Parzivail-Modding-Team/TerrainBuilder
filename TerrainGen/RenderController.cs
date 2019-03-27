@@ -21,9 +21,18 @@ namespace TerrainGen
 
         private void RenderController_Load(object sender, EventArgs e)
         {
+            nudSeed.Maximum = long.MaxValue;
+            nudSeed.Value = _random.Next();
             _parent.EnqueueJob(new JobSetSeed((long)nudSeed.Value));
             _parent.EnqueueJob(new JobSetSideLength((int)nudSideLength.Value));
             SetTintColor(Color.LimeGreen);
+
+            nudSeed.MouseWheel += delegate(object o, MouseEventArgs args) {
+                ((HandledMouseEventArgs)args).Handled = true;
+            };
+            nudSideLength.MouseWheel += delegate(object o, MouseEventArgs args) {
+                ((HandledMouseEventArgs)args).Handled = true;
+            };
         }
 
         private void SetTintColor(Color c)
@@ -76,31 +85,11 @@ namespace TerrainGen
             _parent.Title = $"{EmbeddedFiles.AppName} | {ofd.FileName}";
         }
 
-        private void bCancelGen_Click(object sender, EventArgs e)
-        {
-        }
-
-        private void bManuallyGenerate_Click(object sender, EventArgs e)
-        {
-        }
-
-        private void cbPauseGen_CheckedChanged(object sender, EventArgs e)
-        {
-        }
-
         private void pbMinColor_Click(object sender, EventArgs e)
         {
             if (colorPicker.ShowDialog() != DialogResult.OK)
                 return;
             SetTintColor(colorPicker.Color);
-        }
-
-        private void heightmapViewerToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-        }
-
-        private void cbVoxels_CheckedChanged(object sender, EventArgs e)
-        {
         }
     }
 }

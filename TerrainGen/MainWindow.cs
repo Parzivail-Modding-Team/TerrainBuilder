@@ -88,6 +88,7 @@ namespace TerrainGen
         {
             if (!_shouldDie)
                 _terrainLayerList?.Close();
+            _renderManager.Kill();
         }
 
         private void OnResize(object sender, EventArgs e)
@@ -219,6 +220,11 @@ namespace TerrainGen
         public void RebuildChunks()
         {
             _renderManager.Rebuild();
+        }
+
+        public void CancelJobs()
+        {
+            _renderManager.CancelJobs();
         }
     }
 }
