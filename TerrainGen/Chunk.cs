@@ -1,6 +1,6 @@
 ﻿using OpenTK;
-using TerrainGen.Buffer;
 using TerrainGen.Generator;
+using TerrainGen.Graphics;
 
 namespace TerrainGen
 {
@@ -10,7 +10,7 @@ namespace TerrainGen
         public int Z { get; }
 
         private readonly byte[,] _heightmap = new byte[18,18];
-        private readonly SimpleVertexBuffer _vbo = new SimpleVertexBuffer();
+        private readonly VertexBuffer _vbo = new VertexBuffer();
         private readonly ChunkBuffer _vbi = new ChunkBuffer();
 
         public Chunk(int x, int z)

@@ -11,6 +11,7 @@ using OpenTK.Input;
 using TerrainGen.Generator;
 using TerrainGen.Job;
 using TerrainGen.Shader;
+using TerrainGen.Util;
 
 namespace TerrainGen
 {

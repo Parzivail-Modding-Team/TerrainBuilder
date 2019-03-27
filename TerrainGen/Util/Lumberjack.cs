@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TerrainGen
+namespace TerrainGen.Util
 {
     public class Lumberjack
     {

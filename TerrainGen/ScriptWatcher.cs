@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading;
+using TerrainGen.Util;
 
 namespace TerrainGen
 {

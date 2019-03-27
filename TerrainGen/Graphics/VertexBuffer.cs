@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using TerrainGen.Util;
 
-namespace TerrainGen.Buffer
+namespace TerrainGen.Graphics
 {
-    public class SimpleVertexBuffer
+    public class VertexBuffer
     {
         public int ColorBufferId = -1;
         public int ElementBufferId = -1;
@@ -32,7 +31,7 @@ namespace TerrainGen.Buffer
                         GL.BindBuffer(BufferTarget.ArrayBuffer, ColorBufferId);
 
                         // Send data to buffer
-                        GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr) (buffer.Length * sizeof(int)),
+                        GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(buffer.Length * sizeof(int)),
                             buffer.ColorBuffer,
                             BufferUsageHint.StaticDraw);
 
@@ -56,7 +55,7 @@ namespace TerrainGen.Buffer
                         GL.BindBuffer(BufferTarget.ArrayBuffer, NormalBufferId);
 
                         // Send data to buffer
-                        GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr) (buffer.Length * SmallVertex.Size),
+                        GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(buffer.Length * SmallVertex.Size),
                             buffer.NormalBuffer, BufferUsageHint.StaticDraw);
 
                         // Validate that the buffer is the correct size
@@ -79,7 +78,7 @@ namespace TerrainGen.Buffer
                         GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferId);
 
                         // Send data to buffer
-                        GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr) (buffer.Length * Vertex.Size),
+                        GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(buffer.Length * Vertex.Size),
                             buffer.VertexBuffer,
                             BufferUsageHint.DynamicDraw);
 
@@ -103,7 +102,7 @@ namespace TerrainGen.Buffer
                         GL.BindBuffer(BufferTarget.ElementArrayBuffer, ElementBufferId);
 
                         // Send data to buffer
-                        GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr) (buffer.Length * sizeof(short)),
+                        GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(buffer.Length * sizeof(short)),
                             buffer.IndexBuffer,
                             BufferUsageHint.StreamDraw);
 

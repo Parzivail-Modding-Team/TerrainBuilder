@@ -13,6 +13,7 @@ using OpenTK.Graphics.OpenGL;
 using TerrainGen.Generator;
 using TerrainGen.Job;
 using TerrainGen.Shader;
+using TerrainGen.Util;
 using TerrainGenCore;
 
 namespace TerrainGen

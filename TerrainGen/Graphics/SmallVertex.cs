@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace TerrainGen
+namespace TerrainGen.Graphics
 {
     [StructLayout(LayoutKind.Explicit, Size = 3)]
     public struct SmallVertex

@@ -29,6 +29,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
@@ -46,16 +47,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Buffer\SimpleVertexBuffer.cs" />
-    <Compile Include="Buffer\VertexBufferInitializer.cs" />
     <Compile Include="Chunk.cs" />
-    <Compile Include="ChunkBuffer.cs" />
+    <Compile Include="Graphics\ChunkBuffer.cs" />
     <Compile Include="Generator\CSTerrainGenerator.cs" />
     <Compile Include="EmbeddedFiles.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>EmbeddedFiles.resx</DependentUpon>
     </Compile>
+    <Compile Include="Graphics\VertexBuffer.cs" />
     <Compile Include="Job\IJob.cs" />
     <Compile Include="Job\JobPregenerateChunk.cs" />
     <Compile Include="Job\JobRebuildChunks.cs" />
@@ -63,8 +63,7 @@
     <Compile Include="Job\JobSetSeed.cs" />
     <Compile Include="Job\JobSetSideLength.cs" />
     <Compile Include="Job\JobSetTintColor.cs" />
-    <Compile Include="ListExtensions.cs" />
-    <Compile Include="Lumberjack.cs" />
+    <Compile Include="Util\Lumberjack.cs" />
     <Compile Include="MainWindow.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -74,8 +73,8 @@
     <Compile Include="RenderController.Designer.cs">
       <DependentUpon>RenderController.cs</DependentUpon>
     </Compile>
-    <Compile Include="SmallVertex.cs" />
-    <Compile Include="Vertex.cs" />
+    <Compile Include="Graphics\SmallVertex.cs" />
+    <Compile Include="Graphics\Vertex.cs" />
     <None Include="Resources\TerrainGenerator.cs" />
     <Compile Include="RenderManager.cs" />
     <Compile Include="Generator\RequiredMethodEntry.cs" />
