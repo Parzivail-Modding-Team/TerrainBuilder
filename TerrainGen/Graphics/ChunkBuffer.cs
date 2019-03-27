@@ -2,20 +2,21 @@
 {
     public class ChunkBuffer
     {
-        public object LockHandle = new object();
+        public object LockHandle;
         public Vertex[] VertexBuffer;
         public SmallVertex[] NormalBuffer;
         public int[] ColorBuffer;
         public short[] IndexBuffer;
-
-        public short Length { get; private set; }
+        public short Length;
 
         public ChunkBuffer()
         {
+            LockHandle = new object();
             VertexBuffer = new Vertex[5120];
             NormalBuffer = new SmallVertex[5120];
             ColorBuffer = new int[5120];
             IndexBuffer = new short[5120];
+            Length = 0;
         }
 
         public void Reset()

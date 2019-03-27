@@ -23,11 +23,11 @@ namespace TerrainGen
         private readonly ConcurrentQueue<IJob> _fgJobs;
         private readonly ConcurrentQueue<IJob> _bgJobs;
         private readonly CsTerrainGenerator _generator;
+        private readonly EventWaitHandle _workerHandle;
         private readonly ShaderProgram _shaderProgram;
         private readonly Uniform _tintUniform = new Uniform("tint");
 
         private Thread _worker;
-        private EventWaitHandle _workerHandle;
 
         public Chunk[] Chunks { get; private set; }
         public Vector3 TintColor { get; set; }
@@ -82,7 +82,7 @@ namespace TerrainGen
                             }
                             job.Execute(this);
                         }
-
+                        
                         _workerHandle.Reset();
                         _workerHandle.WaitOne();
                     }
@@ -110,7 +110,7 @@ namespace TerrainGen
             GL.Color3(Color.White);
 
             GL.PushMatrix();
-            GL.Translate(-SideLength * 8, 0, -SideLength * 8);
+            GL.Translate(-SideLength * 8 + 1, 0, -SideLength * 8 + 1);
             // Engage shader, render, disengage
             _shaderProgram.Use(_tintUniform);
             foreach (var chunk in Chunks)

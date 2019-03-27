@@ -27,6 +27,9 @@ namespace TerrainGen
         private float _zoom = 1;
         private Vector2 _translation = new Vector2(0, -25);
         private Vector2 _rotation = new Vector2(160, 45);
+        private Vector2 _prevRotation = new Vector2(160, 45);
+
+        private double _updateTimeAccumulator = 0;
 
         public MainWindow()
         {
@@ -114,6 +117,8 @@ namespace TerrainGen
             var delta = (float)e.Time;
             var amount = _keyboard[Key.LShift] || _keyboard[Key.RShift] ? 45 : 90;
 
+            _prevRotation = new Vector2(_rotation.X, _rotation.Y);
+
             if (Focused)
             {
                 if (_keyboard[Key.Left])
@@ -133,6 +138,8 @@ namespace TerrainGen
             }
 
             _renderManager.UpdateJobs();
+
+            _updateTimeAccumulator = 0;
         }
 
         private void OnRender(object sender, FrameEventArgs e)
@@ -141,6 +148,9 @@ namespace TerrainGen
             GL.Clear(ClearBufferMask.ColorBufferBit |
                      ClearBufferMask.DepthBufferBit |
                      ClearBufferMask.StencilBufferBit);
+
+            _updateTimeAccumulator += e.Time;
+            var partialTicks = _updateTimeAccumulator / TargetUpdatePeriod;
 
             // Reload the projection matrix
             var aspectRatio = Width / (float)Height;
@@ -158,8 +168,10 @@ namespace TerrainGen
             // Zoom and scale the terrain
             var scale = new Vector3(4 * (1 / _zoom), -4 * (1 / _zoom), 4 * (1 / _zoom));
             GL.Scale(scale);
-            GL.Rotate(_rotation.X, 1.0f, 0.0f, 0.0f);
-            GL.Rotate(_rotation.Y, 0.0f, 1.0f, 0.0f);
+            var rotX = _prevRotation.X + (_rotation.X - _prevRotation.X) * partialTicks;
+            var rotY = _prevRotation.Y + (_rotation.Y - _prevRotation.Y) * partialTicks;
+            GL.Rotate(rotX, 1.0f, 0.0f, 0.0f);
+            GL.Rotate(rotY, 0.0f, 1.0f, 0.0f);
 
             _renderManager.Render();
 
