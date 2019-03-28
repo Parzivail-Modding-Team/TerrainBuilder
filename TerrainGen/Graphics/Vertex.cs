@@ -2,7 +2,7 @@
 
 namespace TerrainGen.Graphics
 {
-    [StructLayout(LayoutKind.Explicit, Size = 6)]
+    [StructLayout(LayoutKind.Explicit, Size = Size)]
     public struct Vertex
     {
         public const int Size = 6;

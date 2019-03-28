@@ -27,7 +27,7 @@
             }
         }
 
-        public void Append(Vertex pos, SmallVertex normal, int color)
+        public short Append(Vertex pos, SmallVertex normal, int color)
         {
             lock (LockHandle)
             {
@@ -35,6 +35,16 @@
                 NormalBuffer[Length] = normal;
                 ColorBuffer[Length] = color;
                 IndexBuffer[Length] = Length;
+                Length++;
+                return (short) (Length - 1);
+            }
+        }
+
+        public void Append(short elementIdx)
+        {
+            lock (LockHandle)
+            {
+                IndexBuffer[Length] = elementIdx;
                 Length++;
             }
         }

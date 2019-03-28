@@ -36,7 +36,7 @@ namespace TerrainGen
         public void Prerender()
         {
             const int color = 0xFFFFFF;
-            var occludedColor = 0xC0C0C0;
+            const int occludedColor = 0xC0C0C0;
             _vbi.Reset();
 
             for (var x = X * 16; x < X * 16 + 16; x++)
@@ -65,20 +65,10 @@ namespace TerrainGen
                 var isPosZHigher = valuePosZ > valueHere;
                 var isNegZHigher = valueNegZ > valueHere;
 
-                var isPosXLower = valuePosX < valueHere;
-                var isNegXLower = valueNegX < valueHere;
-                var isPosZLower = valuePosZ < valueHere;
-                var isNegZLower = valueNegZ < valueHere;
-
                 var isPosXPosZHigher = valuePosXPosZ > valueHere;
                 var isNegXPosZHigher = valueNegXPosZ > valueHere;
                 var isPosXNegZHigher = valuePosXNegZ > valueHere;
                 var isNegXNegZHigher = valueNegXNegZ > valueHere;
-
-                var isPosXPosZLower = valuePosXPosZ < valueHere;
-                var isNegXPosZLower = valueNegXPosZ < valueHere;
-                var isPosXNegZLower = valuePosXNegZ < valueHere;
-                var isNegXNegZLower = valueNegXNegZ < valueHere;
 
                 // Always draw a top face for a block
                 _vbi.Append(
@@ -117,13 +107,13 @@ namespace TerrainGen
                     _vbi.Append(
                         new Vertex(x, valuePosZ, z),
                         SmallVertex.UnitZ,
-                        isPosXLower || isPosZLower || isPosXPosZLower ? occludedColor : color
+                        occludedColor
                     );
 
                     _vbi.Append(
                         new Vertex(x - 1, valuePosZ, z),
                         SmallVertex.UnitZ,
-                        isNegXLower || isPosZLower || isNegXPosZLower ? occludedColor : color
+                        occludedColor
                     );
 
                     _vbi.Append(
@@ -145,13 +135,13 @@ namespace TerrainGen
                     _vbi.Append(
                         new Vertex(x, valueNegZ, z - 1),
                         SmallVertex.UnitNZ,
-                        isPosXLower || isNegZLower || isPosXNegZLower ? occludedColor : color
+                        occludedColor
                     );
 
                     _vbi.Append(
                         new Vertex(x - 1, valueNegZ, z - 1),
                         SmallVertex.UnitNZ,
-                        isNegXLower || isNegZLower || isNegXNegZLower ? occludedColor : color
+                        occludedColor
                     );
 
                     _vbi.Append(
@@ -173,13 +163,13 @@ namespace TerrainGen
                     _vbi.Append(
                         new Vertex(x, valuePosX, z),
                         SmallVertex.UnitX,
-                        isPosXLower || isPosZLower || isPosXPosZLower ? occludedColor : color
+                        occludedColor
                     );
 
                     _vbi.Append(
                         new Vertex(x, valuePosX, z - 1),
                         SmallVertex.UnitX,
-                        isPosXLower || isNegZLower || isPosXNegZLower ? occludedColor : color
+                        occludedColor
                     );
 
                     _vbi.Append(
@@ -201,13 +191,13 @@ namespace TerrainGen
                     _vbi.Append(
                         new Vertex(x - 1, valueNegX, z),
                         SmallVertex.UnitNX,
-                        isNegXLower || isPosZLower || isNegXPosZLower ? occludedColor : color
+                        occludedColor
                     );
 
                     _vbi.Append(
                         new Vertex(x - 1, valueNegX, z - 1),
                         SmallVertex.UnitNX,
-                        isNegXLower || isNegZLower || isNegXNegZLower ? occludedColor : color
+                        occludedColor
                     );
 
                     _vbi.Append(

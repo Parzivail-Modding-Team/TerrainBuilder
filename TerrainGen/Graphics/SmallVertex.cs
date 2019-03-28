@@ -2,7 +2,7 @@
 
 namespace TerrainGen.Graphics
 {
-    [StructLayout(LayoutKind.Explicit, Size = 3)]
+    [StructLayout(LayoutKind.Explicit, Size = Size)]
     public struct SmallVertex
     {
         public const int Size = 3;
