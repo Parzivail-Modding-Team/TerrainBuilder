@@ -25,7 +25,10 @@ namespace TerrainGen
         private readonly CsTerrainGenerator _generator;
         private readonly EventWaitHandle _workerHandle;
         private readonly ShaderProgram _shaderProgram;
-        private readonly Uniform _tintUniform = new Uniform("tint");
+        private readonly Uniform _uTint = new Uniform("tint");
+        private readonly Uniform _uMatModel = new Uniform("m");
+        private readonly Uniform _uMatView = new Uniform("v");
+        private readonly Uniform _uMatProjection = new Uniform("p");
 
         private Thread _worker;
 
@@ -38,7 +41,7 @@ namespace TerrainGen
             _fgJobs = new ConcurrentQueue<IJob>();
             _bgJobs = new ConcurrentQueue<IJob>();
             _generator = generator;
-            _shaderProgram = new DefaultShaderProgram(EmbeddedFiles.default_fs);
+            _shaderProgram = new DefaultShaderProgram(EmbeddedFiles.default_fs, EmbeddedFiles.default_vs);
             _shaderProgram.InitProgram();
             _workerHandle = new EventWaitHandle(false, EventResetMode.ManualReset);
             CreateChunks();
@@ -82,7 +85,7 @@ namespace TerrainGen
                             }
                             job.Execute(this);
                         }
-                        
+
                         _workerHandle.Reset();
                         _workerHandle.WaitOne();
                     }
@@ -102,34 +105,45 @@ namespace TerrainGen
             }
         }
 
-        public void Render()
+        public void Render(Matrix4 model, Matrix4 view, Matrix4 projection)
         {
-            // Set up uniforms
-            _tintUniform.Value = TintColor;
-
             GL.Color3(Color.White);
+
+            // Set up uniforms
+            _uTint.Value = TintColor;
+            _uMatModel.Value = model;
+            _uMatView.Value = view;
+            _uMatProjection.Value = projection;
+
+//            GL.MatrixMode(MatrixMode.Projection);
+//            GL.LoadMatrix(ref projection);
+//            GL.MatrixMode(MatrixMode.Modelview);
+//            var mat = view * model;
+//            GL.LoadMatrix(ref mat);
+
+            // Engage shader, render, disengage
+            _shaderProgram.Use(_uTint, _uMatModel, _uMatView, _uMatProjection);
 
             GL.PushMatrix();
             GL.Translate(-SideLength * 8 + 1, 0, -SideLength * 8 + 1);
-            // Engage shader, render, disengage
-            _shaderProgram.Use(_tintUniform);
             foreach (var chunk in Chunks)
                 chunk?.Draw();
-            GL.UseProgram(0);
             GL.PopMatrix();
+
+            GL.UseProgram(0);
 
             // Render the ocean
             GL.Color3(Color.MediumBlue);
 
             var waterLevel = _generator.GetWaterLevel();
-
-            GL.Begin(PrimitiveType.Quads);
-            GL.Normal3(Vector3.UnitY);
-            GL.Vertex3(-SideLength * 8, waterLevel - 0.4, -SideLength * 8);
-            GL.Vertex3(SideLength * 8, waterLevel - 0.4, -SideLength * 8);
-            GL.Vertex3(SideLength * 8, waterLevel - 0.4, SideLength * 8);
-            GL.Vertex3(-SideLength * 8, waterLevel - 0.4, SideLength * 8);
-            GL.End();
+            //
+            //            GL.Begin(PrimitiveType.Quads);
+            //            GL.Normal3(Vector3.UnitY);
+            //            GL.Vertex3(-SideLength * 8, waterLevel - 0.4, -SideLength * 8);
+            //            GL.Vertex3(SideLength * 8, waterLevel - 0.4, -SideLength * 8);
+            //            GL.Vertex3(SideLength * 8, waterLevel - 0.4, SideLength * 8);
+            //            GL.Vertex3(-SideLength * 8, waterLevel - 0.4, SideLength * 8);
+            //            GL.End();
         }
 
         public void Rebuild()

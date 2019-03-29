@@ -115,6 +115,27 @@ namespace TerrainGen {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to // Input vertex data, different for all executions of this shader.
+        ///layout(location = 0) in vec3 vert;
+        ///  
+        ///// Values that stay constant for the whole mesh.
+        ///uniform mat4 m;
+        ///uniform mat4 v;
+        ///uniform mat4 p;
+        ///  
+        ///void main(){
+        ///  // Output position of the vertex, in clip space : MVP * position
+        ///  mat4 MVP = p * v * m;
+        ///  gl_Position =  MVP * vec4(vert,1);
+        ///}.
+        /// </summary>
+        internal static string default_vs {
+            get {
+                return ResourceManager.GetString("default_vs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap folder_brick {

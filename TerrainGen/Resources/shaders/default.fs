@@ -1,7 +1,8 @@
-﻿#version 120
+﻿#version 330 core
 
-uniform vec3 tint;
+out vec4 color;
 
-void main() { 
-	gl_FragColor = vec4(gl_Color.rgb * tint, 1);
+void main()
+{
+  color = vec4(1., 1., 1., 1.);
 }

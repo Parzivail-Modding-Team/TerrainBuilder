@@ -75,7 +75,7 @@ namespace TerrainGen
 
             // Init keyboard to ensure first frame won't NPE
             _keyboard = Keyboard.GetState();
-            
+
             _terrainGenerator = new CsTerrainGenerator();
             _renderManager = new RenderManager(_terrainGenerator);
 
@@ -84,7 +84,7 @@ namespace TerrainGen
 
             _scriptWatcher = new ScriptWatcher();
             _scriptWatcher.FileChanged += OnScriptChanged;
-
+            
             Lumberjack.Info(EmbeddedFiles.Info_WindowLoaded);
         }
 
@@ -154,26 +154,19 @@ namespace TerrainGen
 
             // Reload the projection matrix
             var aspectRatio = Width / (float)Height;
-            var projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.PiOver4, aspectRatio, 1, 1024);
-            GL.MatrixMode(MatrixMode.Projection);
-            GL.LoadMatrix(ref projection);
-
-            var lookat = Matrix4.LookAt(0, 128, 256, 0, 0, 0, 0, 1, 0);
-            GL.MatrixMode(MatrixMode.Modelview);
-            GL.LoadMatrix(ref lookat);
-
-            // "Center" the terrain
-            GL.Translate(_translation.X, _translation.Y, 0);
-
-            // Zoom and scale the terrain
             var scale = new Vector3(4 * (1 / _zoom), -4 * (1 / _zoom), 4 * (1 / _zoom));
-            GL.Scale(scale);
             var rotX = _prevRotation.X + (_rotation.X - _prevRotation.X) * partialTicks;
             var rotY = _prevRotation.Y + (_rotation.Y - _prevRotation.Y) * partialTicks;
-            GL.Rotate(rotX, 1.0f, 0.0f, 0.0f);
-            GL.Rotate(rotY, 0.0f, 1.0f, 0.0f);
 
-            _renderManager.Render();
+            var mProjection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.PiOver4, aspectRatio, 1, 1024);
+            var mModel = Matrix4.LookAt(0, 128, 256, 0, 0, 0, 0, 1, 0);
+            var mTranslate = Matrix4.CreateTranslation(_translation.X, _translation.Y, 0);
+            var mScale = Matrix4.CreateScale(scale);
+            var mRotX = Matrix4.CreateRotationX((float)(rotX / 180 * Math.PI));
+            var mRotY = Matrix4.CreateRotationY((float)(rotY / 180 * Math.PI));
+            var mView = mRotY * mRotX * mScale * mTranslate;
+
+            _renderManager.Render(mModel, mView, mProjection);
 
             // Swap the graphics buffer
             SwapBuffers();

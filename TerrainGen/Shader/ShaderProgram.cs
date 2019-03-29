@@ -65,6 +65,11 @@ namespace TerrainGen.Shader
                     var vec3 = (Vector3) val;
                     GL.Uniform3(loc, vec3.X, vec3.Y, vec3.Z);
                 }
+                else if (type == typeof(Matrix4))
+                {
+                    var mat4 = (Matrix4) val;
+                    GL.UniformMatrix4(loc, false, ref mat4);
+                }
                 else
                 {
                     throw new ArgumentException($"Unsupported uniform type: {type}");

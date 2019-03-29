@@ -4,16 +4,19 @@ namespace TerrainGen.Shader
 {
     public class DefaultShaderProgram : ShaderProgram
     {
-        private readonly string _program;
+        private readonly string _fProg;
+        private readonly string _vProg;
 
-        public DefaultShaderProgram(string program)
+        public DefaultShaderProgram(string fProg, string vProg)
         {
-            _program = program;
+            _fProg = fProg;
+            _vProg = vProg;
         }
 
         protected override void Init()
         {
-            LoadShader(_program, ShaderType.FragmentShader, PgmId, out FsId);
+            LoadShader(_fProg, ShaderType.FragmentShader, PgmId, out FsId);
+            LoadShader(_vProg, ShaderType.VertexShader, PgmId, out VsId);
 
             GL.LinkProgram(PgmId);
             Log(GL.GetProgramInfoLog(PgmId));

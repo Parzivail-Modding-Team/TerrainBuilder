@@ -75,6 +75,7 @@
     </Compile>
     <Compile Include="Graphics\SmallVertex.cs" />
     <Compile Include="Graphics\Vertex.cs" />
+    <None Include="Resources\shaders\default.vs" />
     <None Include="Resources\TerrainGenerator.cs" />
     <Compile Include="RenderManager.cs" />
     <Compile Include="Generator\RequiredMethodEntry.cs" />
