@@ -100,12 +100,25 @@ namespace TerrainGen {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to #version 120
+        ///   Looks up a localized string similar to #version 330 core
         ///
         ///uniform vec3 tint;
         ///
-        ///void main() { 
-        ///	gl_FragColor = vec4(gl_Color.rgb * tint, 1);
+        ///in vec3 fragPos;
+        ///in vec4 fragColor;
+        ///in vec3 fragNormal;
+        ///
+        ///out vec4 color;
+        ///
+        ///void main()
+        ///{
+        ///  vec3 lightPos = vec3(100, 100, 100);
+        ///
+        ///  vec3 norm = normalize(fragNormal);
+        ///  vec3 lightDir = normalize(lightPos - fragPos);  
+        ///  float diffuse = max(dot(norm, lightDir), 0.0);
+        ///
+        ///  color = fragColor * vec4(tint, 1.) * diffuse;
         ///}.
         /// </summary>
         internal static string default_fs {
@@ -115,19 +128,28 @@ namespace TerrainGen {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to // Input vertex data, different for all executions of this shader.
-        ///layout(location = 0) in vec3 vert;
-        ///  
-        ///// Values that stay constant for the whole mesh.
+        ///   Looks up a localized string similar to #version 330 core
+        ///
+        ///// Input vertex data, different for all executions of this shader.
+        ///layout(location = 0) in vec3 position;
+        ///layout(location = 1) in vec3 normal;
+        ///layout(location = 2) in vec4 color;
+        ///
+        ///out vec3 fragPos;
+        ///out vec4 fragColor;
+        ///out vec3 fragNormal;
+        ///
         ///uniform mat4 m;
         ///uniform mat4 v;
         ///uniform mat4 p;
         ///  
-        ///void main(){
+        ///void main()
+        ///{
+        ///  fragColor = color / 255.;
+        ///  fragNormal = normalize(normal);
         ///  // Output position of the vertex, in clip space : MVP * position
-        ///  mat4 MVP = p * v * m;
-        ///  gl_Position =  MVP * vec4(vert,1);
-        ///}.
+        ///  mat4 MVP = p*m*v;
+        ///  gl_Position =  M [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string default_vs {
             get {

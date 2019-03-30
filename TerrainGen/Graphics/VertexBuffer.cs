@@ -10,6 +10,7 @@ namespace TerrainGen.Graphics
         public int ElementBufferId = -1;
         public int NormalBufferId = -1;
         public int VertexBufferId = -1;
+        public int VaoId = -1;
 
         public bool Initialized { get; private set; }
 
@@ -21,6 +22,10 @@ namespace TerrainGen.Graphics
             {
                 try
                 {
+                    if (VaoId == -1)
+                        GL.GenVertexArrays(1, out VaoId);
+                    GL.BindVertexArray(VaoId);
+
                     // Color Buffer
                     {
                         // Generate Array Buffer Id
@@ -116,6 +121,20 @@ namespace TerrainGen.Graphics
                         GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
                     }
 
+                    GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferId);
+                    GL.EnableVertexAttribArray(0);
+                    GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Short, false, 0, 0);
+
+                    GL.BindBuffer(BufferTarget.ArrayBuffer, NormalBufferId);
+                    GL.EnableVertexAttribArray(1);
+                    GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Byte, false, 0, 0);
+
+                    GL.BindBuffer(BufferTarget.ArrayBuffer, ColorBufferId);
+                    GL.EnableVertexAttribArray(2);
+                    GL.VertexAttribPointer(2, 4, VertexAttribPointerType.UnsignedByte, false, 0, 0);
+
+                    GL.BindVertexArray(0);
+
                     Initialized = true;
                 }
                 catch (ApplicationException ex)
@@ -132,62 +151,12 @@ namespace TerrainGen.Graphics
             }
         }
 
+
         public void Render(PrimitiveType type = PrimitiveType.Quads)
         {
-            // Push current Array Buffer state so we can restore it later
-            GL.PushClientAttrib(ClientAttribMask.ClientVertexArrayBit);
-
-            // Normal Array Buffer
-            {
-                // Bind to the Array Buffer ID
-                GL.BindBuffer(BufferTarget.ArrayBuffer, NormalBufferId);
-
-                // Set the Pointer to the current bound array describing how the data is stored
-                GL.NormalPointer(NormalPointerType.Byte, SmallVertex.Size, IntPtr.Zero);
-
-                // Enable the client state so it will use this array buffer pointer
-                GL.EnableClientState(ArrayCap.NormalArray);
-            }
-
-            // Color Array Buffer
-            {
-                // Bind to the Array Buffer ID
-                GL.BindBuffer(BufferTarget.ArrayBuffer, ColorBufferId);
-
-                // Set the Pointer to the current bound array describing how the data is stored
-                GL.ColorPointer(3, ColorPointerType.UnsignedByte, sizeof(int), IntPtr.Zero);
-
-                // Enable the client state so it will use this array buffer pointer
-                GL.EnableClientState(ArrayCap.ColorArray);
-            }
-
-            // Vertex Array Buffer
-            {
-                // Bind to the Array Buffer ID
-                GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferId);
-
-                // Set the Pointer to the current bound array describing how the data is stored
-                GL.VertexPointer(3, VertexPointerType.Short, Vertex.Size, IntPtr.Zero);
-
-                // Enable the client state so it will use this array buffer pointer
-                GL.EnableClientState(ArrayCap.VertexArray);
-            }
-
-            // Element Array Buffer
-            {
-                // Bind to the Array Buffer ID
-                GL.BindBuffer(BufferTarget.ElementArrayBuffer, ElementBufferId);
-
-                // Draw the elements in the element array buffer
-                // Draws up items in the Color, Vertex, TexCoordinate, and Normal Buffers using indices in the ElementArrayBuffer
-                GL.DrawElements(type, NumElements, DrawElementsType.UnsignedShort, IntPtr.Zero);
-
-                // Could also call GL.DrawArrays which would ignore the ElementArrayBuffer and just use primitives
-                // Of course we would have to reorder our data to be in the correct primitive order
-            }
-
-            // Restore the state
-            GL.PopClientAttrib();
+            GL.BindVertexArray(VaoId);
+            GL.DrawArrays(type, 0, NumElements);
+            GL.BindVertexArray(0);
         }
     }
 }

@@ -115,20 +115,11 @@ namespace TerrainGen
             _uMatView.Value = view;
             _uMatProjection.Value = projection;
 
-//            GL.MatrixMode(MatrixMode.Projection);
-//            GL.LoadMatrix(ref projection);
-//            GL.MatrixMode(MatrixMode.Modelview);
-//            var mat = view * model;
-//            GL.LoadMatrix(ref mat);
-
             // Engage shader, render, disengage
             _shaderProgram.Use(_uTint, _uMatModel, _uMatView, _uMatProjection);
 
-            GL.PushMatrix();
-            GL.Translate(-SideLength * 8 + 1, 0, -SideLength * 8 + 1);
             foreach (var chunk in Chunks)
                 chunk?.Draw();
-            GL.PopMatrix();
 
             GL.UseProgram(0);
 
@@ -136,14 +127,20 @@ namespace TerrainGen
             GL.Color3(Color.MediumBlue);
 
             var waterLevel = _generator.GetWaterLevel();
-            //
-            //            GL.Begin(PrimitiveType.Quads);
-            //            GL.Normal3(Vector3.UnitY);
-            //            GL.Vertex3(-SideLength * 8, waterLevel - 0.4, -SideLength * 8);
-            //            GL.Vertex3(SideLength * 8, waterLevel - 0.4, -SideLength * 8);
-            //            GL.Vertex3(SideLength * 8, waterLevel - 0.4, SideLength * 8);
-            //            GL.Vertex3(-SideLength * 8, waterLevel - 0.4, SideLength * 8);
-            //            GL.End();
+
+            GL.MatrixMode(MatrixMode.Projection);
+            GL.LoadMatrix(ref projection);
+            GL.MatrixMode(MatrixMode.Modelview);
+            var mat = view * model;
+            GL.LoadMatrix(ref mat);
+
+            GL.Begin(PrimitiveType.Quads);
+            GL.Normal3(Vector3.UnitY);
+            GL.Vertex3(0, waterLevel - 0.4, 0);
+            GL.Vertex3(SideLength * 16, waterLevel - 0.4, 0);
+            GL.Vertex3(SideLength * 16, waterLevel - 0.4, SideLength * 16);
+            GL.Vertex3(0, waterLevel - 0.4, SideLength * 16);
+            GL.End();
         }
 
         public void Rebuild()

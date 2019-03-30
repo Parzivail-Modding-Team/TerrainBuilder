@@ -75,7 +75,7 @@
     </Compile>
     <Compile Include="Graphics\SmallVertex.cs" />
     <Compile Include="Graphics\Vertex.cs" />
-    <None Include="Resources\shaders\default.vs" />
+    <None Include="Resources\shaders\default.vert" />
     <None Include="Resources\TerrainGenerator.cs" />
     <Compile Include="RenderManager.cs" />
     <Compile Include="Generator\RequiredMethodEntry.cs" />
@@ -100,7 +100,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\arrow_switch.png" />
-    <None Include="Resources\shaders\default.fs" />
+    <None Include="Resources\shaders\default.frag" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\brick_edit.png" />

@@ -5,7 +5,7 @@
         public object LockHandle;
         public Vertex[] VertexBuffer;
         public SmallVertex[] NormalBuffer;
-        public int[] ColorBuffer;
+        public uint[] ColorBuffer;
         public short[] IndexBuffer;
         public short Length;
 
@@ -14,7 +14,7 @@
             LockHandle = new object();
             VertexBuffer = new Vertex[5120];
             NormalBuffer = new SmallVertex[5120];
-            ColorBuffer = new int[5120];
+            ColorBuffer = new uint[5120];
             IndexBuffer = new short[5120];
             Length = 0;
         }
@@ -27,7 +27,7 @@
             }
         }
 
-        public short Append(Vertex pos, SmallVertex normal, int color)
+        public short Append(Vertex pos, SmallVertex normal, uint color)
         {
             lock (LockHandle)
             {

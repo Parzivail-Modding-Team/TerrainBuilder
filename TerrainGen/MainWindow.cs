@@ -31,7 +31,7 @@ namespace TerrainGen
 
         private double _updateTimeAccumulator = 0;
 
-        public MainWindow()
+        public MainWindow() : base(960, 540, new OpenTK.Graphics.GraphicsMode(32, 24, 0, 8))
         {
             Load += OnLoad;
             Closing += OnClose;
@@ -164,7 +164,8 @@ namespace TerrainGen
             var mScale = Matrix4.CreateScale(scale);
             var mRotX = Matrix4.CreateRotationX((float)(rotX / 180 * Math.PI));
             var mRotY = Matrix4.CreateRotationY((float)(rotY / 180 * Math.PI));
-            var mView = mRotY * mRotX * mScale * mTranslate;
+            var mLocalTranslate = Matrix4.CreateTranslation(-_renderManager.SideLength * 8 + 1, 0, -_renderManager.SideLength * 8 + 1);
+            var mView = mLocalTranslate * mRotY * mRotX * mScale * mTranslate;
 
             _renderManager.Render(mModel, mView, mProjection);
 
