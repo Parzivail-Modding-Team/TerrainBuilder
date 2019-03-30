@@ -6,33 +6,44 @@ using TerrainGen.Util;
 
 namespace TerrainGen.Shader
 {
-    public abstract class ShaderProgram
+    public class ShaderProgram
     {
         protected Dictionary<string, int> CacheLoc;
         protected int FsId;
         protected int PgmId;
         protected int VsId;
+        private readonly string _fProg;
+        private readonly string _vProg;
 
-        protected ShaderProgram()
+        public ShaderProgram(string fProg, string vProg)
         {
+            _fProg = fProg;
+            _vProg = vProg;
             CacheLoc = new Dictionary<string, int>();
-        }
-
-        public void InitProgram()
-        {
             PgmId = GL.CreateProgram();
-            Init();
         }
 
-        public void Use(params Uniform[] uniforms)
+        public void Init()
+        {
+            LoadShader(_fProg, ShaderType.FragmentShader, PgmId, out FsId);
+            LoadShader(_vProg, ShaderType.VertexShader, PgmId, out VsId);
+
+            GL.LinkProgram(PgmId);
+            Log(GL.GetProgramInfoLog(PgmId));
+        }
+
+        public void Use(params ShaderUniform[] uniforms)
         {
             GL.UseProgram(PgmId);
             SetupUniforms(uniforms);
         }
 
-        protected abstract void Init();
+        public void Release()
+        {
+            GL.UseProgram(0);
+        }
 
-        protected virtual void SetupUniforms(params Uniform[] uniforms)
+        protected virtual void SetupUniforms(params ShaderUniform[] uniforms)
         {
             foreach (var uniform in uniforms)
             {

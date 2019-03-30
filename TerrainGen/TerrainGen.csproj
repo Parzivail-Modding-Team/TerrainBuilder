@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Chunk.cs" />
+    <Compile Include="Framebuffer.cs" />
     <Compile Include="Graphics\ChunkBuffer.cs" />
     <Compile Include="Generator\CSTerrainGenerator.cs" />
     <Compile Include="EmbeddedFiles.Designer.cs">
@@ -82,14 +83,15 @@
     </Compile>
     <Compile Include="Graphics\SmallVertex.cs" />
     <Compile Include="Graphics\Vertex.cs" />
-    <None Include="Resources\shaders\default.vert" />
+    <None Include="Resources\shaders\screen.frag" />
+    <None Include="Resources\shaders\screen.vert" />
+    <None Include="Resources\shaders\terrain.vert" />
     <None Include="Resources\TerrainGenerator.cs" />
     <Compile Include="RenderManager.cs" />
     <Compile Include="Generator\RequiredMethodEntry.cs" />
     <Compile Include="ScriptWatcher.cs" />
-    <Compile Include="Shader\DefaultShaderProgram.cs" />
     <Compile Include="Shader\ShaderProgram.cs" />
-    <Compile Include="Shader\Uniform.cs" />
+    <Compile Include="Shader\ShaderUniform.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="EmbeddedFiles.resx">
@@ -110,7 +112,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\arrow_switch.png" />
-    <None Include="Resources\shaders\default.frag" />
+    <None Include="Resources\shaders\terrain.frag" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\brick_edit.png" />
@@ -129,6 +131,11 @@
       <Project>{AE4FE686-53D5-4E73-BFDC-FC8CDA9155BA}</Project>
       <Name>TerrainGenCore</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\shaders\random.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

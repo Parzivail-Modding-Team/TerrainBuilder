@@ -100,8 +100,19 @@ namespace TerrainGen {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap folder_brick {
+            get {
+                object obj = ResourceManager.GetObject("folder_brick", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to #version 330 core
         ///
+        ///uniform vec3 lightPos;
         ///uniform vec3 tint;
         ///
         ///in vec3 fragPos;
@@ -112,58 +123,45 @@ namespace TerrainGen {
         ///
         ///void main()
         ///{
-        ///  vec3 lightPos = vec3(100, 100, 100);
-        ///
-        ///  vec3 norm = normalize(fragNormal);
-        ///  vec3 lightDir = normalize(lightPos - fragPos);  
-        ///  float diffuse = max(dot(norm, lightDir), 0.0);
-        ///
-        ///  color = fragColor * vec4(tint, 1.) * diffuse;
+        ///    vec3 norm = normalize(fragNormal);
+        ///    vec3 lightDir = normalize(lightPos - fragPos);  
+        ///    float diffuse = max(dot(norm, lightDir), 0.0);
+        ///    float ambient = 0.3;
+        ///    
+        ///    color = vec4(fragColor.rgb * tint * (ambient + diffuse), 1.);
         ///}.
         /// </summary>
-        internal static string default_fs {
+        internal static string fs_model {
             get {
-                return ResourceManager.GetString("default_fs", resourceCulture);
+                return ResourceManager.GetString("fs_model", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to #version 330 core
-        ///
-        ///// Input vertex data, different for all executions of this shader.
-        ///layout(location = 0) in vec3 position;
-        ///layout(location = 1) in vec3 normal;
-        ///layout(location = 2) in vec4 color;
-        ///
-        ///out vec3 fragPos;
-        ///out vec4 fragColor;
-        ///out vec3 fragNormal;
-        ///
-        ///uniform mat4 m;
-        ///uniform mat4 v;
-        ///uniform mat4 p;
+        ///out vec4 FragColor;
         ///  
-        ///void main()
+        ///in vec2 TexCoords;
+        ///
+        ///uniform sampler2DMS screenColor;
+        ///uniform sampler2DMS screenDepth;
+        ///uniform int width;
+        ///uniform int height;
+        ///
+        ///vec4 mtexture(sampler2DMS s, vec2 coords)
         ///{
-        ///  fragColor = color / 255.;
-        ///  fragNormal = normalize(normal);
-        ///  // Output position of the vertex, in clip space : MVP * position
-        ///  mat4 MVP = p*m*v;
-        ///  gl_Position =  M [rest of string was truncated]&quot;;.
+        ///	ivec2 vpCoords = ivec2(width, height);
+        ///	vpCoords.x = int(vpCoords.x * coords.x); 
+        ///	vpCoords.y = int(vpCoords.y * coords.y);
+        ///
+        ///	vec4 sample1 = texelFetch(s, vpCoords, 0);
+        ///	vec4 sample2 = texelFetch(s, vpCoords, 1);
+        ///	vec4 sample3 = texelFetch(s, vpCoords, 2);
+        ///	vec4 sample4 = texelFet [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string default_vs {
+        internal static string fs_screen {
             get {
-                return ResourceManager.GetString("default_vs", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap folder_brick {
-            get {
-                object obj = ResourceManager.GetObject("folder_brick", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ResourceManager.GetString("fs_screen", resourceCulture);
             }
         }
         
@@ -210,6 +208,16 @@ namespace TerrainGen {
             get {
                 object obj = ResourceManager.GetObject("logo", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap random {
+            get {
+                object obj = ResourceManager.GetObject("random", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
@@ -270,6 +278,57 @@ namespace TerrainGen {
         internal static string Title_Unsaved {
             get {
                 return ResourceManager.GetString("Title_Unsaved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to #version 330 core
+        ///
+        ///// Input vertex data, different for all executions of this shader.
+        ///layout(location = 0) in vec3 position;
+        ///layout(location = 1) in vec3 normal;
+        ///layout(location = 2) in vec4 color;
+        ///
+        ///out vec3 fragPos;
+        ///out vec4 fragColor;
+        ///out vec3 fragNormal;
+        ///
+        ///uniform mat4 m;
+        ///uniform mat4 v;
+        ///uniform mat4 p;
+        ///  
+        ///void main()
+        ///{
+        ///	fragColor = color / 255.;
+        ///	fragNormal = normalize(normal);
+        ///
+        ///	mat4 MVP = p*m*v;
+        ///	gl_Position =  MVP * vec4(position, 1.);
+        ///	fragPos = vec3(v * vec4(position, 1.0));
+        ///}.
+        /// </summary>
+        internal static string vs_model {
+            get {
+                return ResourceManager.GetString("vs_model", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to #version 330 core
+        ///layout (location = 0) in vec2 aPos;
+        ///layout (location = 1) in vec2 aTexCoords;
+        ///
+        ///out vec2 TexCoords;
+        ///
+        ///void main()
+        ///{
+        ///    gl_Position = vec4(aPos.x, aPos.y, 0.0, 1.0); 
+        ///    TexCoords = aTexCoords;
+        ///}  .
+        /// </summary>
+        internal static string vs_screen {
+            get {
+                return ResourceManager.GetString("vs_screen", resourceCulture);
             }
         }
         

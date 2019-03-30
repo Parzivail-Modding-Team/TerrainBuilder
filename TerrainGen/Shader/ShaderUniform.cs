@@ -1,8 +1,8 @@
 ﻿namespace TerrainGen.Shader
 {
-    public class Uniform
+    public class ShaderUniform
     {
-        public Uniform(string name)
+        public ShaderUniform(string name)
         {
             Name = name;
         }

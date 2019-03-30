@@ -37,13 +37,13 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.lLightPos = new System.Windows.Forms.Label();
-            this.tdtLightPos = new TerrainGen.TwoDimensionalTrackbar();
             this.pbTerrainColor = new System.Windows.Forms.PictureBox();
             this.lTerrainColor = new System.Windows.Forms.Label();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.bCreate = new System.Windows.Forms.ToolStripButton();
             this.bOpen = new System.Windows.Forms.ToolStripButton();
             this.colorPicker = new System.Windows.Forms.ColorDialog();
+            this.tdtLightPos = new TerrainGen.TwoDimensionalTrackbar();
             ((System.ComponentModel.ISupportInitialize)(this.nudSeed)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudSideLength)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -156,20 +156,6 @@
             this.lLightPos.TabIndex = 30;
             this.lLightPos.Text = "Light Position";
             // 
-            // tdtLightPos
-            // 
-            this.tdtLightPos.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.tdtLightPos.Location = new System.Drawing.Point(6, 102);
-            this.tdtLightPos.MaxX = 1F;
-            this.tdtLightPos.MaxY = 1F;
-            this.tdtLightPos.MinX = -1F;
-            this.tdtLightPos.MinY = -1F;
-            this.tdtLightPos.Name = "tdtLightPos";
-            this.tdtLightPos.Size = new System.Drawing.Size(150, 150);
-            this.tdtLightPos.TabIndex = 29;
-            this.tdtLightPos.ValueX = 1F;
-            this.tdtLightPos.ValueY = 0.8F;
-            // 
             // pbTerrainColor
             // 
             this.pbTerrainColor.BackColor = System.Drawing.SystemColors.Control;
@@ -226,6 +212,20 @@
             this.colorPicker.AnyColor = true;
             this.colorPicker.Color = System.Drawing.Color.LimeGreen;
             this.colorPicker.FullOpen = true;
+            // 
+            // tdtLightPos
+            // 
+            this.tdtLightPos.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.tdtLightPos.Location = new System.Drawing.Point(6, 102);
+            this.tdtLightPos.MaxX = 1F;
+            this.tdtLightPos.MaxY = 1F;
+            this.tdtLightPos.MinX = -1F;
+            this.tdtLightPos.MinY = -1F;
+            this.tdtLightPos.Name = "tdtLightPos";
+            this.tdtLightPos.Size = new System.Drawing.Size(150, 150);
+            this.tdtLightPos.TabIndex = 29;
+            this.tdtLightPos.ValueX = 0.9F;
+            this.tdtLightPos.ValueY = 0.8F;
             // 
             // RenderController
             // 

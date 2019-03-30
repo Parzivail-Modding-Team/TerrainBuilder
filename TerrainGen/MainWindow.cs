@@ -69,7 +69,7 @@ namespace TerrainGen
             _keyboard = Keyboard.GetState();
 
             _terrainGenerator = new CsTerrainGenerator();
-            _renderManager = new RenderManager(_terrainGenerator);
+            _renderManager = new RenderManager(this, _terrainGenerator);
 
             _terrainLayerList = new RenderController(this);
             _terrainLayerList.Show();
@@ -90,11 +90,7 @@ namespace TerrainGen
         private void OnResize(object sender, EventArgs e)
         {
             GL.Viewport(ClientRectangle);
-
-            var aspectRatio = Width / (float)Height;
-            var projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.PiOver4, aspectRatio, 1, 1024);
-            GL.MatrixMode(MatrixMode.Projection);
-            GL.LoadMatrix(ref projection);
+            _renderManager.OnResize();
         }
 
         private void OnUpdate(object sender, FrameEventArgs e)
@@ -166,6 +162,10 @@ namespace TerrainGen
 
             // Swap the graphics buffer
             SwapBuffers();
+
+            var err = GL.GetError();
+            if (err != ErrorCode.NoError)
+                Lumberjack.Error(err.ToString());
         }
 
         private void OnMouseWheel(object sender, MouseWheelEventArgs e)

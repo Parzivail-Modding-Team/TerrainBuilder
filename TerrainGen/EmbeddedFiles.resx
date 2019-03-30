@@ -157,8 +157,8 @@
   <data name="arrow_switch" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\arrow_switch.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="default_fs" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Shaders\default.frag;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  <data name="fs_model" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Shaders\terrain.frag;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
   <data name="logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\logo.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -169,7 +169,16 @@
   <data name="Log_Format" xml:space="preserve">
     <value>[{0}{1}] {2}</value>
   </data>
-  <data name="default_vs" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\shaders\default.vert;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  <data name="vs_model" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\shaders\terrain.vert;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="fs_screen" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>resources\shaders\screen.frag;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="vs_screen" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>resources\shaders\screen.vert;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="random" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>resources\shaders\random.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>
