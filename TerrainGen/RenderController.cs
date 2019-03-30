@@ -25,6 +25,7 @@ namespace TerrainGen
             nudSeed.Value = _random.Next();
             _parent.EnqueueJob(new JobSetSeed((long)nudSeed.Value));
             _parent.EnqueueJob(new JobSetSideLength((int)nudSideLength.Value));
+            _parent.EnqueueJob(new JobSetLightPosition(new Vector3(tdtLightPos.ValueX * 2200, 1000, tdtLightPos.ValueY * 2200)));
             SetTintColor(Color.LimeGreen);
 
             nudSeed.MouseWheel += delegate(object o, MouseEventArgs args) {
@@ -33,6 +34,13 @@ namespace TerrainGen
             nudSideLength.MouseWheel += delegate(object o, MouseEventArgs args) {
                 ((HandledMouseEventArgs)args).Handled = true;
             };
+
+            tdtLightPos.ValueChanged += TdtLightPosOnValueChanged;
+        }
+
+        private void TdtLightPosOnValueChanged(object sender, EventArgs eventArgs)
+        {
+            _parent.EnqueueJob(new JobSetLightPosition(new Vector3(tdtLightPos.ValueX * 2200, 1000, tdtLightPos.ValueY * 2200)));
         }
 
         private void SetTintColor(Color c)

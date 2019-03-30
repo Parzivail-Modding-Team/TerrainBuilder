@@ -26,6 +26,7 @@ namespace TerrainGen
 
         private float _zoom = 1;
         private Vector2 _translation = new Vector2(0, -25);
+        private Vector2 _prevTranslation = new Vector2(0, -25);
         private Vector2 _rotation = new Vector2(160, 45);
         private Vector2 _prevRotation = new Vector2(160, 45);
 
@@ -47,16 +48,7 @@ namespace TerrainGen
             Title = $"{EmbeddedFiles.AppName} | {EmbeddedFiles.Title_Unsaved}";
             Icon = EmbeddedFiles.logo;
 
-            // Set up lights
-            const float diffuse = 0.9f;
-            float[] matDiffuse = { diffuse, diffuse, diffuse };
-            GL.Material(MaterialFace.FrontAndBack, MaterialParameter.Diffuse, matDiffuse);
-            GL.Light(LightName.Light0, LightParameter.Position, new[] { 0.0f, 0.0f, 0.0f, 10.0f });
-            GL.Light(LightName.Light0, LightParameter.Diffuse, new[] { diffuse, diffuse, diffuse, diffuse });
-
             // Set up lighting
-            GL.Enable(EnableCap.Lighting);
-            GL.Enable(EnableCap.Light0);
             GL.ShadeModel(ShadingModel.Smooth);
             GL.Enable(EnableCap.ColorMaterial);
 
@@ -84,7 +76,7 @@ namespace TerrainGen
 
             _scriptWatcher = new ScriptWatcher();
             _scriptWatcher.FileChanged += OnScriptChanged;
-            
+
             Lumberjack.Info(EmbeddedFiles.Info_WindowLoaded);
         }
 
@@ -117,6 +109,7 @@ namespace TerrainGen
             var delta = (float)e.Time;
             var amount = _keyboard[Key.LShift] || _keyboard[Key.RShift] ? 45 : 90;
 
+            _prevTranslation = new Vector2(_translation.X, _translation.Y);
             _prevRotation = new Vector2(_rotation.X, _rotation.Y);
 
             if (Focused)
@@ -157,10 +150,12 @@ namespace TerrainGen
             var scale = new Vector3(4 * (1 / _zoom), -4 * (1 / _zoom), 4 * (1 / _zoom));
             var rotX = _prevRotation.X + (_rotation.X - _prevRotation.X) * partialTicks;
             var rotY = _prevRotation.Y + (_rotation.Y - _prevRotation.Y) * partialTicks;
+            var transX = _prevTranslation.X + (_translation.X - _prevTranslation.X) * partialTicks;
+            var transY = _prevTranslation.Y + (_translation.Y - _prevTranslation.Y) * partialTicks;
 
             var mProjection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.PiOver4, aspectRatio, 1, 1024);
             var mModel = Matrix4.LookAt(0, 128, 256, 0, 0, 0, 0, 1, 0);
-            var mTranslate = Matrix4.CreateTranslation(_translation.X, _translation.Y, 0);
+            var mTranslate = Matrix4.CreateTranslation((float)transX, (float)transY, 0);
             var mScale = Matrix4.CreateScale(scale);
             var mRotX = Matrix4.CreateRotationX((float)(rotX / 180 * Math.PI));
             var mRotY = Matrix4.CreateRotationY((float)(rotY / 180 * Math.PI));

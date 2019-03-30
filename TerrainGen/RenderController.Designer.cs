@@ -36,6 +36,8 @@
             this.lSideLen = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.lLightPos = new System.Windows.Forms.Label();
+            this.tdtLightPos = new TerrainGen.TwoDimensionalTrackbar();
             this.pbTerrainColor = new System.Windows.Forms.PictureBox();
             this.lTerrainColor = new System.Windows.Forms.Label();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
@@ -134,6 +136,8 @@
             // 
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.lLightPos);
+            this.groupBox2.Controls.Add(this.tdtLightPos);
             this.groupBox2.Controls.Add(this.pbTerrainColor);
             this.groupBox2.Controls.Add(this.lTerrainColor);
             this.groupBox2.Location = new System.Drawing.Point(12, 114);
@@ -142,6 +146,29 @@
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Render";
+            // 
+            // lLightPos
+            // 
+            this.lLightPos.AutoSize = true;
+            this.lLightPos.Location = new System.Drawing.Point(6, 86);
+            this.lLightPos.Name = "lLightPos";
+            this.lLightPos.Size = new System.Drawing.Size(70, 13);
+            this.lLightPos.TabIndex = 30;
+            this.lLightPos.Text = "Light Position";
+            // 
+            // tdtLightPos
+            // 
+            this.tdtLightPos.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.tdtLightPos.Location = new System.Drawing.Point(6, 102);
+            this.tdtLightPos.MaxX = 1F;
+            this.tdtLightPos.MaxY = 1F;
+            this.tdtLightPos.MinX = -1F;
+            this.tdtLightPos.MinY = -1F;
+            this.tdtLightPos.Name = "tdtLightPos";
+            this.tdtLightPos.Size = new System.Drawing.Size(150, 150);
+            this.tdtLightPos.TabIndex = 29;
+            this.tdtLightPos.ValueX = 1F;
+            this.tdtLightPos.ValueY = 0.8F;
             // 
             // pbTerrainColor
             // 
@@ -242,5 +269,7 @@
         private System.Windows.Forms.PictureBox pbTerrainColor;
         private System.Windows.Forms.Label lTerrainColor;
         private System.Windows.Forms.ColorDialog colorPicker;
+        private TwoDimensionalTrackbar tdtLightPos;
+        private System.Windows.Forms.Label lLightPos;
     }
 }

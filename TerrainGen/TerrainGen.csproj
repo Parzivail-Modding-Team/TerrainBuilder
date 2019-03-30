@@ -62,7 +62,14 @@
     <Compile Include="Job\JobRenderChunk.cs" />
     <Compile Include="Job\JobSetSeed.cs" />
     <Compile Include="Job\JobSetSideLength.cs" />
+    <Compile Include="Job\JobSetLightPosition.cs" />
     <Compile Include="Job\JobSetTintColor.cs" />
+    <Compile Include="TwoDimensionalTrackbar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TwoDimensionalTrackbar.Designer.cs">
+      <DependentUpon>TwoDimensionalTrackbar.cs</DependentUpon>
+    </Compile>
     <Compile Include="Util\Lumberjack.cs" />
     <Compile Include="MainWindow.cs" />
     <Compile Include="Program.cs" />
@@ -91,6 +98,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="RenderController.resx">
       <DependentUpon>RenderController.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TwoDimensionalTrackbar.resx">
+      <DependentUpon>TwoDimensionalTrackbar.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

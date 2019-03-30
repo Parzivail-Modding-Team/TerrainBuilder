@@ -26,6 +26,7 @@ namespace TerrainGen
         private readonly EventWaitHandle _workerHandle;
         private readonly ShaderProgram _shaderProgram;
         private readonly Uniform _uTint = new Uniform("tint");
+        private readonly Uniform _uLightPos = new Uniform("lightPos");
         private readonly Uniform _uMatModel = new Uniform("m");
         private readonly Uniform _uMatView = new Uniform("v");
         private readonly Uniform _uMatProjection = new Uniform("p");
@@ -34,6 +35,7 @@ namespace TerrainGen
 
         public Chunk[] Chunks { get; private set; }
         public Vector3 TintColor { get; set; }
+        public Vector3 LightPosition { get; set; }
         public int SideLength { get; set; }
 
         public RenderManager(CsTerrainGenerator generator)
@@ -111,12 +113,13 @@ namespace TerrainGen
 
             // Set up uniforms
             _uTint.Value = TintColor;
+            _uLightPos.Value = LightPosition;
             _uMatModel.Value = model;
             _uMatView.Value = view;
             _uMatProjection.Value = projection;
 
             // Engage shader, render, disengage
-            _shaderProgram.Use(_uTint, _uMatModel, _uMatView, _uMatProjection);
+            _shaderProgram.Use(_uTint, _uLightPos, _uMatModel, _uMatView, _uMatProjection);
 
             foreach (var chunk in Chunks)
                 chunk?.Draw();
