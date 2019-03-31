@@ -46,7 +46,6 @@ namespace TerrainGen
         private readonly ShaderUniform _uWidth = new ShaderUniform("width");
         private readonly ShaderUniform _uHeight = new ShaderUniform("height");
         private readonly ShaderUniform _uTexColor = new ShaderUniform("screenColor");
-        private readonly ShaderUniform _uTexDepth = new ShaderUniform("screenDepth");
         private readonly ShaderUniform _uTexUi = new ShaderUniform("screenUi");
 
         private Thread _worker;
@@ -70,11 +69,11 @@ namespace TerrainGen
             if (rSans == -1)
                 throw new ApplicationException("Unable to load UI font");
 
-            _perfGraphFps = new PerfGraph(GraphRenderStyle.Fps, "FPS");
+            _perfGraphFps = new PerfGraph(GraphRenderStyle.Fps, null, 40);
 
             _framebuffer = new Framebuffer(8);
             _framebuffer.Init(window.Width, window.Height);
-            _framebufferUi = new Framebuffer(8, false);
+            _framebufferUi = new Framebuffer(8);
             _framebufferUi.Init(window.Width, window.Height);
             _texRandom = LoadGlTexture(EmbeddedFiles.random);
             _shaderModel = new ShaderProgram(EmbeddedFiles.fs_model, EmbeddedFiles.vs_model);
@@ -236,9 +235,7 @@ namespace TerrainGen
             _nvg.FontSize(18);
             _nvg.TextAlign(NvgAlign.Top | NvgAlign.Left);
 
-//            _nvg.Text(2, 2, $"{Math.Ceiling(_window.RenderFrequency)} FPS");
-
-            _perfGraphFps.RenderGraph(_nvg, 2, 2);
+            _perfGraphFps.RenderGraph(_nvg, 4, 4);
 
             _nvg.Restore();
             _nvg.EndFrame();
@@ -247,15 +244,14 @@ namespace TerrainGen
             _uWidth.Value = _window.Width;
             _uHeight.Value = _window.Height;
             _uTexColor.Value = 0;
-            _uTexDepth.Value = 1;
-            _uTexUi.Value = 2;
+            _uTexUi.Value = 1;
 
-            _shaderScreen.Use(_uWidth, _uHeight, _uTexColor, _uTexDepth, _uTexUi);
-            DrawFullscreenQuad(_framebuffer.TextureId, _framebuffer.DepthId, _framebufferUi.TextureId);
+            _shaderScreen.Use(_uWidth, _uHeight, _uTexColor, _uTexUi);
+            DrawFullscreenQuad(_framebuffer.TextureId, _framebufferUi.TextureId);
             _shaderScreen.Release();
         }
 
-        private void DrawFullscreenQuad(int colorTexture, int extTexture1 = -1, int extTexture2 = -1)
+        private void DrawFullscreenQuad(int colorTexture, int extTexture1 = -1)
         {
             GL.BindVertexArray(_screenVao);
             GL.Disable(EnableCap.DepthTest);
@@ -266,11 +262,6 @@ namespace TerrainGen
             {
                 GL.ActiveTexture(TextureUnit.Texture1);
                 GL.BindTexture(TextureTarget.Texture2DMultisample, extTexture1);
-            }
-            if (extTexture2 != -1)
-            {
-                GL.ActiveTexture(TextureUnit.Texture2);
-                GL.BindTexture(TextureTarget.Texture2DMultisample, extTexture2);
             }
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.DrawArrays(PrimitiveType.Triangles, 0, 6);

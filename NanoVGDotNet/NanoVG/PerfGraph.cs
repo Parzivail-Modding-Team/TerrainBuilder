@@ -35,6 +35,10 @@
  *  the file lgpl-3.0.txt for more details.
  */
 
+using System;
+using System.Linq;
+using OpenTK;
+
 namespace NanoVGDotNet.NanoVG
 {
 	public class PerfGraph
@@ -56,19 +60,23 @@ namespace NanoVGDotNet.NanoVG
 
 		public void UpdateGraph(float frameTime)
 		{
-			_head = (_head + 1) % _graphHistoryCount;
-			_values[_head] = frameTime;
+		    _values[_head] = frameTime;
+            _head = (_head + 1) % _graphHistoryCount;
 		}
 
 		public float GetGraphAverage()
 		{
-			int i;
-			float avg = 0;
-			for (i = 0; i < _graphHistoryCount; i++)
-			{
-				avg += _values[i];
-			}
-			return avg / _graphHistoryCount;
+		    return _values.Average();
+		}
+
+		public float GetGraphMin()
+		{
+		    return _values.Min();
+		}
+
+		public float GetGraphMax()
+		{
+		    return _values.Max();
 		}
 
 		public void RenderGraph(NvgContext vg, float x, float y)
@@ -76,12 +84,15 @@ namespace NanoVGDotNet.NanoVG
 			int i;
 		    string str;
 			var avg = GetGraphAverage();
-			const float w = 200;
+		    const float d = 1 / 60f;
+			var min = GetGraphMin() + d;
+			var max = GetGraphMax() - d;
+            const float w = 100;
 			const float h = 35;
 
 			vg.BeginPath();
 			vg.Rect(x, y, w, h);
-			vg.FillColor(NanoVg.Rgba(0, 0, 0, 128));
+			vg.FillColor(NanoVg.Rgba(255, 255, 255, 64));
 			vg.Fill();
 
 			vg.BeginPath();
@@ -93,24 +104,23 @@ namespace NanoVGDotNet.NanoVG
 			        {
 			            var v = _values[(_head + i) % _graphHistoryCount];
 			            var vx = x + (float)i / (_graphHistoryCount - 1) * w;
-			            var vy = y + h - v / avg * 0.5f * h;
+			            var perc = MathHelper.Clamp((v - min) / (max - min), 0, 1);
+                        var vy = y + h - perc * h;
 			            vg.LineTo(vx, vy);
 			        }
-
 			        break;
-			    case GraphRenderStyle.Percent:
+			    case GraphRenderStyle.Raw:
 			        for (i = 0; i < _graphHistoryCount; i++)
 			        {
-			            var v = _values[(_head + i) % _graphHistoryCount] * 1.0f;
+			            var v = _values[(_head + i) % _graphHistoryCount];
 			            if (v > 100.0f)
 			                v = 100.0f;
 			            var vx = x + (float)i / (_graphHistoryCount - 1) * w;
 			            var vy = y + h - v / 100.0f * h;
 			            vg.LineTo(vx, vy);
 			        }
-
 			        break;
-			    default:
+			    case GraphRenderStyle.Milliseconds:
 			        for (i = 0; i < _graphHistoryCount; i++)
 			        {
 			            var v = _values[(_head + i) % _graphHistoryCount] * 1000.0f;
@@ -120,16 +130,23 @@ namespace NanoVGDotNet.NanoVG
 			            var vy = y + h - v / 20.0f * h;
 			            vg.LineTo(vx, vy);
 			        }
-
-			        break;
+                    break;
 			}
 			vg.LineTo(x + w, y + h);
 			vg.FillColor(NanoVg.Rgba(255, 192, 0, 128));
 			vg.Fill();
 
-			vg.FontFace("sans");
 
-			if (_name[0] != '\0')
+		    var avgPerc = MathHelper.Clamp((avg - min) / (max - min), 0, 1);
+            vg.BeginPath();
+		    vg.MoveTo(x, y + h - avgPerc * h);
+            vg.LineTo(x + w, y + h - avgPerc * h);
+		    vg.StrokeColor(NanoVg.Rgba(255, 255, 255, 128));
+            vg.Stroke();
+
+            vg.FontFace("sans");
+
+			if (_name != null)
 			{
 				vg.FontSize(14.0f);
 				vg.TextAlign(NvgAlign.Left | NvgAlign.Top);
@@ -140,7 +157,7 @@ namespace NanoVGDotNet.NanoVG
 			switch (_style)
 			{
 			    case GraphRenderStyle.Fps:
-			        vg.FontSize(18.0f);
+			        vg.FontSize(16.0f);
 			        vg.TextAlign(NvgAlign.Right | NvgAlign.Top);
 			        vg.FillColor(NanoVg.Rgba(240, 240, 240, 255));
 			        str = $"{1.0f / avg:0.00} FPS";
@@ -149,18 +166,18 @@ namespace NanoVGDotNet.NanoVG
 			        vg.FontSize(15.0f);
 			        vg.TextAlign(NvgAlign.Right | NvgAlign.Bottom);
 			        vg.FillColor(NanoVg.Rgba(240, 240, 240, 160));
-			        str = $"{avg * 1000.0f:0.00} ms";
+			        str = $"{avg * 1000.0f:0.00} ms/f";
 			        vg.Text(x + w - 3, y + h - 1, str);
 			        break;
-			    case GraphRenderStyle.Percent:
-			        vg.FontSize(18.0f);
+			    case GraphRenderStyle.Raw:
+			        vg.FontSize(16.0f);
 			        vg.TextAlign(NvgAlign.Right | NvgAlign.Top);
 			        vg.FillColor(NanoVg.Rgba(240, 240, 240, 255));
-			        str = $"{avg * 1.0f:0.0} %";
+			        str = $"{avg:0.00}";
 			        vg.Text(x + w - 3, y + 1, str);
 			        break;
-			    default:
-			        vg.FontSize(18.0f);
+			    case GraphRenderStyle.Milliseconds:
+                    vg.FontSize(16.0f);
 			        vg.TextAlign(NvgAlign.Right | NvgAlign.Top);
 			        vg.FillColor(NanoVg.Rgba(240, 240, 240, 255));
 			        str = $"{avg * 1000.0f:0.00} ms";

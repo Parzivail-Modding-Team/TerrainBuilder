@@ -4,7 +4,6 @@ out vec4 FragColor;
 in vec2 TexCoords;
 
 uniform sampler2DMS screenColor;
-uniform sampler2DMS screenDepth;
 uniform sampler2DMS screenUi;
 uniform int width;
 uniform int height;
@@ -34,17 +33,10 @@ float linearDepth(float depthSample)
     return zLinear;
 }
 
-float getDepth(vec2 pos)
-{
-	float depth = mtexture(screenDepth, pos).r;
-	return linearDepth(depth);
-}
-
 void main()
 { 
 	vec4 color = mtexture(screenColor, TexCoords);
 	vec4 ui = mtexture(screenUi, TexCoords);
-	vec4 depth = vec4(vec3(getDepth(TexCoords)), 1.);
 
 	FragColor = ui + (1 - ui.a) * color;
 }

@@ -86,7 +86,6 @@
     </Compile>
     <Compile Include="Graphics\SmallVertex.cs" />
     <Compile Include="Graphics\Vertex.cs" />
-    <Compile Include="Util\SlidingWindow.cs" />
     <None Include="Resources\ibmplexmono.ttf" />
     <None Include="Resources\shaders\screen.frag" />
     <None Include="Resources\shaders\screen.vert" />

@@ -25,6 +25,7 @@ namespace TerrainGen
         private RenderManager _renderManager;
 
         private float _zoom = 1;
+        private float _prevZoom = 1;
         private Vector2 _translation = new Vector2(0, -25);
         private Vector2 _prevTranslation = new Vector2(0, -25);
         private Vector2 _rotation = new Vector2(160, 45);
@@ -105,6 +106,7 @@ namespace TerrainGen
             var delta = (float)e.Time;
             var amount = _keyboard[Key.LShift] || _keyboard[Key.RShift] ? 45 : 90;
 
+            _prevZoom = _zoom;
             _prevTranslation = new Vector2(_translation.X, _translation.Y);
             _prevRotation = new Vector2(_rotation.X, _rotation.Y);
 
@@ -143,7 +145,8 @@ namespace TerrainGen
 
             // Reload the projection matrix
             var aspectRatio = Width / (float)Height;
-            var scale = new Vector3(4 * (1 / _zoom), -4 * (1 / _zoom), 4 * (1 / _zoom));
+            var zoom = (float)(_prevZoom + (_zoom - _prevZoom) * partialTicks);
+            var scale = new Vector3(4 * (1 / zoom), -4 * (1 / zoom), 4 * (1 / zoom));
             var rotX = _prevRotation.X + (_rotation.X - _prevRotation.X) * partialTicks;
             var rotY = _prevRotation.Y + (_rotation.Y - _prevRotation.Y) * partialTicks;
             var transX = _prevTranslation.X + (_translation.X - _prevTranslation.X) * partialTicks;
