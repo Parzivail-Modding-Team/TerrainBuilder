@@ -48,7 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Chunk.cs" />
-    <Compile Include="Framebuffer.cs" />
+    <Compile Include="Graphics\Framebuffer.cs" />
     <Compile Include="Graphics\ChunkBuffer.cs" />
     <Compile Include="Generator\CSTerrainGenerator.cs" />
     <Compile Include="EmbeddedFiles.Designer.cs">

@@ -145,6 +145,7 @@ namespace TerrainGen {
         ///
         ///uniform sampler2DMS screenColor;
         ///uniform sampler2DMS screenDepth;
+        ///uniform sampler2D random;
         ///uniform int width;
         ///uniform int height;
         ///
@@ -156,8 +157,7 @@ namespace TerrainGen {
         ///
         ///	vec4 sample1 = texelFetch(s, vpCoords, 0);
         ///	vec4 sample2 = texelFetch(s, vpCoords, 1);
-        ///	vec4 sample3 = texelFetch(s, vpCoords, 2);
-        ///	vec4 sample4 = texelFet [rest of string was truncated]&quot;;.
+        ///	vec4 sample3 = texelFetch(s, vpCoords, 2) [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string fs_screen {
             get {

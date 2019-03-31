@@ -16,5 +16,5 @@ void main()
     float diffuse = max(dot(norm, lightDir), 0.0);
     float ambient = 0.3;
     
-    color = vec4(fragColor.rgb * tint * (ambient + diffuse), 1.);
+    color = vec4(fragColor.rgb * tint * clamp(ambient + diffuse, 0, 1), 1.);
 }

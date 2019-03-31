@@ -1,8 +1,7 @@
 ﻿using System;
 using OpenTK.Graphics.OpenGL;
-using TerrainGen.Util;
 
-namespace TerrainGen
+namespace TerrainGen.Graphics
 {
     internal class Framebuffer
     {

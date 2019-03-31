@@ -36,7 +36,7 @@ namespace TerrainGen
         public void Prerender()
         {
             const uint color = 0xFFFFFFFF;
-            const uint occludedColor = color;//0xFFC0C0C0;
+            const uint occludedColor = 0xFFC0C0C0;
             _vbi.Reset();
 
             for (var x = X * 16; x < X * 16 + 16; x++)

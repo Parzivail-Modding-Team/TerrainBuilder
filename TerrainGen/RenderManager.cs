@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using TerrainGen.Generator;
+using TerrainGen.Graphics;
 using TerrainGen.Job;
 using TerrainGen.Shader;
 using TerrainGen.Util;
@@ -208,13 +209,19 @@ namespace TerrainGen
             _uTexRandom.Value = 3;
 
             _shaderScreen.Use(_uWidth, _uHeight, _uTexColor, _uTexDepth, _uTexRandom);
+            DrawFullscreenQuad(_framebuffer.TextureId, _framebuffer.TextureId);
+            _shaderScreen.Release();
+        }
+
+        private void DrawFullscreenQuad(int colorTexture, int extTexture)
+        {
             GL.BindVertexArray(_screenVao);
             GL.Disable(EnableCap.DepthTest);
             GL.Enable(EnableCap.Texture2D);
             GL.ActiveTexture(TextureUnit.Texture0);
-            GL.BindTexture(TextureTarget.Texture2DMultisample, _framebuffer.TextureId);
+            GL.BindTexture(TextureTarget.Texture2DMultisample, colorTexture);
             GL.ActiveTexture(TextureUnit.Texture1);
-            GL.BindTexture(TextureTarget.Texture2DMultisample, _framebuffer.DepthId);
+            GL.BindTexture(TextureTarget.Texture2DMultisample, extTexture);
             GL.ActiveTexture(TextureUnit.Texture3);
             GL.BindTexture(TextureTarget.Texture2D, _texRandom);
             GL.ActiveTexture(TextureUnit.Texture0);
@@ -222,7 +229,6 @@ namespace TerrainGen
             GL.BindTexture(TextureTarget.Texture2DMultisample, 0);
             GL.Disable(EnableCap.Texture2D);
             GL.Enable(EnableCap.DepthTest);
-            _shaderScreen.Release();
         }
 
         public void Rebuild()

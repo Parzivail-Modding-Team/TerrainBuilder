@@ -226,6 +226,7 @@
             this.tdtLightPos.TabIndex = 29;
             this.tdtLightPos.ValueX = 0.9F;
             this.tdtLightPos.ValueY = 0.8F;
+            this.tdtLightPos.ValueChanged += new System.EventHandler(this.tdtLightPos_ValueChanged);
             // 
             // RenderController
             // 

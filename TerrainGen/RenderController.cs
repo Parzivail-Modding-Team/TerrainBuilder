@@ -34,13 +34,6 @@ namespace TerrainGen
             nudSideLength.MouseWheel += delegate(object o, MouseEventArgs args) {
                 ((HandledMouseEventArgs)args).Handled = true;
             };
-
-            tdtLightPos.ValueChanged += TdtLightPosOnValueChanged;
-        }
-
-        private void TdtLightPosOnValueChanged(object sender, EventArgs eventArgs)
-        {
-            _parent.EnqueueJob(new JobSetLightPosition(new Vector3(tdtLightPos.ValueX * 2200, 1000, tdtLightPos.ValueY * 2200)));
         }
 
         private void SetTintColor(Color c)
@@ -98,6 +91,11 @@ namespace TerrainGen
             if (colorPicker.ShowDialog() != DialogResult.OK)
                 return;
             SetTintColor(colorPicker.Color);
+        }
+
+        private void tdtLightPos_ValueChanged(object sender, EventArgs e)
+        {
+            _parent.EnqueueJob(new JobSetLightPosition(new Vector3(tdtLightPos.ValueX * 2200, 1000, tdtLightPos.ValueY * 2200)));
         }
     }
 }
