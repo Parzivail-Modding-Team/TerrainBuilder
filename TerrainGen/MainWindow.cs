@@ -126,7 +126,7 @@ namespace TerrainGen
                 }
             }
 
-            _renderManager.UpdateJobs();
+            _renderManager.Update();
 
             _updateTimeAccumulator = 0;
         }

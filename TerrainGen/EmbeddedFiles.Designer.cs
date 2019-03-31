@@ -128,7 +128,7 @@ namespace TerrainGen {
         ///    float diffuse = max(dot(norm, lightDir), 0.0);
         ///    float ambient = 0.3;
         ///    
-        ///    color = vec4(fragColor.rgb * tint * (ambient + diffuse), 1.);
+        ///    color = vec4(fragColor.rgb * tint * clamp(ambient + diffuse, 0, 1), 1.);
         ///}.
         /// </summary>
         internal static string fs_model {
@@ -145,23 +145,37 @@ namespace TerrainGen {
         ///
         ///uniform sampler2DMS screenColor;
         ///uniform sampler2DMS screenDepth;
-        ///uniform sampler2D random;
+        ///uniform sampler2DMS screenUi;
         ///uniform int width;
         ///uniform int height;
         ///
         ///vec4 mtexture(sampler2DMS s, vec2 coords)
         ///{
+        ///	const float SAMPLES = 4;
+        ///
         ///	ivec2 vpCoords = ivec2(width, height);
-        ///	vpCoords.x = int(vpCoords.x * coords.x); 
+        ///	vpCoords.x = int(vpCoords.x * coords.x);
         ///	vpCoords.y = int(vpCoords.y * coords.y);
         ///
-        ///	vec4 sample1 = texelFetch(s, vpCoords, 0);
-        ///	vec4 sample2 = texelFetch(s, vpCoords, 1);
-        ///	vec4 sample3 = texelFetch(s, vpCoords, 2) [rest of string was truncated]&quot;;.
+        ///	vec4 avg = vec4(0);
+        ///	for (int i = 0; i &lt; SAMPLES; i++)
+        ///	{
+        ///		avg += texelFetch(s, vpCoords, i);
+        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string fs_screen {
             get {
                 return ResourceManager.GetString("fs_screen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] ibmplexmono {
+            get {
+                object obj = ResourceManager.GetObject("ibmplexmono", resourceCulture);
+                return ((byte[])(obj));
             }
         }
         

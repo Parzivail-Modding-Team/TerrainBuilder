@@ -5,16 +5,16 @@ in vec2 TexCoords;
 
 uniform sampler2DMS screenColor;
 uniform sampler2DMS screenDepth;
-uniform sampler2D random;
+uniform sampler2DMS screenUi;
 uniform int width;
 uniform int height;
 
 vec4 mtexture(sampler2DMS s, vec2 coords)
 {
-	const float SAMPLES = 4;
+	const float SAMPLES = 8;
 
 	ivec2 vpCoords = ivec2(width, height);
-	vpCoords.x = int(vpCoords.x * coords.x); 
+	vpCoords.x = int(vpCoords.x * coords.x);
 	vpCoords.y = int(vpCoords.y * coords.y);
 
 	vec4 avg = vec4(0);
@@ -43,7 +43,8 @@ float getDepth(vec2 pos)
 void main()
 { 
 	vec4 color = mtexture(screenColor, TexCoords);
+	vec4 ui = mtexture(screenUi, TexCoords);
 	vec4 depth = vec4(vec3(getDepth(TexCoords)), 1.);
 
-	FragColor = color;
+	FragColor = ui + (1 - ui.a) * color;
 }

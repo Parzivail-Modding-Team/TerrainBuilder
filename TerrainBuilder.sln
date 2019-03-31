@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TerrainGenCore", "TerrainGe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TerrainGen", "TerrainGen\TerrainGen.csproj", "{7760A877-D286-4F08-BA36-A93617E27EF0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NanoVGDotNet", "NanoVGDotNet\NanoVGDotNet.csproj", "{9A3AB3CF-AE64-45C0-90E5-AB9B93B639F6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,14 @@ Global
 		{7760A877-D286-4F08-BA36-A93617E27EF0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7760A877-D286-4F08-BA36-A93617E27EF0}.Release|x64.ActiveCfg = Release|Any CPU
 		{7760A877-D286-4F08-BA36-A93617E27EF0}.Release|x64.Build.0 = Release|Any CPU
+		{9A3AB3CF-AE64-45C0-90E5-AB9B93B639F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A3AB3CF-AE64-45C0-90E5-AB9B93B639F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A3AB3CF-AE64-45C0-90E5-AB9B93B639F6}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9A3AB3CF-AE64-45C0-90E5-AB9B93B639F6}.Debug|x64.Build.0 = Debug|Any CPU
+		{9A3AB3CF-AE64-45C0-90E5-AB9B93B639F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A3AB3CF-AE64-45C0-90E5-AB9B93B639F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A3AB3CF-AE64-45C0-90E5-AB9B93B639F6}.Release|x64.ActiveCfg = Release|Any CPU
+		{9A3AB3CF-AE64-45C0-90E5-AB9B93B639F6}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

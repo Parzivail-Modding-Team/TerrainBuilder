@@ -34,6 +34,9 @@
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\logo.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -83,6 +86,8 @@
     </Compile>
     <Compile Include="Graphics\SmallVertex.cs" />
     <Compile Include="Graphics\Vertex.cs" />
+    <Compile Include="Util\SlidingWindow.cs" />
+    <None Include="Resources\ibmplexmono.ttf" />
     <None Include="Resources\shaders\screen.frag" />
     <None Include="Resources\shaders\screen.vert" />
     <None Include="Resources\shaders\terrain.vert" />
@@ -127,15 +132,17 @@
     <None Include="Resources\folder_brick.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\NanoVGDotNet\NanoVGDotNet.csproj">
+      <Project>{9a3ab3cf-ae64-45c0-90e5-ab9b93b639f6}</Project>
+      <Name>NanoVGDotNet</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TerrainGenCore\TerrainGenCore.csproj">
       <Project>{AE4FE686-53D5-4E73-BFDC-FC8CDA9155BA}</Project>
       <Name>TerrainGenCore</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\shaders\random.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <None Include="Resources\shaders\random.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

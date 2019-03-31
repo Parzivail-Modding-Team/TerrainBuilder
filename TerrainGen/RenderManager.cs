@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
@@ -8,6 +9,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using NanoVGDotNet.FontStash;
+using NanoVGDotNet.NanoVG;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using TerrainGen.Generator;
@@ -27,7 +30,10 @@ namespace TerrainGen
         private readonly CsTerrainGenerator _generator;
         private readonly EventWaitHandle _workerHandle;
 
+        private readonly NvgContext _nvg;
+        private readonly PerfGraph _perfGraphFps;
         private readonly Framebuffer _framebuffer;
+        private readonly Framebuffer _framebufferUi;
         private readonly int _texRandom;
         private readonly ShaderProgram _shaderScreen;
         private int _screenVao;
@@ -41,7 +47,7 @@ namespace TerrainGen
         private readonly ShaderUniform _uHeight = new ShaderUniform("height");
         private readonly ShaderUniform _uTexColor = new ShaderUniform("screenColor");
         private readonly ShaderUniform _uTexDepth = new ShaderUniform("screenDepth");
-        private readonly ShaderUniform _uTexRandom = new ShaderUniform("random");
+        private readonly ShaderUniform _uTexUi = new ShaderUniform("screenUi");
 
         private Thread _worker;
 
@@ -52,12 +58,24 @@ namespace TerrainGen
 
         public RenderManager(GameWindow window, CsTerrainGenerator generator)
         {
-            _fgJobs = new ConcurrentQueue<IJob>();
-            _bgJobs = new ConcurrentQueue<IJob>();
             _window = window;
             _generator = generator;
-            _framebuffer = new Framebuffer();
+
+            _fgJobs = new ConcurrentQueue<IJob>();
+            _bgJobs = new ConcurrentQueue<IJob>();
+
+            _nvg = GlNanoVg.CreateGl(NvgCreateFlags.StencilStrokes);
+
+            var rSans = _nvg.CreateFont("sans", EmbeddedFiles.ibmplexmono);
+            if (rSans == -1)
+                throw new ApplicationException("Unable to load UI font");
+
+            _perfGraphFps = new PerfGraph(GraphRenderStyle.Fps, "FPS");
+
+            _framebuffer = new Framebuffer(8);
             _framebuffer.Init(window.Width, window.Height);
+            _framebufferUi = new Framebuffer(8, false);
+            _framebufferUi.Init(window.Width, window.Height);
             _texRandom = LoadGlTexture(EmbeddedFiles.random);
             _shaderModel = new ShaderProgram(EmbeddedFiles.fs_model, EmbeddedFiles.vs_model);
             _shaderModel.Init();
@@ -117,7 +135,7 @@ namespace TerrainGen
                 _fgJobs.Enqueue(job);
         }
 
-        public void UpdateJobs()
+        public void Update()
         {
             if (_worker is null)
             {
@@ -152,6 +170,8 @@ namespace TerrainGen
                 job.Execute(this);
                 Application.DoEvents();
             }
+
+            _perfGraphFps.UpdateGraph((float)_window.RenderTime);
         }
 
         public void Render(Matrix4 model, Matrix4 view, Matrix4 projection)
@@ -202,31 +222,58 @@ namespace TerrainGen
             GL.PopMatrix();
             _framebuffer.Release();
 
+            _framebufferUi.Use();
+            GL.ClearColor(0, 0, 0, 0);
+            GL.Clear(ClearBufferMask.ColorBufferBit |
+                     ClearBufferMask.DepthBufferBit |
+                     ClearBufferMask.StencilBufferBit);
+
+            _nvg.BeginFrame(_window.Width, _window.Height, 1);
+            _nvg.Save();
+
+            _nvg.FillColor(NanoVg.Rgba(255, 255, 255, 255));
+            _nvg.FontFace("sans");
+            _nvg.FontSize(18);
+            _nvg.TextAlign(NvgAlign.Top | NvgAlign.Left);
+
+//            _nvg.Text(2, 2, $"{Math.Ceiling(_window.RenderFrequency)} FPS");
+
+            _perfGraphFps.RenderGraph(_nvg, 2, 2);
+
+            _nvg.Restore();
+            _nvg.EndFrame();
+            _framebufferUi.Release();
+
             _uWidth.Value = _window.Width;
             _uHeight.Value = _window.Height;
             _uTexColor.Value = 0;
             _uTexDepth.Value = 1;
-            _uTexRandom.Value = 3;
+            _uTexUi.Value = 2;
 
-            _shaderScreen.Use(_uWidth, _uHeight, _uTexColor, _uTexDepth, _uTexRandom);
-            DrawFullscreenQuad(_framebuffer.TextureId, _framebuffer.TextureId);
+            _shaderScreen.Use(_uWidth, _uHeight, _uTexColor, _uTexDepth, _uTexUi);
+            DrawFullscreenQuad(_framebuffer.TextureId, _framebuffer.DepthId, _framebufferUi.TextureId);
             _shaderScreen.Release();
         }
 
-        private void DrawFullscreenQuad(int colorTexture, int extTexture)
+        private void DrawFullscreenQuad(int colorTexture, int extTexture1 = -1, int extTexture2 = -1)
         {
             GL.BindVertexArray(_screenVao);
             GL.Disable(EnableCap.DepthTest);
             GL.Enable(EnableCap.Texture2D);
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2DMultisample, colorTexture);
-            GL.ActiveTexture(TextureUnit.Texture1);
-            GL.BindTexture(TextureTarget.Texture2DMultisample, extTexture);
-            GL.ActiveTexture(TextureUnit.Texture3);
-            GL.BindTexture(TextureTarget.Texture2D, _texRandom);
+            if (extTexture1 != -1)
+            {
+                GL.ActiveTexture(TextureUnit.Texture1);
+                GL.BindTexture(TextureTarget.Texture2DMultisample, extTexture1);
+            }
+            if (extTexture2 != -1)
+            {
+                GL.ActiveTexture(TextureUnit.Texture2);
+                GL.BindTexture(TextureTarget.Texture2DMultisample, extTexture2);
+            }
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.DrawArrays(PrimitiveType.Triangles, 0, 6);
-            GL.BindTexture(TextureTarget.Texture2DMultisample, 0);
             GL.Disable(EnableCap.Texture2D);
             GL.Enable(EnableCap.DepthTest);
         }
@@ -276,6 +323,7 @@ namespace TerrainGen
         public void OnResize()
         {
             _framebuffer.Init(_window.Width, _window.Height);
+            _framebufferUi.Init(_window.Width, _window.Height);
         }
 
         private static int LoadGlTexture(Bitmap bitmap)
