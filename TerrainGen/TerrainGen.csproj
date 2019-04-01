@@ -65,6 +65,7 @@
     <Compile Include="Job\JobRebuildChunks.cs" />
     <Compile Include="Job\JobRenderChunk.cs" />
     <Compile Include="Job\JobSetSeed.cs" />
+    <Compile Include="Job\JobSetSamples.cs" />
     <Compile Include="Job\JobSetSideLength.cs" />
     <Compile Include="Job\JobSetLightPosition.cs" />
     <Compile Include="Job\JobSetTintColor.cs" />

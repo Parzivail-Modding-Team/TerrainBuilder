@@ -7,21 +7,21 @@ uniform sampler2DMS screenColor;
 uniform sampler2DMS screenUi;
 uniform int width;
 uniform int height;
+uniform int samples;
+uniform int samplesUi;
 
-vec4 mtexture(sampler2DMS s, vec2 coords)
+vec4 mtexture(sampler2DMS s, vec2 coords, int samp)
 {
-	const float SAMPLES = 8;
-
 	ivec2 vpCoords = ivec2(width, height);
 	vpCoords.x = int(vpCoords.x * coords.x);
 	vpCoords.y = int(vpCoords.y * coords.y);
 
 	vec4 avg = vec4(0);
-	for (int i = 0; i < SAMPLES; i++)
+	for (int i = 0; i < samp; i++)
 	{
 		avg += texelFetch(s, vpCoords, i);
 	}
-	return avg / SAMPLES;
+	return avg / float(samp);
 }
 
 float linearDepth(float depthSample)
@@ -35,8 +35,8 @@ float linearDepth(float depthSample)
 
 void main()
 { 
-	vec4 color = mtexture(screenColor, TexCoords);
-	vec4 ui = mtexture(screenUi, TexCoords);
+	vec4 color = mtexture(screenColor, TexCoords, samples);
+	vec4 ui = mtexture(screenUi, TexCoords, samplesUi);
 
 	FragColor = ui + (1 - ui.a) * color;
 }

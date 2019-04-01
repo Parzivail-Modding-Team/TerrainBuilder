@@ -2,6 +2,7 @@
 
 uniform vec3 lightPos;
 uniform vec3 tint;
+uniform int samples;
 
 in vec3 fragPos;
 in vec4 fragColor;

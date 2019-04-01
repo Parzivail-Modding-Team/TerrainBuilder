@@ -97,5 +97,10 @@ namespace TerrainGen
         {
             _parent.EnqueueJob(new JobSetLightPosition(new Vector3(tdtLightPos.ValueX * 2200, 1000, tdtLightPos.ValueY * 2200)));
         }
-    }
+
+		private void nudMsaa_ValueChanged(object sender, EventArgs e)
+		{
+			_parent.EnqueueJob(new JobSetSamples((int)nudMsaa.Value));
+		}
+	}
 }

@@ -117,13 +117,16 @@ namespace TerrainGen
 
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
+			var p = new Pen(ForeColor);
+			var b = new SolidBrush(ForeColor);
+
             var posX = (ValueX - MinX) / (MaxX - MinX) * ClientRectangle.Width;
-            e.Graphics.DrawLine(Pens.Black, posX, ClientRectangle.Top, posX, ClientRectangle.Bottom);
+            e.Graphics.DrawLine(p, posX, ClientRectangle.Top, posX, ClientRectangle.Bottom);
 
             var posY = (ValueY - MinY) / (MaxY - MinY) * ClientRectangle.Height;
-            e.Graphics.DrawLine(Pens.Black, ClientRectangle.Left, posY, ClientRectangle.Right, posY);
+            e.Graphics.DrawLine(p, ClientRectangle.Left, posY, ClientRectangle.Right, posY);
 
-            e.Graphics.FillEllipse(Brushes.Black, posX - 3, posY - 3, 6, 6);
+            e.Graphics.FillEllipse(b, posX - 3, posY - 3, 6, 6);
         }
 
         /// <inheritdoc />

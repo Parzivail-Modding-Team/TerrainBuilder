@@ -47,6 +47,8 @@ namespace TerrainGen
         private readonly ShaderUniform _uHeight = new ShaderUniform("height");
         private readonly ShaderUniform _uTexColor = new ShaderUniform("screenColor");
         private readonly ShaderUniform _uTexUi = new ShaderUniform("screenUi");
+        private readonly ShaderUniform _uSamples = new ShaderUniform("samples");
+        private readonly ShaderUniform _uSamplesUi = new ShaderUniform("samplesUi");
 
         private Thread _worker;
 
@@ -73,7 +75,7 @@ namespace TerrainGen
 
             _framebuffer = new Framebuffer(8);
             _framebuffer.Init(window.Width, window.Height);
-            _framebufferUi = new Framebuffer(8);
+            _framebufferUi = new Framebuffer(1);
             _framebufferUi.Init(window.Width, window.Height);
             _texRandom = LoadGlTexture(EmbeddedFiles.random);
             _shaderModel = new ShaderProgram(EmbeddedFiles.fs_model, EmbeddedFiles.vs_model);
@@ -190,9 +192,10 @@ namespace TerrainGen
             _uMatModel.Value = model;
             _uMatView.Value = view;
             _uMatProjection.Value = projection;
+	        _uSamples.Value = _framebuffer.Samples;
 
-            // Engage shader, render, disengage
-            _shaderModel.Use(_uTint, _uLightPos, _uMatModel, _uMatView, _uMatProjection);
+			// Engage shader, render, disengage
+			_shaderModel.Use(_uTint, _uLightPos, _uMatModel, _uMatView, _uMatProjection, _uSamples);
 
             foreach (var chunk in Chunks)
                 chunk?.Draw();
@@ -245,8 +248,10 @@ namespace TerrainGen
             _uHeight.Value = _window.Height;
             _uTexColor.Value = 0;
             _uTexUi.Value = 1;
+	        _uSamples.Value = _framebuffer.Samples;
+	        _uSamplesUi.Value = _framebufferUi.Samples;
 
-            _shaderScreen.Use(_uWidth, _uHeight, _uTexColor, _uTexUi);
+			_shaderScreen.Use(_uWidth, _uHeight, _uTexColor, _uTexUi, _uSamples, _uSamplesUi);
             DrawFullscreenQuad(_framebuffer.TextureId, _framebufferUi.TextureId);
             _shaderScreen.Release();
         }
@@ -338,5 +343,10 @@ namespace TerrainGen
 
             return tex;
         }
+
+	    public void SetSamples(int samples)
+	    {
+		    _framebuffer.Samples = samples;
+	    }
     }
 }

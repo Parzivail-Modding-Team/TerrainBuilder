@@ -5,12 +5,24 @@ namespace TerrainGen.Graphics
 {
     internal class Framebuffer
     {
-        private readonly int _samples;
+        private int _samples;
         public int FboId { get; set; }
         public int TextureId { get; set; }
         public int DepthId { get; set; }
+        public int Width { get; private set; }
+        public int Height { get; private set; }
 
-        public Framebuffer(int samples)
+	    public int Samples
+		{
+			get => _samples;
+			set
+			{
+				_samples = value;
+				Init(Width, Height);
+			}
+		}
+
+		public Framebuffer(int samples)
         {
             _samples = samples;
             FboId = GL.GenFramebuffer();
@@ -20,6 +32,8 @@ namespace TerrainGen.Graphics
 
         public void Init(int width, int height)
         {
+	        Width = width;
+	        Height = height;
             Use();
 
             GL.BindTexture(TextureTarget.Texture2DMultisample, TextureId);
