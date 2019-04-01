@@ -65,7 +65,7 @@ namespace TerrainGen
             _fgJobs = new ConcurrentQueue<IJob>();
             _bgJobs = new ConcurrentQueue<IJob>();
 
-            _nvg = GlNanoVg.CreateGl(NvgCreateFlags.StencilStrokes);
+            _nvg = GlNanoVg.CreateGl(NvgCreateFlags.StencilStrokes | NvgCreateFlags.AntiAlias);
 
             var rSans = _nvg.CreateFont("sans", EmbeddedFiles.ibmplexmono);
             if (rSans == -1)
