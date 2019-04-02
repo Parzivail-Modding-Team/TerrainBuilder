@@ -1,36 +1,39 @@
 ﻿using System;
 using System.Drawing;
-using NanoVGDotNet.NanoVG;
 using OpenTK;
 using OpenTK.Input;
 
 namespace Kuat
 {
-    public class KuatControl
-    {
-	    public EventHandler<MouseButtonEventArgs> Click;
-	    public EventHandler<MouseButtonEventArgs> DoubleClick;
+	public class KuatControl
+	{
+		public EventHandler<MouseButtonEventArgs> Click;
+		public EventHandler<MouseButtonEventArgs> DoubleClick;
 		public EventHandler<MouseButtonEventArgs> MouseDown;
 		public EventHandler<MouseButtonEventArgs> MouseUp;
 		public EventHandler<MouseWheelEventArgs> MouseWheel;
-		public EventHandler<MouseEventArgs> MouseEnter;
-	    public EventHandler<MouseEventArgs> MouseLeave;
-	    public EventHandler<MouseEventArgs> MouseMove;
-	    public EventHandler<EventArgs> Paint;
-	    public EventHandler<EventArgs> TextChanged;
-	    public EventHandler<KeyboardKeyEventArgs> KeyDown;
-	    public EventHandler<KeyboardKeyEventArgs> KeyUp;
-	    public EventHandler<KeyPressEventArgs> KeyPress;
+		public EventHandler<MouseMoveEventArgs> MouseEnter;
+		public EventHandler<MouseMoveEventArgs> MouseLeave;
+		public EventHandler<MouseMoveEventArgs> MouseMove;
+		public EventHandler<PaintEventArgs> Paint;
+		public EventHandler<EventArgs> TextChanged;
+		public EventHandler<KeyboardKeyEventArgs> KeyDown;
+		public EventHandler<KeyboardKeyEventArgs> KeyUp;
+		public EventHandler<KeyPressEventArgs> KeyPress;
 
-        public Point Location { get; set; }
-        public Size Size { get; set; }
-        public string Name { get; set; }
-        public string Text { get; set; }
-        public Color ForeColor { get; set; }
-        public Color BackColor { get; set; }
-        public int ZIndex { get; set; }
-        public int TabIndex { get; set; }
-        public bool TabStop { get; set; }
+		public Point Location { get; set; }
+		public Size Size { get; set; }
+		public string Name { get; set; }
+		public string Text { get; set; }
+		public Color ForeColor { get; set; }
+		public Color BackColor { get; set; }
+		public int ZIndex { get; set; }
+		public int TabIndex { get; set; }
+		public bool TabStop { get; set; }
+		public bool CanFocus { get; set; }
+		public bool HasFocus { get; set; }
+
+		public Rectangle ClientRectangle => new Rectangle(Location, Size);
 
 		protected virtual void OnClick(object sender, MouseButtonEventArgs e)
 		{
@@ -57,22 +60,22 @@ namespace Kuat
 			MouseWheel?.Invoke(sender, e);
 		}
 
-		protected virtual void OnMouseEnter(object sender, MouseEventArgs e)
+		protected virtual void OnMouseEnter(object sender, MouseMoveEventArgs e)
 		{
 			MouseEnter?.Invoke(sender, e);
 		}
 
-		protected virtual void OnMouseLeave(object sender, MouseEventArgs e)
+		protected virtual void OnMouseLeave(object sender, MouseMoveEventArgs e)
 		{
 			MouseLeave?.Invoke(sender, e);
 		}
 
-		protected virtual void OnMouseMove(object sender, MouseEventArgs e)
+		protected virtual void OnMouseMove(object sender, MouseMoveEventArgs e)
 		{
 			MouseMove?.Invoke(sender, e);
 		}
 
-		protected virtual void OnPaint(object sender, EventArgs e)
+		protected virtual void OnPaint(object sender, PaintEventArgs e)
 		{
 			Paint?.Invoke(sender, e);
 		}
@@ -96,6 +99,5 @@ namespace Kuat
 		{
 			KeyPress?.Invoke(sender, e);
 		}
-
 	}
 }

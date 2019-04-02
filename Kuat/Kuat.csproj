@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="KuatWindow.cs" />
     <Compile Include="KuatControl.cs" />
+    <Compile Include="PaintEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
