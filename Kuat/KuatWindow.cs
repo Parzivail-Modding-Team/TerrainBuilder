@@ -8,9 +8,6 @@ namespace Kuat
 {
 	public class KuatWindow
 	{
-		private Point _prevMousePos;
-		private Point _mousePos;
-
 		public ConcurrentBag<KuatControl> Controls { get; }
 
 		public KuatWindow(INativeWindow window)
@@ -21,48 +18,24 @@ namespace Kuat
 
 		private void SubscribeEvents(INativeWindow window)
 		{
-			window.MouseMove += WindowOnMouseMove;
-			window.MouseWheel += WindowOnMouseWheel;
-			window.MouseDown += WindowOnMouseDown;
+			window.MouseMove += WindowOnMouseEvent;
+			window.MouseWheel += WindowOnMouseEvent;
+			window.MouseDown += WindowOnMouseEvent;
 		}
 
-		private void WindowOnMouseDown(object sender, MouseButtonEventArgs mouseButtonEventArgs)
+		private void WindowOnMouseEvent(object sender, MouseEventArgs args)
 		{
+		    var isFocusingEvent = args is MouseButtonEventArgs;
+            var focused = false;
 			foreach (var control in Controls)
 			{
-				if (control.ClientRectangle.Contains(mouseButtonEventArgs.Position))
-				{
-					control.MouseDown.Invoke(sender, mouseButtonEventArgs);
-					SetFocus(control);
-				}
+                control.ProcessMouseEvents(sender, args);
+			    if (!isFocusingEvent || !control.CanFocus || !control.ClientRectangle.Contains(args.Position)) continue;
+			    SetFocus(control);
+			    focused = true;
 			}
-		}
-
-		private void WindowOnMouseWheel(object sender, MouseWheelEventArgs mouseWheelEventArgs)
-		{
-			foreach (var control in Controls)
-			{
-				if (control.HasFocus)
-					control.MouseWheel.Invoke(sender, mouseWheelEventArgs);
-			}
-		}
-
-		private void WindowOnMouseMove(object sender, MouseMoveEventArgs mouseMoveEventArgs)
-		{
-			_prevMousePos = _mousePos;
-			_mousePos = mouseMoveEventArgs.Position;
-			foreach (var control in Controls)
-			{
-				if (control.ClientRectangle.Contains(_mousePos))
-				{
-					if (control.ClientRectangle.Contains(_prevMousePos))
-						control.MouseMove.Invoke(sender, mouseMoveEventArgs);
-					else
-						control.MouseEnter.Invoke(sender, mouseMoveEventArgs);
-				}
-				else if (control.ClientRectangle.Contains(_prevMousePos))
-					control.MouseLeave.Invoke(sender, mouseMoveEventArgs);
-			}
+            if (!focused && isFocusingEvent)
+                SetFocus(null);
 		}
 
 		private void SetFocus(KuatControl needle)

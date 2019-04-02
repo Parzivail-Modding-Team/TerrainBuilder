@@ -99,5 +99,31 @@ namespace Kuat
 		{
 			KeyPress?.Invoke(sender, e);
 		}
+
+	    internal void ProcessMouseEvents(object sender, MouseEventArgs args)
+	    {
+	        switch (args)
+	        {
+	            case MouseButtonEventArgs buttonEventArgs:
+	                break;
+	            case MouseMoveEventArgs moveEventArgs:
+	                var mousePos = moveEventArgs.Position;
+	                var prevMousePos = mousePos - new Size(moveEventArgs.XDelta, moveEventArgs.YDelta);
+	                if (ClientRectangle.Contains(mousePos))
+	                {
+	                    if (ClientRectangle.Contains(prevMousePos))
+	                        OnMouseMove(sender, moveEventArgs);
+	                    else
+	                        OnMouseEnter(sender, moveEventArgs);
+	                }
+	                else if (ClientRectangle.Contains(prevMousePos))
+	                    OnMouseLeave(sender, moveEventArgs);
+                    break;
+	            case MouseWheelEventArgs wheelEventArgs:
+                    if (HasFocus)
+                        OnMouseWheel(sender, wheelEventArgs);
+	                break;
+	        }
+	    }
 	}
 }
