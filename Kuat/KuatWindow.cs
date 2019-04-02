@@ -6,27 +6,13 @@ using System.Threading.Tasks;
 
 namespace Kuat
 {
-    public class KuatWindow : IKuatObject
+    public class KuatWindow
     {
         public ConcurrentBag<KuatControl> Widgets { get; }
 
         public KuatWindow()
         {
             Widgets = new ConcurrentBag<KuatControl>();
-        }
-
-        /// <inheritdoc />
-        public void Update(double dt)
-        {
-            foreach (var widget in Widgets)
-                widget.Update(dt);
-        }
-
-        /// <inheritdoc />
-        public void Render(double partialTicks)
-        {
-            foreach (var widget in Widgets.OrderBy(control => control.ZIndex))
-                widget.Render(partialTicks);
         }
     }
 }
