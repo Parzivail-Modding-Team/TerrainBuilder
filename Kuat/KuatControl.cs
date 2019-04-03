@@ -32,6 +32,7 @@ namespace Kuat
 		public bool TabStop { get; set; }
 		public bool CanFocus { get; set; }
 		public bool HasFocus { get; set; }
+		public bool CanTabOut { get; set; }
 
 		public Rectangle ClientRectangle => new Rectangle(Location, Size);
 
@@ -95,9 +96,17 @@ namespace Kuat
 			KeyUp?.Invoke(sender, e);
 		}
 
-		protected virtual void OnKeyPress(object sender, KeyPressEventArgs e)
+		protected virtual void OnKeyPress(object sender, KeyPressEventArgs e) 
 		{
 			KeyPress?.Invoke(sender, e);
+		}
+
+		internal void ProcessKeyboardEvents(object sender, KeyboardKeyEventArgs args)
+		{
+		}
+
+		internal void ProcessKeyboardEvents(object sender, KeyPressEventArgs args)
+		{
 		}
 
 	    internal void ProcessMouseEvents(object sender, MouseEventArgs args)
