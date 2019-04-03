@@ -9,6 +9,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Kuat;
+using Kuat.Control;
 using NanoVGDotNet.FontStash;
 using NanoVGDotNet.NanoVG;
 using OpenTK;
@@ -32,6 +34,7 @@ namespace TerrainGen
 
         private readonly NvgContext _nvg;
         private readonly PerfGraph _perfGraphFps;
+        private readonly KuatWindow _ui;
         private readonly Framebuffer _framebuffer;
         private readonly Framebuffer _framebufferUi;
         private readonly int _texRandom;
@@ -66,6 +69,13 @@ namespace TerrainGen
             _bgJobs = new ConcurrentQueue<IJob>();
 
             _nvg = GlNanoVg.CreateGl(NvgCreateFlags.StencilStrokes | NvgCreateFlags.AntiAlias);
+            _ui = new KuatWindow(window);
+
+            _ui.Controls.Add(new KuatButton()
+            {
+                Location = new Point(50, 50),
+                Size = new Size(120, 75)
+            });
 
             var rSans = _nvg.CreateFont("sans", EmbeddedFiles.ibmplexmono);
             if (rSans == -1)
@@ -241,6 +251,9 @@ namespace TerrainGen
             _perfGraphFps.RenderGraph(_nvg, 4, 4);
 
             _nvg.Restore();
+
+            _ui.Paint(this, _nvg);
+
             _nvg.EndFrame();
             _framebufferUi.Release();
 

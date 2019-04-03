@@ -42,9 +42,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EventStage.cs" />
+    <Compile Include="Control\KuatButton.cs" />
     <Compile Include="KuatWindow.cs" />
-    <Compile Include="KuatControl.cs" />
-    <Compile Include="PaintEventArgs.cs" />
+    <Compile Include="Control\KuatControl.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

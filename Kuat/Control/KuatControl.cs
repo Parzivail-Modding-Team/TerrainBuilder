@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 using System.Drawing;
+using NanoVGDotNet.NanoVG;
 using OpenTK;
 using OpenTK.Input;
 
@@ -15,7 +17,7 @@ namespace Kuat
 		public EventHandler<MouseMoveEventArgs> MouseEnter;
 		public EventHandler<MouseMoveEventArgs> MouseLeave;
 		public EventHandler<MouseMoveEventArgs> MouseMove;
-		public EventHandler<PaintEventArgs> Paint;
+		public EventHandler<NvgContext> Paint;
 		public EventHandler<EventArgs> TextChanged;
 		public EventHandler<KeyboardKeyEventArgs> KeyDown;
 		public EventHandler<KeyboardKeyEventArgs> KeyUp;
@@ -33,8 +35,14 @@ namespace Kuat
 		public bool CanFocus { get; set; }
 		public bool HasFocus { get; set; }
 		public bool CanTabOut { get; set; }
+        public bool Invalid { get; private set; }
 
 		public Rectangle ClientRectangle => new Rectangle(Location, Size);
+
+        public void Invalidate()
+        {
+            Invalid = true;
+        }
 
 		protected virtual void OnClick(object sender, MouseButtonEventArgs e)
 		{
@@ -76,7 +84,7 @@ namespace Kuat
 			MouseMove?.Invoke(sender, e);
 		}
 
-		protected virtual void OnPaint(object sender, PaintEventArgs e)
+		protected virtual void OnPaint(object sender, NvgContext e)
 		{
 			Paint?.Invoke(sender, e);
 		}
@@ -103,24 +111,34 @@ namespace Kuat
 
 		internal void ProcessKeyboardEvents(object sender, KeyboardKeyEventArgs args)
 		{
+            Contract.Requires(args != null);
+            if (args.Keyboard.IsKeyDown(args.Key))
+                OnKeyDown(sender, args);
+            else
+                OnKeyUp(sender, args);
 		}
 
 		internal void ProcessKeyboardEvents(object sender, KeyPressEventArgs args)
 		{
+            OnKeyPress(sender, args);
 		}
 
-	    internal void ProcessMouseEvents(object sender, MouseEventArgs args)
+	    internal EventStage ProcessMouseEvents(object sender, MouseEventArgs args)
 	    {
+            var mousePos = args.Position;
 	        switch (args)
 	        {
 	            case MouseButtonEventArgs buttonEventArgs:
-                    if (buttonEventArgs.IsPressed)
-                        OnMouseDown(sender, buttonEventArgs);
-                    else
-                        OnMouseUp(sender, buttonEventArgs);
-	                break;
+                    if (ClientRectangle.Contains(mousePos))
+                    {
+                        if (buttonEventArgs.IsPressed)
+                            OnMouseDown(sender, buttonEventArgs);
+                        else
+                            OnMouseUp(sender, buttonEventArgs);
+                        return EventStage.Handled;
+                    }
+                    break;
 	            case MouseMoveEventArgs moveEventArgs:
-	                var mousePos = moveEventArgs.Position;
 	                var prevMousePos = mousePos - new Size(moveEventArgs.XDelta, moveEventArgs.YDelta);
 	                if (ClientRectangle.Contains(mousePos))
 	                {
@@ -137,6 +155,13 @@ namespace Kuat
                         OnMouseWheel(sender, wheelEventArgs);
 	                break;
 	        }
-	    }
-	}
+
+            return EventStage.Pass;
+        }
+
+        public void Render(object sender, NvgContext context)
+        {
+            OnPaint(sender, context);
+        }
+    }
 }

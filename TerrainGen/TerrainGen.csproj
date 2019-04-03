@@ -132,6 +132,10 @@
     <None Include="Resources\folder_brick.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Kuat\Kuat.csproj">
+      <Project>{18F4FC46-C54A-42F3-8E17-D754C22DCD30}</Project>
+      <Name>Kuat</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NanoVGDotNet\NanoVGDotNet.csproj">
       <Project>{9a3ab3cf-ae64-45c0-90e5-ab9b93b639f6}</Project>
       <Name>NanoVGDotNet</Name>
