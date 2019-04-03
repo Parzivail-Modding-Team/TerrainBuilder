@@ -105,6 +105,10 @@ namespace Kuat
 	        switch (args)
 	        {
 	            case MouseButtonEventArgs buttonEventArgs:
+                    if (buttonEventArgs.IsPressed)
+                        OnMouseDown(sender, buttonEventArgs);
+                    else
+                        OnMouseUp(sender, buttonEventArgs);
 	                break;
 	            case MouseMoveEventArgs moveEventArgs:
 	                var mousePos = moveEventArgs.Position;

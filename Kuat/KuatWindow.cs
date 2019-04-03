@@ -21,7 +21,8 @@ namespace Kuat
 			window.MouseMove += WindowOnMouseEvent;
 			window.MouseWheel += WindowOnMouseEvent;
 			window.MouseDown += WindowOnMouseEvent;
-		}
+            window.MouseUp += WindowOnMouseEvent;
+        }
 
 		private void WindowOnMouseEvent(object sender, MouseEventArgs args)
 		{
