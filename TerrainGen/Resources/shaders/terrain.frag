@@ -2,8 +2,6 @@
 
 uniform vec3 lightPos;
 uniform vec3 tint;
-uniform int width;
-uniform int height;
 uniform int samples;
 uniform sampler2D random;
 
@@ -15,7 +13,7 @@ out vec4 color;
 
 void main()
 {
-	vec2 resolution = vec2(float(width), float(height));
+	vec2 resolution = vec2(512., 512.);
 
     vec3 norm = normalize(fragNormal);
     vec3 lightDir = normalize(lightPos - fragPos);  
@@ -23,9 +21,9 @@ void main()
     float ambient = 0.3;
 	
     // Look up noise from texture
-    vec4 noise = texture(random, gl_FragCoord.xy / resolution);
+    vec4 noise = texture(random, gl_FragCoord.xy / resolution.yy);
     
     color = vec4(fragColor.rgb * tint * clamp(ambient + diffuse, 0, 1), 1.);
 
-    color += vec4(vec3(((noise.r + noise.g) - 0.5) / 255.0), 0.0);
+    color += vec4(vec3((noise.r - 0.5) / 255.0), 0.0);
 }

@@ -9,7 +9,7 @@ using OpenTK.Input;
 
 namespace Kuat
 {
-    public class KuatWindow
+    public class KuatWindow : KuatControl
     {
         /// <summary>
         /// Gets the time, in milliseconds, that the user has configured to be the minimum time between clicks to be considered a double click
@@ -34,24 +34,16 @@ namespace Kuat
         /// The time at which a click event occurs to check for double clicks
         /// </summary>
         private DateTime _clickTime;
-        
-        /// <summary>
-        /// The list of controls contained within the window
-        /// </summary>
-        public ConcurrentBag<KuatControl> Controls { get; }
-        /// <summary>
-        /// True if the window contains invalid controls and requires a re-render
-        /// </summary>
-        public bool Invalid => Controls.Any(control => control.Invalid);
 
         /// <summary>
         /// Creates a <see cref="KuatWindow"/> that contains the functionality to hold controls and pump events
         /// </summary>
         /// <param name="window">The <see cref="INativeWindow"/> parent from which to subscribe events</param>
-        public KuatWindow(INativeWindow window)
+        /// <param name="defaultFont">The default font for the window</param>
+        public KuatWindow(INativeWindow window, KuatFont defaultFont) : base("_window")
         {
-            Controls = new ConcurrentBag<KuatControl>();
             SubscribeEvents(window);
+            Font = defaultFont;
         }
 
         /// <summary>
@@ -74,7 +66,7 @@ namespace Kuat
         /// </summary>
         /// <param name="sender">The object which initiates the event</param>
         /// <param name="context">The context of the event</param>
-        public void Paint(object sender, NvgContext context)
+        public void Render(object sender, NvgContext context)
         {
             foreach (var control in Controls) control.ProcessRenderEvent(sender, context);
         }
@@ -131,7 +123,7 @@ namespace Kuat
                 SetFocus(null);
 
             // return if we don't need to process click or double click events
-            if (_focusedControl is null || _focusedControl != prevFocusedControl || !(args is MouseButtonEventArgs buttonEvent) ||
+            if (_focusedControl == null || _focusedControl != prevFocusedControl || !(args is MouseButtonEventArgs buttonEvent) ||
                 buttonEvent.IsPressed)
                 return;
 

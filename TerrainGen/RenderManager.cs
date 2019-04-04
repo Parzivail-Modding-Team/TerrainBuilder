@@ -70,15 +70,14 @@ namespace TerrainGen
             _bgJobs = new ConcurrentQueue<IJob>();
 
             _nvg = GlNanoVg.CreateGl(NvgCreateFlags.StencilStrokes | NvgCreateFlags.AntiAlias);
-            _ui = new KuatWindow(window);
+            _ui = new KuatWindow(window, new KuatFont("sans", 16));
 
             KuatButton b;
             _ui.Controls.Add(b = new KuatButton("bTest")
             {
                 Location = new Point(50, 50),
-                Size = new Size(120, 75),
-                Text = "Hello, World!",
-                Font = new KuatFont("sans", 18)
+                Size = new Size(120, 60),
+                Text = "Hello, World!"
             });
             b.Click += (sender, args) => { Lumberjack.Info("Click!"); };
 
@@ -202,8 +201,6 @@ namespace TerrainGen
             GL.Color3(Color.White);
 
             // Set up uniforms
-            _uWidth.Value = _window.Width;
-            _uHeight.Value = _window.Height;
             _uTint.Value = TintColor;
             _uLightPos.Value = LightPosition;
             _uMatModel.Value = model;
@@ -216,7 +213,7 @@ namespace TerrainGen
             GL.BindTexture(TextureTarget.Texture2D, _texRandom);
 
 			// Engage shader, render, disengage
-			_shaderModel.Use(_uTint, _uLightPos, _uMatModel, _uMatView, _uMatProjection, _uSamples, _uTexRandom, _uWidth, _uHeight);
+			_shaderModel.Use(_uTint, _uLightPos, _uMatModel, _uMatView, _uMatProjection, _uSamples, _uTexRandom);
 
             foreach (var chunk in Chunks)
                 chunk?.Draw();
@@ -263,12 +260,14 @@ namespace TerrainGen
 
             _nvg.Restore();
 
-            _ui.Paint(this, _nvg);
+            _ui.Render(this, _nvg);
 
             _nvg.EndFrame();
             _framebufferUi.Release();
 
-            _uTexColor.Value = 0;
+            _uWidth.Value = _window.Width;
+            _uHeight.Value = _window.Height;
+			_uTexColor.Value = 0;
             _uTexUi.Value = 1;
 	        _uSamples.Value = _framebuffer.Samples;
 	        _uSamplesUi.Value = _framebufferUi.Samples;

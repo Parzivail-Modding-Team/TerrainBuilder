@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
 using System.Drawing;
+using System.Linq;
 using NanoVGDotNet.NanoVG;
 using OpenTK;
 using OpenTK.Input;
@@ -24,6 +25,8 @@ namespace Kuat
 		public EventHandler<KeyPressEventArgs> KeyPress;
 
         private string _text;
+        private bool _invalid;
+        private KuatFont _font;
 
         /// <summary>
         /// The location of the control
@@ -35,13 +38,23 @@ namespace Kuat
 		public Size Size { get; set; }
 
         /// <summary>
+        /// The control which owns this control
+        /// </summary>
+        public KuatControl Parent { get; internal set; }
+
+        /// <summary>
         /// The name of the font loaded NanoVG
         /// </summary>
-        public KuatFont Font { get; set; } = new KuatFont();
+        public KuatFont Font
+        {
+	        get => _font == null && Parent?.Font != null ? Parent.Font : _font;
+	        set => _font = value;
+        }
+
         /// <summary>
         /// The identifying name of the control
         /// </summary>
-		public string Name { get; set; }
+        public string Name { get; set; }
         /// <summary>
         /// The text associated with the control
         /// </summary>
@@ -86,19 +99,29 @@ namespace Kuat
         /// True if a tab character inputted while the control is focused will blur this control and advance along the tab focus list
         /// </summary>
 		public bool CanTabOut { get; set; } = true;
+
         /// <summary>
         /// True if the control is invalid and requires a re-render
         /// </summary>
-        public bool Invalid { get; private set; }
-
+        public bool Invalid
+        {
+	        get => _invalid || Controls.Any(control => control.Invalid);
+	        private set => _invalid = value;
+        }
         /// <summary>
-        /// The rectangle that defines the render and picking bounds of the control
+        /// The list of children controls contained within the control
         /// </summary>
+        public KuatControlCollection Controls { get; }
+
+		/// <summary>
+		/// The rectangle that defines the render and picking bounds of the control
+		/// </summary>
 		public Rectangle ClientRectangle => new Rectangle(Location, Size);
 
         public KuatControl(string name)
         {
             Name = name;
+			Controls = new KuatControlCollection(this);
         }
 
         /// <summary>
@@ -240,7 +263,7 @@ namespace Kuat
 		}
         
         /// <summary>
-        /// Processed the keyboard state change events
+        /// Processes the keyboard state change events
         /// </summary>
         /// <param name="sender">The object which initiates the events</param>
         /// <param name="args">The context of the events</param>
@@ -253,7 +276,7 @@ namespace Kuat
 		}
         
         /// <summary>
-        /// Processed the keyboard key press events
+        /// Processes the keyboard key press events
         /// </summary>
         /// <param name="sender">The object which initiates the events</param>
         /// <param name="args">The context of the events</param>
@@ -263,7 +286,7 @@ namespace Kuat
 		}
         
         /// <summary>
-        /// Processed the mouse events
+        /// Processes the mouse events
         /// </summary>
         /// <param name="sender">The object which initiates the events</param>
         /// <param name="args">The context of the events</param>
@@ -309,11 +332,11 @@ namespace Kuat
         }
         
         /// <summary>
-        /// Processed the render event
+        /// Processes the render event
         /// </summary>
         /// <param name="sender">The object which initiates the event</param>
         /// <param name="context">The graphics context of the render call</param>
-        public void ProcessRenderEvent(object sender, NvgContext context)
+        internal void ProcessRenderEvent(object sender, NvgContext context)
         {
             OnPaint(sender, context);
         }
