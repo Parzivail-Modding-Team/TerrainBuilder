@@ -11,9 +11,9 @@ namespace Kuat.Control
 {
     public class KuatButton : KuatControl
     {
-        public KuatButton()
+        /// <inheritdoc />
+        public KuatButton(string name) : base(name)
         {
-            BackColor = Color.White;
         }
 
         /// <inheritdoc />
@@ -26,22 +26,12 @@ namespace Kuat.Control
             e.BeginPath();
             e.Rect(Location.X, Location.Y, Size.Width, Size.Height);
             e.Fill();
-        }
 
-        /// <inheritdoc />
-        protected override void OnMouseDown(object sender, MouseButtonEventArgs e)
-        {
-            base.OnMouseDown(sender, e);
-
-            Console.WriteLine("Down");
-        }
-
-        /// <inheritdoc />
-        protected override void OnMouseUp(object sender, MouseButtonEventArgs e)
-        {
-            base.OnMouseUp(sender, e);
-
-            Console.WriteLine("Up");
+            e.FillColor(NanoVg.Rgba(ForeColor));
+            e.FontFace(Font.Family);
+            e.FontSize(Font.Size);
+            e.TextAlign(NvgAlign.Center | NvgAlign.Middle);
+            e.Text(Location.X + Size.Width / 2, Location.Y + Size.Height / 2, Text);
         }
 
         /// <inheritdoc />

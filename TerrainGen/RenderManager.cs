@@ -50,6 +50,7 @@ namespace TerrainGen
         private readonly ShaderUniform _uHeight = new ShaderUniform("height");
         private readonly ShaderUniform _uTexColor = new ShaderUniform("screenColor");
         private readonly ShaderUniform _uTexUi = new ShaderUniform("screenUi");
+        private readonly ShaderUniform _uTexRandom = new ShaderUniform("random");
         private readonly ShaderUniform _uSamples = new ShaderUniform("samples");
         private readonly ShaderUniform _uSamplesUi = new ShaderUniform("samplesUi");
 
@@ -71,11 +72,15 @@ namespace TerrainGen
             _nvg = GlNanoVg.CreateGl(NvgCreateFlags.StencilStrokes | NvgCreateFlags.AntiAlias);
             _ui = new KuatWindow(window);
 
-            _ui.Controls.Add(new KuatButton()
+            KuatButton b;
+            _ui.Controls.Add(b = new KuatButton("bTest")
             {
                 Location = new Point(50, 50),
-                Size = new Size(120, 75)
+                Size = new Size(120, 75),
+                Text = "Hello, World!",
+                Font = new KuatFont("sans", 18)
             });
+            b.Click += (sender, args) => { Lumberjack.Info("Click!"); };
 
             var rSans = _nvg.CreateFont("sans", EmbeddedFiles.ibmplexmono);
             if (rSans == -1)
@@ -197,15 +202,21 @@ namespace TerrainGen
             GL.Color3(Color.White);
 
             // Set up uniforms
+            _uWidth.Value = _window.Width;
+            _uHeight.Value = _window.Height;
             _uTint.Value = TintColor;
             _uLightPos.Value = LightPosition;
             _uMatModel.Value = model;
             _uMatView.Value = view;
             _uMatProjection.Value = projection;
 	        _uSamples.Value = _framebuffer.Samples;
+            _uTexRandom.Value = 1;
+            
+            GL.ActiveTexture(TextureUnit.Texture1);
+            GL.BindTexture(TextureTarget.Texture2D, _texRandom);
 
 			// Engage shader, render, disengage
-			_shaderModel.Use(_uTint, _uLightPos, _uMatModel, _uMatView, _uMatProjection, _uSamples);
+			_shaderModel.Use(_uTint, _uLightPos, _uMatModel, _uMatView, _uMatProjection, _uSamples, _uTexRandom, _uWidth, _uHeight);
 
             foreach (var chunk in Chunks)
                 chunk?.Draw();
@@ -257,8 +268,6 @@ namespace TerrainGen
             _nvg.EndFrame();
             _framebufferUi.Release();
 
-            _uWidth.Value = _window.Width;
-            _uHeight.Value = _window.Height;
             _uTexColor.Value = 0;
             _uTexUi.Value = 1;
 	        _uSamples.Value = _framebuffer.Samples;

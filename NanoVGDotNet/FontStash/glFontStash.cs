@@ -134,7 +134,7 @@ namespace NanoVGDotNet.FontStash
 			GL.TexCoordPointer(2, TexCoordPointerType.Float, 0, tcoords);
 			GL.ColorPointer(4, ColorPointerType.UnsignedByte, 0, colors);
 
-			GL.DrawArrays(BeginMode.Triangles, 0, nverts);
+			GL.DrawArrays(PrimitiveType.Triangles, 0, nverts);
 
 			GL.Disable(EnableCap.Texture2D);
 			GL.DisableClientState(ArrayCap.VertexArray);

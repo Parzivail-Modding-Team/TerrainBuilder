@@ -42,10 +42,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="KuatFont.cs" />
     <Compile Include="EventStage.cs" />
     <Compile Include="Control\KuatButton.cs" />
     <Compile Include="KuatWindow.cs" />
     <Compile Include="Control\KuatControl.cs" />
+    <Compile Include="MouseClickEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

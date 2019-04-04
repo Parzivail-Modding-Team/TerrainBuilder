@@ -391,8 +391,7 @@ namespace NanoVGDotNet.FontStash
 			FONSstate state;
 			fons__getState(stash, out state);
 			uint codepoint = 0;
-			uint utf8state = 0;
-			var q = new FONSquad();
+            var q = new FONSquad();
 			FONSglyph glyph;
 			var prevGlyphIndex = -1;
 			var isize = (short)(state.size * 10.0f);
