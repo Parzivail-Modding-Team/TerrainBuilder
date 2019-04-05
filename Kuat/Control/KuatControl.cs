@@ -1,62 +1,73 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using System.Drawing;
 using System.Linq;
 using NanoVGDotNet.NanoVG;
 using OpenTK;
 using OpenTK.Input;
 
-namespace Kuat
+namespace Kuat.Control
 {
-	public class KuatControl
-	{
-		public EventHandler<MouseClickEventArgs> Click;
-		public EventHandler<MouseClickEventArgs> DoubleClick;
-		public EventHandler<MouseButtonEventArgs> MouseDown;
-		public EventHandler<MouseButtonEventArgs> MouseUp;
-		public EventHandler<MouseWheelEventArgs> MouseWheel;
-		public EventHandler<MouseMoveEventArgs> MouseEnter;
-		public EventHandler<MouseMoveEventArgs> MouseLeave;
-		public EventHandler<MouseMoveEventArgs> MouseMove;
-		public EventHandler<NvgContext> Paint;
-		public EventHandler<EventArgs> TextChanged;
-		public EventHandler<KeyboardKeyEventArgs> KeyDown;
-		public EventHandler<KeyboardKeyEventArgs> KeyUp;
-		public EventHandler<KeyPressEventArgs> KeyPress;
+    public class KuatControl
+    {
+        private KuatFont _font;
+        private bool _invalid;
 
         private string _text;
-        private bool _invalid;
-        private KuatFont _font;
+        public EventHandler<MouseClickEventArgs> Click;
+        public EventHandler<MouseClickEventArgs> DoubleClick;
+        public EventHandler<KeyboardKeyEventArgs> KeyDown;
+        public EventHandler<KeyPressEventArgs> KeyPress;
+        public EventHandler<KeyboardKeyEventArgs> KeyUp;
+        public EventHandler<MouseButtonEventArgs> MouseDown;
+        public EventHandler<MouseMoveEventArgs> MouseEnter;
+        public EventHandler<MouseMoveEventArgs> MouseLeave;
+        public EventHandler<MouseMoveEventArgs> MouseMove;
+        public EventHandler<MouseButtonEventArgs> MouseUp;
+        public EventHandler<MouseWheelEventArgs> MouseWheel;
+        public EventHandler<NvgContext> Paint;
+        public EventHandler<EventArgs> TextChanged;
 
         /// <summary>
-        /// The location of the control
+        /// True if the control is being hovered
         /// </summary>
-		public Point Location { get; set; }
-        /// <summary>
-        /// The size of the control
-        /// </summary>
-		public Size Size { get; set; }
+        internal bool Hover { get; set; }
 
         /// <summary>
-        /// The control which owns this control
+        /// True if the control is active (i.e. being clicked on)
+        /// </summary>
+        internal bool Active { get; set; }
+
+        /// <summary>
+        ///     The location of the control
+        /// </summary>
+        public Point Location { get; set; }
+
+        /// <summary>
+        ///     The size of the control
+        /// </summary>
+        public Size Size { get; set; }
+
+        /// <summary>
+        ///     The control which owns this control
         /// </summary>
         public KuatControl Parent { get; internal set; }
 
         /// <summary>
-        /// The name of the font loaded NanoVG
+        ///     The name of the font loaded NanoVG
         /// </summary>
         public KuatFont Font
         {
-	        get => _font == null && Parent?.Font != null ? Parent.Font : _font;
-	        set => _font = value;
+            get => _font == null && Parent?.Font != null ? Parent.Font : _font;
+            set => _font = value;
         }
 
         /// <summary>
-        /// The identifying name of the control
+        ///     The identifying name of the control
         /// </summary>
         public string Name { get; set; }
+
         /// <summary>
-        /// The text associated with the control
+        ///     The text associated with the control
         /// </summary>
         public string Text
         {
@@ -67,65 +78,85 @@ namespace Kuat
                 OnTextChanged(this, EventArgs.Empty);
             }
         }
-        /// <summary>
-        /// The foreground color of the control
-        /// </summary>
-        public Color ForeColor { get; set; } = Color.Black;
-        /// <summary>
-        /// The background color of the control
-        /// </summary>
-        public Color BackColor { get; set; } = Color.White;
-        /// <summary>
-        /// The z-index of the control
-        /// </summary>
-		public int ZIndex { get; set; }
-        /// <summary>
-        /// The tab index of the control
-        /// </summary>
-		public int TabIndex { get; set; }
-        /// <summary>
-        /// True if the control can be focused on by tabbing to it
-        /// </summary>
-		public bool TabStop { get; set; }
-        /// <summary>
-        /// True if the control can receive any focus
-        /// </summary>
-        public bool CanFocus { get; set; } = true;
-        /// <summary>
-        /// True if the control is currently focused
-        /// </summary>
-		public bool HasFocus { get; set; }
-        /// <summary>
-        /// True if a tab character inputted while the control is focused will blur this control and advance along the tab focus list
-        /// </summary>
-		public bool CanTabOut { get; set; } = true;
 
         /// <summary>
-        /// True if the control is invalid and requires a re-render
+        ///     The foreground color of the control
+        /// </summary>
+        public Color ForeColor { get; set; } = Color.White;
+
+        /// <summary>
+        ///     The background color of the control
+        /// </summary>
+        public Color BackColor { get; set; } = Color.FromArgb(255, 53, 61, 66);
+
+        /// <summary>
+        ///     The hover color of the control
+        /// </summary>
+        public Color HoverColor { get; set; } = Color.FromArgb(255, 98, 106, 110);
+
+        /// <summary>
+        ///     The active color of the control
+        /// </summary>
+        public Color ActiveColor { get; set; } = Color.FromArgb(255, 124, 232, 255);
+
+        /// <summary>
+        ///     The z-index of the control
+        /// </summary>
+        public int ZIndex { get; set; }
+
+        /// <summary>
+        ///     The tab index of the control
+        /// </summary>
+        public int TabIndex { get; set; }
+
+        /// <summary>
+        ///     True if the control can be focused on by tabbing to it
+        /// </summary>
+        public bool TabStop { get; set; }
+
+        /// <summary>
+        ///     True if the control can receive any focus
+        /// </summary>
+        public bool CanFocus { get; set; } = true;
+
+        /// <summary>
+        ///     True if the control is currently focused
+        /// </summary>
+        public bool HasFocus { get; set; }
+
+        /// <summary>
+        ///     True if a tab character inputted while the control is focused will blur this control and advance along the tab
+        ///     focus list
+        /// </summary>
+        public bool CanTabOut { get; set; } = true;
+
+        /// <summary>
+        ///     True if the control is invalid and requires a re-render
         /// </summary>
         public bool Invalid
         {
-	        get => _invalid || Controls.Any(control => control.Invalid);
-	        private set => _invalid = value;
+            get => _invalid || Controls.Any(control => control.Invalid);
+            private set => _invalid = value;
         }
+
         /// <summary>
-        /// The list of children controls contained within the control
+        ///     The list of children controls contained within the control
         /// </summary>
         public KuatControlCollection Controls { get; }
 
-		/// <summary>
-		/// The rectangle that defines the render and picking bounds of the control
-		/// </summary>
-		public Rectangle ClientRectangle => new Rectangle(Location, Size);
+        /// <summary>
+        ///     The rectangle that defines the render and picking bounds of the control
+        /// </summary>
+        public Rectangle ClientRectangle => new Rectangle(Location, Size);
 
         public KuatControl(string name)
         {
             Name = name;
-			Controls = new KuatControlCollection(this);
+            Controls = new KuatControlCollection(this);
         }
 
         /// <summary>
-        /// Invalidates the control
+        ///     Invalidates the control
         /// </summary>
         public void Invalidate()
         {
@@ -133,169 +164,176 @@ namespace Kuat
         }
 
         /// <summary>
-        /// Raises the <see cref="Click"/> event
+        ///     Raises the <see cref="Click" /> event
         /// </summary>
         /// <param name="sender">The object which initiates the event</param>
         /// <param name="e">The context of the event</param>
-		protected virtual void OnClick(object sender, MouseClickEventArgs e)
-		{
-			Click?.Invoke(sender, e);
-		}
-        
+        protected virtual void OnClick(object sender, MouseClickEventArgs e)
+        {
+            Click?.Invoke(sender, e);
+        }
+
         /// <summary>
-        /// Raises the <see cref="DoubleClick"/> event
+        ///     Raises the <see cref="DoubleClick" /> event
         /// </summary>
         /// <param name="sender">The object which initiates the event</param>
         /// <param name="e">The context of the event</param>
-		protected virtual void OnDoubleClick(object sender, MouseClickEventArgs e)
-		{
-			DoubleClick?.Invoke(sender, e);
-		}
-        
+        protected virtual void OnDoubleClick(object sender, MouseClickEventArgs e)
+        {
+            DoubleClick?.Invoke(sender, e);
+        }
+
         /// <summary>
-        /// Raises the <see cref="MouseDown"/> event
+        ///     Raises the <see cref="MouseDown" /> event
         /// </summary>
         /// <param name="sender">The object which initiates the event</param>
         /// <param name="e">The context of the event</param>
-		protected virtual void OnMouseDown(object sender, MouseButtonEventArgs e)
-		{
-			MouseDown?.Invoke(sender, e);
-		}
-        
+        protected virtual void OnMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            MouseDown?.Invoke(sender, e);
+            Active = true;
+        }
+
         /// <summary>
-        /// Raises the <see cref="MouseUp"/> event
+        ///     Raises the <see cref="MouseUp" /> event
         /// </summary>
         /// <param name="sender">The object which initiates the event</param>
         /// <param name="e">The context of the event</param>
-		protected virtual void OnMouseUp(object sender, MouseButtonEventArgs e)
-		{
-			MouseUp?.Invoke(sender, e);
-		}
-        
+        protected virtual void OnMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            MouseUp?.Invoke(sender, e);
+            Active = false;
+        }
+
         /// <summary>
-        /// Raises the <see cref="MouseWheel"/> event
+        ///     Raises the <see cref="MouseWheel" /> event
         /// </summary>
         /// <param name="sender">The object which initiates the event</param>
         /// <param name="e">The context of the event</param>
-		protected virtual void OnMouseWheel(object sender, MouseWheelEventArgs e)
-		{
-			MouseWheel?.Invoke(sender, e);
-		}
-        
+        protected virtual void OnMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            MouseWheel?.Invoke(sender, e);
+        }
+
         /// <summary>
-        /// Raises the <see cref="MouseEnter"/> event
+        ///     Raises the <see cref="MouseEnter" /> event
         /// </summary>
         /// <param name="sender">The object which initiates the event</param>
         /// <param name="e">The context of the event</param>
-		protected virtual void OnMouseEnter(object sender, MouseMoveEventArgs e)
-		{
-			MouseEnter?.Invoke(sender, e);
-		}
-        
+        protected virtual void OnMouseEnter(object sender, MouseMoveEventArgs e)
+        {
+            MouseEnter?.Invoke(sender, e);
+            Hover = true;
+            if (e.Mouse.IsAnyButtonDown)
+                Active = true;
+        }
+
         /// <summary>
-        /// Raises the <see cref="MouseLeave"/> event
+        ///     Raises the <see cref="MouseLeave" /> event
         /// </summary>
         /// <param name="sender">The object which initiates the event</param>
         /// <param name="e">The context of the event</param>
-		protected virtual void OnMouseLeave(object sender, MouseMoveEventArgs e)
-		{
-			MouseLeave?.Invoke(sender, e);
-		}
-        
+        protected virtual void OnMouseLeave(object sender, MouseMoveEventArgs e)
+        {
+            MouseLeave?.Invoke(sender, e);
+            Hover = false;
+            Active = false;
+        }
+
         /// <summary>
-        /// Raises the <see cref="MouseMove"/> event
+        ///     Raises the <see cref="MouseMove" /> event
         /// </summary>
         /// <param name="sender">The object which initiates the event</param>
         /// <param name="e">The context of the event</param>
-		protected virtual void OnMouseMove(object sender, MouseMoveEventArgs e)
-		{
-			MouseMove?.Invoke(sender, e);
-		}
-        
+        protected virtual void OnMouseMove(object sender, MouseMoveEventArgs e)
+        {
+            MouseMove?.Invoke(sender, e);
+        }
+
         /// <summary>
-        /// Raises the <see cref="Paint"/> event
+        ///     Raises the <see cref="Paint" /> event
         /// </summary>
         /// <param name="sender">The object which initiates the event</param>
         /// <param name="e">The context of the event</param>
-		protected virtual void OnPaint(object sender, NvgContext e)
-		{
-			Paint?.Invoke(sender, e);
-		}
-        
+        protected virtual void OnPaint(object sender, NvgContext e)
+        {
+            Paint?.Invoke(sender, e);
+        }
+
         /// <summary>
-        /// Raises the <see cref="TextChanged"/> event
+        ///     Raises the <see cref="TextChanged" /> event
         /// </summary>
         /// <param name="sender">The object which initiates the event</param>
         /// <param name="e">The context of the event</param>
-		protected virtual void OnTextChanged(object sender, EventArgs e)
-		{
-			TextChanged?.Invoke(sender, e);
-		}
-        
+        protected virtual void OnTextChanged(object sender, EventArgs e)
+        {
+            TextChanged?.Invoke(sender, e);
+        }
+
         /// <summary>
-        /// Raises the <see cref="KeyDown"/> event
+        ///     Raises the <see cref="KeyDown" /> event
         /// </summary>
         /// <param name="sender">The object which initiates the event</param>
         /// <param name="e">The context of the event</param>
-		protected virtual void OnKeyDown(object sender, KeyboardKeyEventArgs e)
-		{
-			KeyDown?.Invoke(sender, e);
-		}
-        
+        protected virtual void OnKeyDown(object sender, KeyboardKeyEventArgs e)
+        {
+            KeyDown?.Invoke(sender, e);
+        }
+
         /// <summary>
-        /// Raises the <see cref="KeyUp"/> event
+        ///     Raises the <see cref="KeyUp" /> event
         /// </summary>
         /// <param name="sender">The object which initiates the event</param>
         /// <param name="e">The context of the event</param>
-		protected virtual void OnKeyUp(object sender, KeyboardKeyEventArgs e)
-		{
-			KeyUp?.Invoke(sender, e);
-		}
-        
+        protected virtual void OnKeyUp(object sender, KeyboardKeyEventArgs e)
+        {
+            KeyUp?.Invoke(sender, e);
+        }
+
         /// <summary>
-        /// Raises the <see cref="KeyPress"/> event
+        ///     Raises the <see cref="KeyPress" /> event
         /// </summary>
         /// <param name="sender">The object which initiates the event</param>
         /// <param name="e">The context of the event</param>
-		protected virtual void OnKeyPress(object sender, KeyPressEventArgs e) 
-		{
-			KeyPress?.Invoke(sender, e);
-		}
-        
+        protected virtual void OnKeyPress(object sender, KeyPressEventArgs e)
+        {
+            KeyPress?.Invoke(sender, e);
+        }
+
         /// <summary>
-        /// Processes the keyboard state change events
+        ///     Processes the keyboard state change events
         /// </summary>
         /// <param name="sender">The object which initiates the events</param>
         /// <param name="args">The context of the events</param>
-		internal void ProcessKeyboardEvent(object sender, KeyboardKeyEventArgs args)
-		{
+        internal void ProcessKeyboardEvent(object sender, KeyboardKeyEventArgs args)
+        {
             if (args.Keyboard.IsKeyDown(args.Key))
                 OnKeyDown(sender, args);
             else
                 OnKeyUp(sender, args);
-		}
-        
+        }
+
         /// <summary>
-        /// Processes the keyboard key press events
+        ///     Processes the keyboard key press events
         /// </summary>
         /// <param name="sender">The object which initiates the events</param>
         /// <param name="args">The context of the events</param>
-		internal void ProcessKeyboardEvent(object sender, KeyPressEventArgs args)
-		{
+        internal void ProcessKeyboardEvent(object sender, KeyPressEventArgs args)
+        {
             OnKeyPress(sender, args);
-		}
-        
+        }
+
         /// <summary>
-        /// Processes the mouse events
+        ///     Processes the mouse events
         /// </summary>
         /// <param name="sender">The object which initiates the events</param>
         /// <param name="args">The context of the events</param>
-	    internal EventStage ProcessMouseEvent(object sender, MouseEventArgs args)
-	    {
+        internal EventStage ProcessMouseEvent(object sender, MouseEventArgs args)
+        {
             var mousePos = args.Position;
-	        switch (args)
-	        {
-	            case MouseButtonEventArgs buttonEventArgs:
+            switch (args)
+            {
+                case MouseButtonEventArgs buttonEventArgs:
                     if (ClientRectangle.Contains(mousePos))
                     {
                         if (buttonEventArgs.IsPressed)
@@ -304,35 +342,38 @@ namespace Kuat
                             OnMouseUp(sender, buttonEventArgs);
                         return EventStage.Handled;
                     }
+
                     break;
-	            case MouseMoveEventArgs moveEventArgs:
-	                var prevMousePos = mousePos - new Size(moveEventArgs.XDelta, moveEventArgs.YDelta);
-	                if (ClientRectangle.Contains(mousePos))
-	                {
-	                    if (ClientRectangle.Contains(prevMousePos))
-	                        OnMouseMove(sender, moveEventArgs);
-	                    else
-	                        OnMouseEnter(sender, moveEventArgs);
-	                }
-	                else if (ClientRectangle.Contains(prevMousePos))
-	                    OnMouseLeave(sender, moveEventArgs);
+                case MouseMoveEventArgs moveEventArgs:
+                    var prevMousePos = mousePos - new Size(moveEventArgs.XDelta, moveEventArgs.YDelta);
+                    if (ClientRectangle.Contains(mousePos))
+                    {
+                        if (!ClientRectangle.Contains(prevMousePos))
+                            OnMouseEnter(sender, moveEventArgs);
+                        OnMouseMove(sender, moveEventArgs);
+                    }
+                    else if (ClientRectangle.Contains(prevMousePos))
+                    {
+                        OnMouseLeave(sender, moveEventArgs);
+                    }
+
                     break;
                 case MouseClickEventArgs clickEventArgs:
                     if (clickEventArgs.DoubleClick)
                         OnDoubleClick(sender, clickEventArgs);
                     OnClick(sender, clickEventArgs);
                     break;
-	            case MouseWheelEventArgs wheelEventArgs:
+                case MouseWheelEventArgs wheelEventArgs:
                     if (HasFocus)
                         OnMouseWheel(sender, wheelEventArgs);
-	                break;
-	        }
+                    break;
+            }
 
             return EventStage.Pass;
         }
-        
+
         /// <summary>
-        /// Processes the render event
+        ///     Processes the render event
         /// </summary>
         /// <param name="sender">The object which initiates the event</param>
         /// <param name="context">The graphics context of the render call</param>

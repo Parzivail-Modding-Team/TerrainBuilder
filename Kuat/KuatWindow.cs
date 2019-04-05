@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Kuat.Control;
 using NanoVGDotNet.NanoVG;
 using OpenTK;
 using OpenTK.Input;
@@ -12,33 +11,30 @@ namespace Kuat
     public class KuatWindow : KuatControl
     {
         /// <summary>
-        /// Gets the time, in milliseconds, that the user has configured to be the minimum time between clicks to be considered a double click
-        /// </summary>
-        /// <returns>The time in milliseconds</returns>
-        [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
-        public static extern int GetDoubleClickTime();
-        
-        /// <summary>
-        /// The index of the control that's tab-focused. This isn't the index throughout the list but rather, the control whose ZIndex property is equal to this is considered focused.
-        /// </summary>
-        private int _tabIndex;
-        /// <summary>
-        /// The control which is currently considered focused
-        /// </summary>
-        private KuatControl _focusedControl;
-        /// <summary>
-        /// The control which is temporarily stored to check for double clicks
+        ///     The control which is temporarily stored to check for double clicks
         /// </summary>
         private KuatControl _clickedControl;
+
         /// <summary>
-        /// The time at which a click event occurs to check for double clicks
+        ///     The time at which a click event occurs to check for double clicks
         /// </summary>
         private DateTime _clickTime;
 
         /// <summary>
-        /// Creates a <see cref="KuatWindow"/> that contains the functionality to hold controls and pump events
+        ///     The control which is currently considered focused
         /// </summary>
-        /// <param name="window">The <see cref="INativeWindow"/> parent from which to subscribe events</param>
+        private KuatControl _focusedControl;
+
+        /// <summary>
+        ///     The index of the control that's tab-focused. This isn't the index throughout the list but rather, the control whose
+        ///     ZIndex property is equal to this is considered focused.
+        /// </summary>
+        private int _tabIndex;
+
+        /// <summary>
+        ///     Creates a <see cref="KuatWindow" /> that contains the functionality to hold controls and pump events
+        /// </summary>
+        /// <param name="window">The <see cref="INativeWindow" /> parent from which to subscribe events</param>
         /// <param name="defaultFont">The default font for the window</param>
         public KuatWindow(INativeWindow window, KuatFont defaultFont) : base("_window")
         {
@@ -47,7 +43,15 @@ namespace Kuat
         }
 
         /// <summary>
-        /// Wires all of the events 
+        ///     Gets the time, in milliseconds, that the user has configured to be the minimum time between clicks to be considered
+        ///     a double click
+        /// </summary>
+        /// <returns>The time in milliseconds</returns>
+        [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
+        public static extern int GetDoubleClickTime();
+
+        /// <summary>
+        ///     Wires all of the events
         /// </summary>
         /// <param name="window"></param>
         private void SubscribeEvents(INativeWindow window)
@@ -62,7 +66,7 @@ namespace Kuat
         }
 
         /// <summary>
-        /// Renders the GUI into the NanoVG context
+        ///     Renders the GUI into the NanoVG context
         /// </summary>
         /// <param name="sender">The object which initiates the event</param>
         /// <param name="context">The context of the event</param>
@@ -72,7 +76,7 @@ namespace Kuat
         }
 
         /// <summary>
-        /// Process keyboard key press events from the parent window
+        ///     Process keyboard key press events from the parent window
         /// </summary>
         /// <param name="sender">The object which initiates the event</param>
         /// <param name="args">The context of the event</param>
@@ -87,9 +91,9 @@ namespace Kuat
 
             _focusedControl?.ProcessKeyboardEvent(sender, args);
         }
-        
+
         /// <summary>
-        /// Process keyboard state change events from the parent window
+        ///     Process keyboard state change events from the parent window
         /// </summary>
         /// <param name="sender">The object which initiates the event</param>
         /// <param name="args">The context of the event</param>
@@ -97,9 +101,9 @@ namespace Kuat
         {
             _focusedControl?.ProcessKeyboardEvent(sender, args);
         }
-        
+
         /// <summary>
-        /// Process mouse events from the parent window
+        ///     Process mouse events from the parent window
         /// </summary>
         /// <param name="sender">The object which initiates the event</param>
         /// <param name="args">The context of the event</param>
@@ -123,7 +127,8 @@ namespace Kuat
                 SetFocus(null);
 
             // return if we don't need to process click or double click events
-            if (_focusedControl == null || _focusedControl != prevFocusedControl || !(args is MouseButtonEventArgs buttonEvent) ||
+            if (_focusedControl == null || _focusedControl != prevFocusedControl ||
+                !(args is MouseButtonEventArgs buttonEvent) ||
                 buttonEvent.IsPressed)
                 return;
 
@@ -140,7 +145,7 @@ namespace Kuat
         }
 
         /// <summary>
-        /// Sets the focus to the specified control
+        ///     Sets the focus to the specified control
         /// </summary>
         /// <param name="needle">The control to focus on. Pass null to blur all elements.</param>
         private void SetFocus(KuatControl needle)

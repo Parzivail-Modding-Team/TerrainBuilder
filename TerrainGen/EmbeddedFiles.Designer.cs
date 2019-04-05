@@ -19,7 +19,7 @@ namespace TerrainGen {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class EmbeddedFiles {
@@ -114,6 +114,8 @@ namespace TerrainGen {
         ///
         ///uniform vec3 lightPos;
         ///uniform vec3 tint;
+        ///uniform int samples;
+        ///uniform sampler2D random;
         ///
         ///in vec3 fragPos;
         ///in vec4 fragColor;
@@ -123,13 +125,15 @@ namespace TerrainGen {
         ///
         ///void main()
         ///{
+        ///	vec2 resolution = vec2(512., 512.);
+        ///
         ///    vec3 norm = normalize(fragNormal);
         ///    vec3 lightDir = normalize(lightPos - fragPos);  
         ///    float diffuse = max(dot(norm, lightDir), 0.0);
         ///    float ambient = 0.3;
-        ///    
-        ///    color = vec4(fragColor.rgb * tint * clamp(ambient + diffuse, 0, 1), 1.);
-        ///}.
+        ///	
+        ///    // Look up noise from texture
+        ///    vec4 noise = texture(random, gl_FragCoord.xy / [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string fs_model {
             get {
@@ -144,24 +148,24 @@ namespace TerrainGen {
         ///in vec2 TexCoords;
         ///
         ///uniform sampler2DMS screenColor;
-        ///uniform sampler2DMS screenDepth;
         ///uniform sampler2DMS screenUi;
         ///uniform int width;
         ///uniform int height;
+        ///uniform int samples;
+        ///uniform int samplesUi;
         ///
-        ///vec4 mtexture(sampler2DMS s, vec2 coords)
+        ///vec4 mtexture(sampler2DMS s, vec2 coords, int samp)
         ///{
-        ///	const float SAMPLES = 4;
-        ///
         ///	ivec2 vpCoords = ivec2(width, height);
         ///	vpCoords.x = int(vpCoords.x * coords.x);
         ///	vpCoords.y = int(vpCoords.y * coords.y);
         ///
         ///	vec4 avg = vec4(0);
-        ///	for (int i = 0; i &lt; SAMPLES; i++)
+        ///	for (int i = 0; i &lt; samp; i++)
         ///	{
         ///		avg += texelFetch(s, vpCoords, i);
-        /// [rest of string was truncated]&quot;;.
+        ///	}
+        ///	retur [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string fs_screen {
             get {
@@ -175,6 +179,16 @@ namespace TerrainGen {
         internal static byte[] ibmplexmono {
             get {
                 object obj = ResourceManager.GetObject("ibmplexmono", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] ibmplexsans {
+            get {
+                object obj = ResourceManager.GetObject("ibmplexsans", resourceCulture);
                 return ((byte[])(obj));
             }
         }

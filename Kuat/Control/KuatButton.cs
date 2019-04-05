@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NanoVGDotNet.NanoVG;
-using OpenTK.Input;
+﻿using NanoVGDotNet.NanoVG;
 
 namespace Kuat.Control
 {
@@ -21,14 +14,14 @@ namespace Kuat.Control
         {
             base.OnPaint(sender, e);
 
-            e.FillColor(NanoVg.Rgba(BackColor));
-            e.StrokeColor(NanoVg.Rgba(ForeColor));
+            e.BeginPath();
+            e.RoundedRect(Location.X, Location.Y, Size.Width, Size.Height, 2);
 
-            e.BeginPath();
-			e.RoundedRect(Location.X, Location.Y, Size.Width, Size.Height, 4);
+            e.FillColor(
+                Active ? NanoVg.Rgba(ActiveColor) : Hover ? NanoVg.Rgba(HoverColor) : NanoVg.Rgba(BackColor));
             e.Fill();
-            e.BeginPath();
-			e.RoundedRect(Location.X, Location.Y, Size.Width, Size.Height, 4);
+
+            e.StrokeColor(NanoVg.Rgba(43, 51, 55, 255));
             e.Stroke();
 
             e.FillColor(NanoVg.Rgba(ForeColor));
@@ -36,6 +29,6 @@ namespace Kuat.Control
             e.FontSize(Font.Size);
             e.TextAlign(NvgAlign.Center | NvgAlign.Middle);
             e.Text(Location.X + Size.Width / 2, Location.Y + Size.Height / 2, Text);
-        } 
+        }
     }
 }

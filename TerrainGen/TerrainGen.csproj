@@ -88,6 +88,7 @@
     <Compile Include="Graphics\SmallVertex.cs" />
     <Compile Include="Graphics\Vertex.cs" />
     <None Include="Resources\ibmplexmono.ttf" />
+    <None Include="Resources\ibmplexsans.ttf" />
     <None Include="Resources\shaders\screen.frag" />
     <None Include="Resources\shaders\screen.vert" />
     <None Include="Resources\shaders\terrain.vert" />

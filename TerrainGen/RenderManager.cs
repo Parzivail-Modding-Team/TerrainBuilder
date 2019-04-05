@@ -76,14 +76,24 @@ namespace TerrainGen
             _ui.Controls.Add(b = new KuatButton("bTest")
             {
                 Location = new Point(50, 50),
-                Size = new Size(120, 60),
-                Text = "Hello, World!"
+                Size = new Size(60, 23),
+                Text = "Button"
             });
             b.Click += (sender, args) => { Lumberjack.Info("Click!"); };
+            _ui.Controls.Add(new KuatCheckbox("cbTest")
+            {
+                Location = new Point(50, 90),
+                Size = new Size(14, 14),
+                Text = "Checkbox"
+            });
 
-            var rSans = _nvg.CreateFont("sans", EmbeddedFiles.ibmplexmono);
+            var rMono = _nvg.CreateFont("mono", EmbeddedFiles.ibmplexmono);
+            if (rMono == -1)
+                throw new ApplicationException("Unable to load mono font");
+
+            var rSans = _nvg.CreateFont("sans", EmbeddedFiles.ibmplexsans);
             if (rSans == -1)
-                throw new ApplicationException("Unable to load UI font");
+                throw new ApplicationException("Unable to load sans font");
 
             _perfGraphFps = new PerfGraph(GraphRenderStyle.Fps, null, 40);
 
