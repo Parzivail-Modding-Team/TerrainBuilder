@@ -73,6 +73,7 @@ namespace TerrainGen
             _ui = new KuatWindow(window, new KuatFont("sans", 16));
 
             KuatButton b;
+            KuatGroupBox gb;
             _ui.Controls.Add(b = new KuatButton("bTest")
             {
                 Location = new Point(50, 50),
@@ -85,6 +86,30 @@ namespace TerrainGen
                 Location = new Point(50, 90),
                 Size = new Size(14, 14),
                 Text = "Checkbox"
+            });
+            _ui.Controls.Add(gb = new KuatGroupBox("gbTest")
+            {
+                Location = new Point(150, 50),
+                Size = new Size(140, 140),
+                Text = "Group Box 1"
+            });
+            gb.Controls.Add(new KuatRadioButton("rbTest1")
+            {
+                Location = new Point(10, 10),
+                Size = new Size(14, 14),
+                Text = "Radio 1"
+            });
+            gb.Controls.Add(new KuatRadioButton("rbTest2")
+            {
+                Location = new Point(10, 30),
+                Size = new Size(14, 14),
+                Text = "Radio 2"
+            });
+            gb.Controls.Add(new KuatRadioButton("rbTest3")
+            {
+                Location = new Point(10, 50),
+                Size = new Size(14, 14),
+                Text = "Radio 3"
             });
 
             var rMono = _nvg.CreateFont("mono", EmbeddedFiles.ibmplexmono);

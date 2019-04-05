@@ -42,6 +42,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Control\KuatRadioButton.cs" />
+    <Compile Include="Control\KuatGroupBox.cs" />
     <Compile Include="Control\KuatCheckbox.cs" />
     <Compile Include="KuatControlCollection.cs" />
     <Compile Include="KuatFont.cs" />

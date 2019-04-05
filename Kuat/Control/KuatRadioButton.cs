@@ -2,12 +2,12 @@
 
 namespace Kuat.Control
 {
-    public class KuatCheckbox : KuatControl
+    public class KuatRadioButton : KuatControl
     {
         public bool Checked { get; set; }
 
         /// <inheritdoc />
-        public KuatCheckbox(string name) : base(name)
+        public KuatRadioButton(string name) : base(name)
         {
         }
 
@@ -37,7 +37,18 @@ namespace Kuat.Control
         protected override void OnClick(object sender, MouseClickEventArgs e)
         {
             base.OnClick(sender, e);
-            Checked = !Checked;
+            if (Checked) return;
+            UncheckNeighbors();
+			Checked = true;
+        }
+
+        private void UncheckNeighbors()
+        {
+	        foreach (var control in Parent.Controls)
+	        {
+		        if (control is KuatRadioButton radioButton)
+			        radioButton.Checked = false;
+	        }
         }
     }
 }

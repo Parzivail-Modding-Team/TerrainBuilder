@@ -72,7 +72,7 @@ namespace Kuat
         /// <param name="context">The context of the event</param>
         public void Render(object sender, NvgContext context)
         {
-            foreach (var control in Controls) control.ProcessRenderEvent(sender, context);
+            ProcessRenderEvent(sender, context);
         }
 
         /// <summary>
