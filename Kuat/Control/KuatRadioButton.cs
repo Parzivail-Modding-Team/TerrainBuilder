@@ -17,7 +17,7 @@ namespace Kuat.Control
             base.OnPaint(sender, e);
 
             e.BeginPath();
-            e.RoundedRect(ClientRectangle.Location.X, ClientRectangle.Location.Y, 14, 14, 2);
+            e.Circle(ClientRectangle.Location.X + 7, ClientRectangle.Location.Y + 7, 7);
 
             e.FillColor(Checked ? NanoVg.Rgba(ActiveColor) :
                 Hover ? NanoVg.Rgba(HoverColor) : NanoVg.Rgba(BackColor));

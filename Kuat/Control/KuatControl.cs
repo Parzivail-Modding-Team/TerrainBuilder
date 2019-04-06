@@ -334,12 +334,12 @@ namespace Kuat.Control
 		/// <param name="args">The context of the events</param>
 		internal EventStage ProcessMouseEvent(object sender, MouseEventArgs args)
 		{
-			foreach (var child in Controls)
-			{
-				var childStage = child.ProcessMouseEvent(sender, args);
-				if (childStage == EventStage.Handled)
-					return EventStage.Handled;
-			}
+            foreach (var child in Controls)
+            {
+                var childStage = child.ProcessMouseEvent(sender, args);
+                if (childStage == EventStage.Handled)
+                    return EventStage.Handled;
+            }
 
 			var mousePos = args.Position;
 			switch (args)
@@ -369,14 +369,23 @@ namespace Kuat.Control
 
 					break;
 				case MouseClickEventArgs clickEventArgs:
-					if (clickEventArgs.DoubleClick)
-						OnDoubleClick(sender, clickEventArgs);
-					OnClick(sender, clickEventArgs);
-					break;
+                    if (ClientRectangle.Contains(mousePos))
+                    {
+                        if (clickEventArgs.DoubleClick)
+                            OnDoubleClick(sender, clickEventArgs);
+                        OnClick(sender, clickEventArgs);
+                        return EventStage.Handled;
+                    }
+
+                    break;
 				case MouseWheelEventArgs wheelEventArgs:
-					if (HasFocus)
-						OnMouseWheel(sender, wheelEventArgs);
-					break;
+                    if (ClientRectangle.Contains(mousePos) && HasFocus)
+                    {
+                        OnMouseWheel(sender, wheelEventArgs);
+                        return EventStage.Handled;
+                    }
+
+                    break;
 			}
 
 			return EventStage.Pass;

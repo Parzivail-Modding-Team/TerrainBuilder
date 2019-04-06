@@ -87,6 +87,11 @@ namespace TerrainGen
                 Size = new Size(14, 14),
                 Text = "Checkbox"
             });
+            _ui.Controls.Add(new KuatLabel("lTest")
+            {
+                Location = new Point(50, 130),
+                Text = "Hello, World!"
+            });
             _ui.Controls.Add(gb = new KuatGroupBox("gbTest")
             {
                 Location = new Point(150, 50),
