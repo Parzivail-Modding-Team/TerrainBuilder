@@ -1,4 +1,6 @@
-﻿using NanoVGDotNet.NanoVG;
+﻿using System;
+using System.Drawing;
+using NanoVGDotNet.NanoVG;
 
 namespace Kuat.Control
 {
@@ -9,6 +11,14 @@ namespace Kuat.Control
         /// <inheritdoc />
         public KuatCheckbox(string name) : base(name)
         {
+            Size = new Size(14, 14);
+        }
+
+        public event EventHandler<EventArgs> CheckedChanged;
+
+        protected void OnCheckedChanged(object sender, EventArgs e)
+        {
+            CheckedChanged?.Invoke(sender, e);
         }
 
         /// <inheritdoc />
@@ -17,20 +27,19 @@ namespace Kuat.Control
             base.OnPaint(sender, e);
 
             e.BeginPath();
-            e.RoundedRect(ClientRectangle.Location.X, ClientRectangle.Location.Y, 14, 14, 2);
+            e.RoundedRect(ClientLocation.X, ClientLocation.Y, Size.Width, Size.Height, 2);
 
-            e.FillColor(Checked ? NanoVg.Rgba(ActiveColor) :
-                Hover ? NanoVg.Rgba(HoverColor) : NanoVg.Rgba(BackColor));
+            e.FillColor(Checked ? NanoVg.Rgba(ActiveColor) : NanoVg.Rgba(0xFF475054));
             e.Fill();
 
-            e.StrokeColor(NanoVg.Rgba(43, 51, 55, 255));
+            e.StrokeColor(NanoVg.Rgba(0xFF192025));
             e.Stroke();
 
             e.FillColor(NanoVg.Rgba(ForeColor));
             e.FontFace(Font.Family);
             e.FontSize(Font.Size);
             e.TextAlign(NvgAlign.Left | NvgAlign.Middle);
-            e.Text(ClientRectangle.Location.X + 18, ClientRectangle.Location.Y + 7.5f, Text);
+            e.Text(ClientLocation.X + Size.Width + 4, ClientLocation.Y + Size.Height / 2f, Text);
         }
 
         /// <inheritdoc />
@@ -38,6 +47,7 @@ namespace Kuat.Control
         {
             base.OnClick(sender, e);
             Checked = !Checked;
+            OnCheckedChanged(sender, e);
         }
     }
 }

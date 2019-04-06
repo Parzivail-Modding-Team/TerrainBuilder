@@ -73,7 +73,8 @@ namespace TerrainGen
             _ui = new KuatWindow(window, new KuatFont("sans", 16));
 
             KuatButton b;
-            KuatGroupBox gb;
+            KuatKnob k;
+            KuatIndicator i;
             _ui.Controls.Add(b = new KuatButton("bTest")
             {
                 Location = new Point(50, 50),
@@ -87,35 +88,15 @@ namespace TerrainGen
                 Size = new Size(14, 14),
                 Text = "Checkbox"
             });
-            _ui.Controls.Add(new KuatLabel("lTest")
+            _ui.Controls.Add(k = new KuatKnob("kTest")
             {
-                Location = new Point(50, 130),
-                Text = "Hello, World!"
+                Location = new Point(50, 130)
             });
-            _ui.Controls.Add(gb = new KuatGroupBox("gbTest")
+            _ui.Controls.Add(i = new KuatIndicator("iTest")
             {
-                Location = new Point(150, 50),
-                Size = new Size(140, 140),
-                Text = "Group Box 1"
+                Location = new Point(120, 130)
             });
-            gb.Controls.Add(new KuatRadioButton("rbTest1")
-            {
-                Location = new Point(10, 10),
-                Size = new Size(14, 14),
-                Text = "Radio 1"
-            });
-            gb.Controls.Add(new KuatRadioButton("rbTest2")
-            {
-                Location = new Point(10, 30),
-                Size = new Size(14, 14),
-                Text = "Radio 2"
-            });
-            gb.Controls.Add(new KuatRadioButton("rbTest3")
-            {
-                Location = new Point(10, 50),
-                Size = new Size(14, 14),
-                Text = "Radio 3"
-            });
+            k.ValueChanged += (sender, args) => { i.Lit = k.Value > 0; };
 
             var rMono = _nvg.CreateFont("mono", EmbeddedFiles.ibmplexmono);
             if (rMono == -1)

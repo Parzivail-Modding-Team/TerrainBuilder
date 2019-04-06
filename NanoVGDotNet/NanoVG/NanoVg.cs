@@ -284,6 +284,22 @@ namespace NanoVGDotNet.NanoVG
             return color;
         }
 
+        public static NvgColor Rgba(uint argb)
+        {
+            var b = argb & 0x000000FF;
+            var g = (argb & 0x0000FF00) >> 8;
+            var r = (argb & 0x00FF0000) >> 16;
+            var a = (argb & 0xFF000000) >> 24;
+            var color = default(NvgColor);
+            // Use longer initialization to suppress warning.
+            color.R = r / 255.0f;
+            color.G = g / 255.0f;
+            color.B = b / 255.0f;
+            color.A = a / 255.0f;
+
+            return color;
+        }
+
         public static NvgColor Rgba(float r, float g, float b, float a)
         {
             var color = default(NvgColor);
@@ -1985,7 +2001,7 @@ namespace NanoVGDotNet.NanoVG
             var x0 = ctx.Commandx;
             var y0 = ctx.Commandy;
             float cx, cy, a0, a1;
-            int dir;
+            NvgWinding dir;
 
             if (ctx.Ncommands == 0)
             {
@@ -2026,7 +2042,7 @@ namespace NanoVGDotNet.NanoVG
                 cy = y1 + dy0 * d + -dx0 * radius;
                 a0 = Atan2F(dx0, -dy0);
                 a1 = Atan2F(-dx1, dy1);
-                dir = (int)NvgWinding.Clockwise;
+                dir = NvgWinding.Clockwise;
                 //		printf("CW c=(%f, %f) a0=%f° a1=%f°\n", cx, cy, a0/NVG_PI*180.0f, a1/NVG_PI*180.0f);
             }
             else
@@ -2035,7 +2051,7 @@ namespace NanoVGDotNet.NanoVG
                 cy = y1 + dy0 * d + dx0 * radius;
                 a0 = Atan2F(-dx0, dy0);
                 a1 = Atan2F(dx1, -dy1);
-                dir = (int)NvgWinding.CounterClockwise;
+                dir = NvgWinding.CounterClockwise;
                 //		printf("CCW c=(%f, %f) a0=%f° a1=%f°\n", cx, cy, a0/NVG_PI*180.0f, a1/NVG_PI*180.0f);
             }
 
@@ -2054,7 +2070,7 @@ namespace NanoVGDotNet.NanoVG
             AppendCommands(ctx, vals, NVG_COUNTOF(vals));
         }
 
-        public static void Arc(this NvgContext ctx, float cx, float cy, float r, float a0, float a1, int dir)
+        public static void Arc(this NvgContext ctx, float cx, float cy, float r, float a0, float a1, NvgWinding dir)
         {
             float px = 0, py = 0, ptanx = 0, ptany = 0;
             var vals = new float[3 + 5 * 7 + 100];
@@ -2063,7 +2079,7 @@ namespace NanoVGDotNet.NanoVG
 
             // Clamp angles
             var da = a1 - a0;
-            if (dir == (int)NvgWinding.Clockwise)
+            if (dir == NvgWinding.Clockwise)
             {
                 if (Absf(da) >= NvgPi * 2)
                 {
@@ -2093,7 +2109,7 @@ namespace NanoVGDotNet.NanoVG
             var hda = da / ndivs / 2.0f;
             var kappa = Absf(4.0f / 3.0f * (1.0f - Cosf(hda)) / Sinf(hda));
 
-            if (dir == (int)NvgWinding.CounterClockwise)
+            if (dir == NvgWinding.CounterClockwise)
                 kappa = -kappa;
 
             var nvals = 0;

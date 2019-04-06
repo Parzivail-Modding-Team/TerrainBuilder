@@ -15,7 +15,7 @@ namespace Kuat.Control
             base.OnPaint(sender, e);
 
             e.BeginPath();
-            e.RoundedRect(ClientRectangle.Location.X, ClientRectangle.Location.Y, Size.Width, Size.Height, 2);
+            e.RoundedRect(ClientLocation.X, ClientLocation.Y, Size.Width, Size.Height, 2);
 
             e.StrokeColor(NanoVg.Rgba(43, 51, 55, 255));
             e.Stroke();
@@ -24,7 +24,7 @@ namespace Kuat.Control
             e.FontFace(Font.Family);
             e.FontSize(Font.Size);
             e.TextAlign(NvgAlign.Baseline | NvgAlign.Left);
-            e.Text(ClientRectangle.Location.X, ClientRectangle.Location.Y - 3, Text);
+            e.Text(ClientLocation.X, ClientLocation.Y - 3, Text);
         }
     }
 }

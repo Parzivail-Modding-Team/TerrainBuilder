@@ -18,7 +18,7 @@ namespace Kuat.Control
             e.FontFace(Font.Family);
             e.FontSize(Font.Size);
             e.TextAlign(NvgAlign.Left | NvgAlign.Top);
-            e.Text(ClientRectangle.Location.X, ClientRectangle.Location.Y, Text);
+            e.Text(ClientLocation.X, ClientLocation.Y, Text);
         }
     }
 }
