@@ -9,6 +9,27 @@ namespace Kuat.Control
     {
         private int _selectionStart = 0;
         private int _selectionLength = 0;
+
+        public int SelectionStart
+        {
+            get => _selectionStart;
+            set
+            {
+                _selectionStart = value;
+                ValidateSelection();
+            }
+        }
+
+        public int SelectionLength
+        {
+            get => _selectionLength;
+            set
+            {
+                _selectionLength = value;
+                ValidateSelection();
+            }
+        }
+
         private DateTime _moveTime;
 
         /// <inheritdoc />
@@ -37,7 +58,7 @@ namespace Kuat.Control
             e.TextAlign(NvgAlign.Left | NvgAlign.Top);
             e.Text(ClientLocation.X + 2, ClientLocation.Y + 2, Text);
 
-            var width = e.TextBounds(0, 0, Text.Substring(0, _selectionStart), null);
+            var width = e.TextBounds(0, 0, Text.Substring(0, SelectionStart), null);
 
             var blinkTime = KNativeMethods.GetCaretBlinkTime();
             if (HasFocus && ((DateTime.Now - _moveTime).TotalMilliseconds < blinkTime || KMath.GetTodayMs() % (2 * blinkTime) < blinkTime))
@@ -52,30 +73,43 @@ namespace Kuat.Control
         }
 
         /// <inheritdoc />
+        protected override void OnTextChanged(object sender, EventArgs e)
+        {
+            ValidateSelection();
+            base.OnTextChanged(sender, e);
+        }
+
+        /// <inheritdoc />
         protected override void OnKeyPress(object sender, KeyPressEventArgs e)
         {
             base.OnKeyPress(sender, e);
-            if (_selectionLength == 0)
+            if (SelectionLength == 0)
             {
-                var textUntilCaret = Text.Substring(0, _selectionStart);
-                var textAfterCaret = Text.Substring(_selectionStart);
+                var textUntilCaret = Text.Substring(0, SelectionStart);
+                var textAfterCaret = Text.Substring(SelectionStart);
                 Text = textUntilCaret + e.KeyChar + textAfterCaret;
-                _selectionStart++;
-                _moveTime = DateTime.Now;
-                ValidateSelection();
+                SelectionStart++;
             }
+        }
+
+        /// <inheritdoc />
+        protected internal override void OnFocus(object sender, EventArgs e)
+        {
+            base.OnFocus(sender, e);
+            ValidateSelection();
         }
 
         private void ValidateSelection()
         {
-            if (_selectionStart < 0)
-                _selectionStart = 0;
-            if (_selectionStart > Text.Length)
-                _selectionStart = Text.Length;
-            if (_selectionLength < 0)
-                _selectionLength = 0;
-            if (_selectionStart + _selectionLength > Text.Length)
-                _selectionLength = Text.Length - _selectionStart;
+            _moveTime = DateTime.Now;
+            if (SelectionStart < 0)
+                SelectionStart = 0;
+            if (SelectionStart > Text.Length)
+                SelectionStart = Text.Length;
+            if (SelectionLength < 0)
+                SelectionLength = 0;
+            if (SelectionStart + SelectionLength > Text.Length)
+                SelectionLength = Text.Length - SelectionStart;
         }
 
         /// <inheritdoc />
@@ -86,55 +120,48 @@ namespace Kuat.Control
             switch (e.Key)
             {
                 case Key.BackSpace:
-                    if (_selectionLength == 0)
+                    if (SelectionLength == 0)
                     {
-                        var textUntilCaret = Text.Substring(0, _selectionStart);
+                        var textUntilCaret = Text.Substring(0, SelectionStart);
                         if (textUntilCaret.Length != 0)
                         {
-                            var textAfterCaret = Text.Substring(_selectionStart);
+                            var textAfterCaret = Text.Substring(SelectionStart);
+                            SelectionStart--;
                             Text = textUntilCaret.Substring(0, textUntilCaret.Length - 1) + textAfterCaret;
-                            _selectionStart--;
-                            _moveTime = DateTime.Now;
-                            ValidateSelection();
                         }
                     }
                     else
                         DeleteSelection();
                     break;
                 case Key.Delete:
-                    if (_selectionLength == 0)
+                    if (SelectionLength == 0)
                     {
-                        var textAfterCaret = Text.Substring(_selectionStart);
+                        var textAfterCaret = Text.Substring(SelectionStart);
                         if (textAfterCaret.Length != 0)
                         {
-                            var textUntilCaret = Text.Substring(0, _selectionStart);
+                            var textUntilCaret = Text.Substring(0, SelectionStart);
                             Text = textUntilCaret + textAfterCaret.Substring(1, textAfterCaret.Length - 1);
-                            ValidateSelection();
                         }
                     }
                     else
                         DeleteSelection();
                     break;
                 case Key.Left:
-                    _selectionStart--;
-                    _moveTime = DateTime.Now;
-                    ValidateSelection();
+                    SelectionStart--;
                     break;
                 case Key.Right:
-                    _selectionStart++;
-                    _moveTime = DateTime.Now;
-                    ValidateSelection();
+                    SelectionStart++;
                     break;
             }
         }
 
         private void DeleteSelection()
         {
-            var textUntilCaret = Text.Substring(0, _selectionStart);
-            var textAfterSelection = Text.Substring(_selectionStart + _selectionLength);
+            var textUntilCaret = Text.Substring(0, SelectionStart);
+            var textAfterSelection = Text.Substring(SelectionStart + SelectionLength);
             Text = textUntilCaret + textAfterSelection;
             ValidateSelection();
-            _selectionLength = 0;
+            SelectionLength = 0;
         }
     }
 }

@@ -26,6 +26,8 @@ namespace Kuat.Control
         public EventHandler<MouseWheelEventArgs> MouseWheel;
         public EventHandler<NvgContext> Paint;
         public EventHandler<EventArgs> TextChanged;
+        public EventHandler<EventArgs> Focus;
+        public EventHandler<EventArgs> Blur;
 
         /// <summary>
         ///     True if the control is being hovered
@@ -314,6 +316,26 @@ namespace Kuat.Control
         protected virtual void OnKeyPress(object sender, KeyPressEventArgs e)
         {
             KeyPress?.Invoke(sender, e);
+        }
+
+        /// <summary>
+        ///     Raises the <see cref="Focus" /> event
+        /// </summary>
+        /// <param name="sender">The object which initiates the event</param>
+        /// <param name="e">The context of the event</param>
+        protected internal virtual void OnFocus(object sender, EventArgs e)
+        {
+            Focus?.Invoke(sender, e);
+        }
+
+        /// <summary>
+        ///     Raises the <see cref="Blur" /> event
+        /// </summary>
+        /// <param name="sender">The object which initiates the event</param>
+        /// <param name="e">The context of the event</param>
+        protected internal virtual void OnBlur(object sender, EventArgs e)
+        {
+            Focus?.Invoke(sender, e);
         }
 
         /// <summary>

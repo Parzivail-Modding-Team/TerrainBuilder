@@ -144,7 +144,15 @@ namespace Kuat
         {
             _focusedControl = needle;
             foreach (var control in Controls)
+            {
+                var wasFocus = control.HasFocus;
                 control.HasFocus = control == needle;
+
+                if (wasFocus && !control.HasFocus)
+                    control.OnBlur(this, EventArgs.Empty);
+                else if (!wasFocus && control.HasFocus)
+                    control.OnFocus(this, EventArgs.Empty);
+            }
         }
     }
 }
