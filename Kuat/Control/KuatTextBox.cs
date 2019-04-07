@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using NanoVGDotNet.NanoVG;
 using OpenTK;
 using OpenTK.Input;
@@ -9,6 +10,7 @@ namespace Kuat.Control
     {
         private int _selectionStart = 0;
         private int _selectionLength = 0;
+        private int _clientRenderOffsetX = 0;
 
         public int SelectionStart
         {
@@ -52,24 +54,41 @@ namespace Kuat.Control
             e.StrokeColor(NanoVg.Rgba(0xFF192025));
             e.Stroke();
 
+            var selectionWidth = (int)e.TextBounds(0, 0, Text.Substring(0, SelectionStart), null);
+
+            if (HasFocus)
+            {
+                if (_clientRenderOffsetX + selectionWidth > Size.Width - 5)
+                {
+                    _clientRenderOffsetX = -selectionWidth + 10;
+                }
+                else if (_clientRenderOffsetX + selectionWidth < 5)
+                {
+                    _clientRenderOffsetX = Math.Min(Size.Width - selectionWidth - 10, 0);
+                }
+            }
+            else
+                _clientRenderOffsetX = 0;
+
+            e.Scissor(ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width, ClientRectangle.Height);
+            e.Translate(_clientRenderOffsetX, 0);
             e.FillColor(NanoVg.Rgba(ForeColor));
             e.FontFace(Font.Family);
             e.FontSize(Font.Size);
             e.TextAlign(NvgAlign.Left | NvgAlign.Top);
             e.Text(ClientLocation.X + 2, ClientLocation.Y + 2, Text);
 
-            var width = e.TextBounds(0, 0, Text.Substring(0, SelectionStart), null);
-
             var blinkTime = KNativeMethods.GetCaretBlinkTime();
             if (HasFocus && ((DateTime.Now - _moveTime).TotalMilliseconds < blinkTime || KMath.GetTodayMs() % (2 * blinkTime) < blinkTime))
             {
                 e.BeginPath();
-                e.MoveTo(ClientLocation.X + 2 + width, ClientLocation.Y + 2);
-                e.LineTo(ClientLocation.X + 2 + width, ClientLocation.Y + Size.Height - 4);
+                e.MoveTo(ClientLocation.X + 2 + selectionWidth, ClientLocation.Y + 2);
+                e.LineTo(ClientLocation.X + 2 + selectionWidth, ClientLocation.Y + Size.Height - 4);
 
                 e.StrokeColor(NanoVg.Rgba(0xFF192025));
                 e.Stroke();
             }
+            e.ResetScissor();
         }
 
         /// <inheritdoc />
@@ -85,9 +104,7 @@ namespace Kuat.Control
             base.OnKeyPress(sender, e);
             if (SelectionLength == 0)
             {
-                var textUntilCaret = Text.Substring(0, SelectionStart);
-                var textAfterCaret = Text.Substring(SelectionStart);
-                Text = textUntilCaret + e.KeyChar + textAfterCaret;
+                Text = Text.Insert(SelectionStart, e.KeyChar.ToString());
                 SelectionStart++;
             }
         }
@@ -106,8 +123,8 @@ namespace Kuat.Control
                 SelectionStart = 0;
             if (SelectionStart > Text.Length)
                 SelectionStart = Text.Length;
-            if (SelectionLength < 0)
-                SelectionLength = 0;
+            if (SelectionStart + SelectionLength < 0)
+                SelectionLength = -SelectionStart;
             if (SelectionStart + SelectionLength > Text.Length)
                 SelectionLength = Text.Length - SelectionStart;
         }
@@ -122,45 +139,52 @@ namespace Kuat.Control
                 case Key.BackSpace:
                     if (SelectionLength == 0)
                     {
-                        var textUntilCaret = Text.Substring(0, SelectionStart);
-                        if (textUntilCaret.Length != 0)
-                        {
-                            var textAfterCaret = Text.Substring(SelectionStart);
+                        Text = Text.Select(SelectionStart, -1, SelectionMode.Outside);
+                        if (SelectionStart != Text.Length)
                             SelectionStart--;
-                            Text = textUntilCaret.Substring(0, textUntilCaret.Length - 1) + textAfterCaret;
-                        }
                     }
                     else
                         DeleteSelection();
                     break;
                 case Key.Delete:
                     if (SelectionLength == 0)
-                    {
-                        var textAfterCaret = Text.Substring(SelectionStart);
-                        if (textAfterCaret.Length != 0)
-                        {
-                            var textUntilCaret = Text.Substring(0, SelectionStart);
-                            Text = textUntilCaret + textAfterCaret.Substring(1, textAfterCaret.Length - 1);
-                        }
-                    }
+                        Text = Text.Select(SelectionStart, 1, SelectionMode.Outside);
                     else
                         DeleteSelection();
                     break;
                 case Key.Left:
-                    SelectionStart--;
+                    if (e.Control)
+                    {
+                        var lastToken = Text.Substring(0, _selectionStart).LastIndexOf(" ", StringComparison.InvariantCulture);
+                        if (lastToken != -1)
+                            SelectionStart = (lastToken + 1);
+                    }
+                    else
+                    {
+                        SelectionStart--;
+                        SelectionLength = 0;
+                    }
+
                     break;
                 case Key.Right:
-                    SelectionStart++;
+                    if (e.Control)
+                    {
+                    }
+                    else
+                    {
+                        SelectionStart++;
+                        SelectionLength = 0;
+                    }
+
                     break;
             }
         }
 
         private void DeleteSelection()
         {
-            var textUntilCaret = Text.Substring(0, SelectionStart);
-            var textAfterSelection = Text.Substring(SelectionStart + SelectionLength);
-            Text = textUntilCaret + textAfterSelection;
-            ValidateSelection();
+            Text = Text.Select(SelectionStart, SelectionLength, SelectionMode.Outside);
+            if (SelectionLength < 0)
+                SelectionStart += SelectionLength;
             SelectionLength = 0;
         }
     }

@@ -46,6 +46,7 @@
             this.bCreate = new System.Windows.Forms.ToolStripButton();
             this.bOpen = new System.Windows.Forms.ToolStripButton();
             this.colorPicker = new System.Windows.Forms.ColorDialog();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.nudSeed)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudSideLength)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -139,6 +140,7 @@
             // 
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.textBox1);
             this.groupBox2.Controls.Add(this.lSamples);
             this.groupBox2.Controls.Add(this.nudMsaa);
             this.groupBox2.Controls.Add(this.lLightPos);
@@ -265,6 +267,13 @@
             this.colorPicker.Color = System.Drawing.Color.LimeGreen;
             this.colorPicker.FullOpen = true;
             // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(296, 172);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(100, 20);
+            this.textBox1.TabIndex = 33;
+            // 
             // RenderController
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -312,5 +321,6 @@
         private System.Windows.Forms.Label lLightPos;
 		private System.Windows.Forms.Label lSamples;
 		private System.Windows.Forms.NumericUpDown nudMsaa;
-	}
+        private System.Windows.Forms.TextBox textBox1;
+    }
 }
