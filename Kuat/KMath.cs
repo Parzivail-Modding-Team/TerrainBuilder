@@ -30,5 +30,15 @@ namespace Kuat
         {
             return (PointF)origin + new SizeF((float) (Math.Cos(angle) * radius), (float) (Math.Sin(angle) * radius));
         }
+
+        public static int GetUnixTime()
+        {
+            return (int)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
+        }
+
+        public static int GetTodayMs()
+        {
+            return (int)DateTime.Now.Subtract(DateTime.Today).TotalMilliseconds;
+        }
     }
 }

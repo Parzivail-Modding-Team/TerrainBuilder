@@ -18,13 +18,12 @@ namespace Kuat.Control
             e.RoundedRect(ClientLocation.X, ClientLocation.Y, Size.Width, Size.Height, 2);
 
             if (Active)
-                e.FillPaint(NanoVg.LinearGradient(e, ClientLocation.X, ClientLocation.Y, ClientLocation.X,
+                e.FillPaint(e.LinearGradient(ClientLocation.X, ClientLocation.Y, ClientLocation.X,
                     ClientLocation.Y + Size.Height, NanoVg.Rgba(0xFF323B40), NanoVg.Rgba(0xFF323B40)));
             else
-                e.FillPaint(NanoVg.LinearGradient(e, ClientLocation.X, ClientLocation.Y, ClientLocation.X,
+                e.FillPaint(e.LinearGradient(ClientLocation.X, ClientLocation.Y, ClientLocation.X,
                     ClientLocation.Y + Size.Height, NanoVg.Rgba(0xFF50595E), NanoVg.Rgba(0xFF2B3337)));
             e.Fill();
-
 
             e.StrokeColor(NanoVg.Rgba(0xFF192025));
             e.Stroke();
@@ -35,7 +34,7 @@ namespace Kuat.Control
             if (Active)
                 e.StrokeColor(NanoVg.Rgba(0xFF293034));
             else
-                e.StrokePaint(NanoVg.LinearGradient(e, ClientLocation.X, ClientLocation.Y, ClientLocation.X,
+                e.StrokePaint(e.LinearGradient(ClientLocation.X, ClientLocation.Y, ClientLocation.X,
                     ClientLocation.Y + Size.Height, NanoVg.Rgba(0xFF6E757B), NanoVg.Rgba(0xFF323B40)));
             e.Stroke();
 

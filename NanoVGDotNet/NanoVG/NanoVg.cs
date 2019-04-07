@@ -180,64 +180,57 @@ namespace NanoVGDotNet.NanoVG
             ctx.DevicePxRatio = ratio;
         }
 
-        private static NvgCompositeOperationState CompositeOperationState(int op)
+        private static NvgCompositeOperationState CompositeOperationState(NvgCompositeOperation op)
         {
-            int sfactor = 0, dfactor = 0;
+            NvgBlendFactor sfactor = 0;
+            NvgBlendFactor dfactor = 0;
 
-            if (op == (int)NvgCompositeOperation.SourceOver)
+            switch (op)
             {
-                sfactor = (int)NvgBlendFactor.One;
-                dfactor = (int)NvgBlendFactor.OneMinusSrcAlpha;
-            }
-            else if (op == (int)NvgCompositeOperation.SourceIn)
-            {
-                sfactor = (int)NvgBlendFactor.DstAlpha;
-                dfactor = (int)NvgBlendFactor.Zero;
-            }
-            else if (op == (int)NvgCompositeOperation.SourceOut)
-            {
-                sfactor = (int)NvgBlendFactor.OneMinusDstAlpha;
-                dfactor = (int)NvgBlendFactor.Zero;
-            }
-            else if (op == (int)NvgCompositeOperation.Atop)
-            {
-                sfactor = (int)NvgBlendFactor.DstAlpha;
-                dfactor = (int)NvgBlendFactor.OneMinusSrcAlpha;
-            }
-            else if (op == (int)NvgCompositeOperation.DestinationOver)
-            {
-                sfactor = (int)NvgBlendFactor.OneMinusDstAlpha;
-                dfactor = (int)NvgBlendFactor.One;
-            }
-            else if (op == (int)NvgCompositeOperation.DestinationIn)
-            {
-                sfactor = (int)NvgBlendFactor.Zero;
-                dfactor = (int)NvgBlendFactor.SrcAlpha;
-            }
-            else if (op == (int)NvgCompositeOperation.DestinationOut)
-            {
-                sfactor = (int)NvgBlendFactor.Zero;
-                dfactor = (int)NvgBlendFactor.OneMinusSrcAlpha;
-            }
-            else if (op == (int)NvgCompositeOperation.DestinationAtop)
-            {
-                sfactor = (int)NvgBlendFactor.OneMinusDstAlpha;
-                dfactor = (int)NvgBlendFactor.SrcAlpha;
-            }
-            else if (op == (int)NvgCompositeOperation.Lighter)
-            {
-                sfactor = (int)NvgBlendFactor.One;
-                dfactor = (int)NvgBlendFactor.One;
-            }
-            else if (op == (int)NvgCompositeOperation.Copy)
-            {
-                sfactor = (int)NvgBlendFactor.One;
-                dfactor = (int)NvgBlendFactor.Zero;
-            }
-            else if (op == (int)NvgCompositeOperation.Xor)
-            {
-                sfactor = (int)NvgBlendFactor.OneMinusDstAlpha;
-                dfactor = (int)NvgBlendFactor.OneMinusSrcAlpha;
+                case NvgCompositeOperation.SourceOver:
+                    sfactor = NvgBlendFactor.One;
+                    dfactor = NvgBlendFactor.OneMinusSrcAlpha;
+                    break;
+                case NvgCompositeOperation.SourceIn:
+                    sfactor = NvgBlendFactor.DstAlpha;
+                    dfactor = NvgBlendFactor.Zero;
+                    break;
+                case NvgCompositeOperation.SourceOut:
+                    sfactor = NvgBlendFactor.OneMinusDstAlpha;
+                    dfactor = NvgBlendFactor.Zero;
+                    break;
+                case NvgCompositeOperation.Atop:
+                    sfactor = NvgBlendFactor.DstAlpha;
+                    dfactor = NvgBlendFactor.OneMinusSrcAlpha;
+                    break;
+                case NvgCompositeOperation.DestinationOver:
+                    sfactor = NvgBlendFactor.OneMinusDstAlpha;
+                    dfactor = NvgBlendFactor.One;
+                    break;
+                case NvgCompositeOperation.DestinationIn:
+                    sfactor = NvgBlendFactor.Zero;
+                    dfactor = NvgBlendFactor.SrcAlpha;
+                    break;
+                case NvgCompositeOperation.DestinationOut:
+                    sfactor = NvgBlendFactor.Zero;
+                    dfactor = NvgBlendFactor.OneMinusSrcAlpha;
+                    break;
+                case NvgCompositeOperation.DestinationAtop:
+                    sfactor = NvgBlendFactor.OneMinusDstAlpha;
+                    dfactor = NvgBlendFactor.SrcAlpha;
+                    break;
+                case NvgCompositeOperation.Lighter:
+                    sfactor = NvgBlendFactor.One;
+                    dfactor = NvgBlendFactor.One;
+                    break;
+                case NvgCompositeOperation.Copy:
+                    sfactor = NvgBlendFactor.One;
+                    dfactor = NvgBlendFactor.Zero;
+                    break;
+                case NvgCompositeOperation.Xor:
+                    sfactor = NvgBlendFactor.OneMinusDstAlpha;
+                    dfactor = NvgBlendFactor.OneMinusSrcAlpha;
+                    break;
             }
 
             NvgCompositeOperationState state;
@@ -658,7 +651,7 @@ namespace NanoVGDotNet.NanoVG
             }
         }
 
-        public static NvgPaint BoxGradient(NvgContext ctx,
+        public static NvgPaint BoxGradient(this NvgContext ctx,
                                               float x, float y, float w, float h, float r, float f,
                                               NvgColor icol, NvgColor ocol)
         {
@@ -2203,7 +2196,7 @@ namespace NanoVGDotNet.NanoVG
             AppendCommands(ctx, vals, NVG_COUNTOF(vals));
         }
 
-        public static NvgPaint LinearGradient(NvgContext ctx,
+        public static NvgPaint LinearGradient(this NvgContext ctx,
                                                  float sx, float sy, float ex, float ey,
                                                  NvgColor icol, NvgColor ocol)
         {
@@ -2252,7 +2245,7 @@ namespace NanoVGDotNet.NanoVG
             return (int)(a / d + 0.5f) * d;
         }
 
-        public static NvgPaint RadialGradient(NvgContext ctx,
+        public static NvgPaint RadialGradient(this NvgContext ctx,
                                                  float cx, float cy, float inr, float outr,
                                                  NvgColor icol, NvgColor ocol)
         {
@@ -2298,7 +2291,7 @@ namespace NanoVGDotNet.NanoVG
             Ellipse(ctx, cx, cy, r, r);
         }
 
-        public static int TextGlyphPositions(NvgContext ctx, float x, float y, string string_,
+        public static int TextGlyphPositions(this NvgContext ctx, float x, float y, string string_,
                                                 NvgGlyphPosition[] positions, int maxPositions)
         {
             var state = GetState(ctx);
@@ -2516,7 +2509,7 @@ namespace NanoVGDotNet.NanoVG
             lineh *= invscale;
         }
 
-        public static int TextBreakLines(NvgContext ctx, string string_,
+        public static int TextBreakLines(this NvgContext ctx, string string_,
                                             float breakRowWidth, NvgTextRow[] rows, int maxRows)
         {
             var state = GetState(ctx);
@@ -2762,7 +2755,7 @@ namespace NanoVGDotNet.NanoVG
             ctx.Params.RenderGetTextureSize(ctx.Params.UserPtr, image, ref w, ref h);
         }
 
-        public static NvgPaint ImagePattern(NvgContext ctx,
+        public static NvgPaint ImagePattern(this NvgContext ctx,
                                                float cx, float cy, float w, float h, float angle,
                                                int image, float alpha)
         {

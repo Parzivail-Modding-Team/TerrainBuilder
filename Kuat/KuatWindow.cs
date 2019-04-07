@@ -43,14 +43,6 @@ namespace Kuat
         }
 
         /// <summary>
-        ///     Gets the time, in milliseconds, that the user has configured to be the minimum time between clicks to be considered
-        ///     a double click
-        /// </summary>
-        /// <returns>The time in milliseconds</returns>
-        [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
-        public static extern int GetDoubleClickTime();
-
-        /// <summary>
         ///     Wires all of the events
         /// </summary>
         /// <param name="window"></param>
@@ -136,7 +128,7 @@ namespace Kuat
 
             // check eligibility of click events
             var doubleClick = _focusedControl == _clickedControl &&
-                              (now - _clickTime).TotalMilliseconds < GetDoubleClickTime();
+                              (now - _clickTime).TotalMilliseconds < KNativeMethods.GetDoubleClickTime();
             _focusedControl.ProcessMouseEvent(sender, new MouseClickEventArgs(args, doubleClick));
 
             // reset the clicked control after double click events

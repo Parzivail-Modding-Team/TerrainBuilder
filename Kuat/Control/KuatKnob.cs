@@ -95,7 +95,7 @@ namespace Kuat.Control
             // draw knob face
             e.BeginPath();
             e.Circle(center.X, center.Y, Size.Width / 2f);
-            e.FillPaint(NanoVg.LinearGradient(e, location.X, location.Y, location.X, location.Y + Size.Height,
+            e.FillPaint(e.LinearGradient(location.X, location.Y, location.X, location.Y + Size.Height,
                 NanoVg.Rgba(0xFF50595E), NanoVg.Rgba(0xFF2B3337)));
             e.Fill();
 
@@ -121,7 +121,7 @@ namespace Kuat.Control
             // draw inner rim
             e.BeginPath();
             e.Circle(center.X, center.Y, Size.Width / 2f - 1);
-            e.StrokePaint(NanoVg.LinearGradient(e, location.X, location.Y, location.X, location.Y + Size.Height,
+            e.StrokePaint(e.LinearGradient(location.X, location.Y, location.X, location.Y + Size.Height,
                 NanoVg.Rgba(0xFF6E757B), NanoVg.Rgba(0xFF323B40)));
             e.Stroke();
 

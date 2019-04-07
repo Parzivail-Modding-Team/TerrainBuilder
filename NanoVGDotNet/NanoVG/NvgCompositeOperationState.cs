@@ -2,9 +2,9 @@ namespace NanoVGDotNet.NanoVG
 {
     public struct NvgCompositeOperationState
     {
-        public int SrcRgb;
-        public int DstRgb;
-        public int SrcAlpha;
-        public int DstAlpha;
+        public NvgBlendFactor SrcRgb;
+        public NvgBlendFactor DstRgb;
+        public NvgBlendFactor SrcAlpha;
+        public NvgBlendFactor DstAlpha;
     }
 }

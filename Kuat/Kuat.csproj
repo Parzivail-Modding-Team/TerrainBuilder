@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Control\KuatTextBox.cs" />
     <Compile Include="Control\KuatIndicator.cs" />
     <Compile Include="Control\KuatKnob.cs" />
     <Compile Include="Control\KuatLabel.cs" />
@@ -49,6 +50,7 @@
     <Compile Include="Control\KuatGroupBox.cs" />
     <Compile Include="Control\KuatCheckbox.cs" />
     <Compile Include="KMath.cs" />
+    <Compile Include="KNativeMethods.cs" />
     <Compile Include="KuatControlCollection.cs" />
     <Compile Include="KuatFont.cs" />
     <Compile Include="EventStage.cs" />

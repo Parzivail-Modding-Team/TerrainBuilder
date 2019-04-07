@@ -1131,31 +1131,31 @@ namespace NanoVGDotNet.NanoVG
 				gl.Ncalls--;
 		}
 
-	    private static BlendingFactorSrc glnvg_convertBlendFuncFactor(int factor)
+	    private static BlendingFactorSrc glnvg_convertBlendFuncFactor(NvgBlendFactor factor)
 		{
 			//NVGblendFactor bf = (NVGblendFactor)factor;
 
 			switch (factor)
 			{
-			    case (int)NvgBlendFactor.One:
+			    case NvgBlendFactor.One:
 			        return BlendingFactorSrc.One;
-			    case (int)NvgBlendFactor.SrcColor:
+			    case NvgBlendFactor.SrcColor:
 			        return BlendingFactorSrc.Src1Color;
-			    case (int)NvgBlendFactor.OneMinusSrcColor:
+			    case NvgBlendFactor.OneMinusSrcColor:
 			        return BlendingFactorSrc.OneMinusSrc1Color;
-			    case (int)NvgBlendFactor.DstColor:
+			    case NvgBlendFactor.DstColor:
 			        return BlendingFactorSrc.DstColor;
-			    case (int)NvgBlendFactor.OneMinusDstColor:
+			    case NvgBlendFactor.OneMinusDstColor:
 			        return BlendingFactorSrc.OneMinusDstColor;
-			    case (int)NvgBlendFactor.SrcAlpha:
+			    case NvgBlendFactor.SrcAlpha:
 			        return BlendingFactorSrc.SrcAlpha;
-			    case (int)NvgBlendFactor.OneMinusSrcAlpha:
+			    case NvgBlendFactor.OneMinusSrcAlpha:
 			        return BlendingFactorSrc.OneMinusSrcAlpha;
-			    case (int)NvgBlendFactor.DstAlpha:
+			    case NvgBlendFactor.DstAlpha:
 			        return BlendingFactorSrc.DstAlpha;
-			    case (int)NvgBlendFactor.OneMinusDstAlpha:
+			    case NvgBlendFactor.OneMinusDstAlpha:
 			        return BlendingFactorSrc.OneMinusDstAlpha;
-			    case (int)NvgBlendFactor.SrcAlphaSaturate:
+			    case NvgBlendFactor.SrcAlphaSaturate:
 			        return BlendingFactorSrc.SrcAlphaSaturate;
 			}
 		    //if (factor == (int)NVGblendFactor.NVG_ZERO)

@@ -97,6 +97,12 @@ namespace TerrainGen
                 Location = new Point(120, 130)
             });
             k.ValueChanged += (sender, args) => { i.Lit = k.Value > 0; };
+            _ui.Controls.Add(new KuatTextBox("tbTest")
+            {
+                Location = new Point(170, 90),
+                Size = new Size(120, 23),
+                ForeColor = Color.Black
+            });
 
             var rMono = _nvg.CreateFont("mono", EmbeddedFiles.ibmplexmono);
             if (rMono == -1)
