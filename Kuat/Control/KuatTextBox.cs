@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using NanoVGDotNet.NanoVG;
 using OpenTK.Input;
@@ -10,12 +9,12 @@ namespace Kuat.Control
 {
     public class KuatTextBox : KuatControl
     {
-        private int _selectionStart = 0;
-        private int _selectionLength = 0;
-        private int _clientRenderOffsetX = 0;
+        private int _clientRenderOffsetX;
+        private Point _deferMouseCaretPos;
         private bool _freezeSelectionValidation;
         private DateTime _moveTime;
-        private Point _deferMouseCaretPos;
+        private int _selectionLength;
+        private int _selectionStart;
 
         public int SelectionStart
         {
@@ -51,7 +50,7 @@ namespace Kuat.Control
             e.RoundedRect(ClientLocation.X, ClientLocation.Y, Size.Width, Size.Height, 2);
 
             e.FillPaint(e.LinearGradient(ClientLocation.X, ClientLocation.Y, ClientLocation.X + Size.Width,
-                    ClientLocation.Y, NanoVg.Rgba(0xFFD9DFE3), NanoVg.Rgba(0xFFBDC8D1)));
+                ClientLocation.Y, NanoVg.Rgba(0xFFD9DFE3), NanoVg.Rgba(0xFFBDC8D1)));
             e.Fill();
 
             e.StrokeColor(NanoVg.Rgba(0xFF192025));
@@ -60,14 +59,18 @@ namespace Kuat.Control
             e.FontFace(Font.Family);
             e.FontSize(Font.Size);
             e.TextAlign(NvgAlign.Left | NvgAlign.Top);
-            var selectionWidth = (int)e.TextBounds(0, 0, Text.Substring(0, SelectionStart), null);
+            var selectionWidth = (int) e.TextBounds(0, 0, Text.Substring(0, SelectionStart), null);
 
             if (_deferMouseCaretPos != Point.Empty)
             {
+                SelectionStart = Text.Length;
+                SelectionLength = 0;
+
                 var prevQueryX = 0;
                 for (var i = 0; i <= Text.Length; i++)
                 {
-                    var queryX = ClientLocation.X + _clientRenderOffsetX + (int)e.TextBounds(0, 0, Text.Substring(0, i), null);
+                    var queryX = ClientLocation.X + _clientRenderOffsetX +
+                                 (int) e.TextBounds(0, 0, Text.Substring(0, i), null);
                     var prevDist = _deferMouseCaretPos.X - prevQueryX;
                     var hereDist = _deferMouseCaretPos.X - queryX;
 
@@ -79,31 +82,33 @@ namespace Kuat.Control
 
                     prevQueryX = queryX;
                 }
+
                 _deferMouseCaretPos = Point.Empty;
             }
 
             if (HasFocus)
             {
                 if (_clientRenderOffsetX + selectionWidth > Size.Width - 5)
-                {
                     _clientRenderOffsetX = -selectionWidth + Size.Width / 2;
-                }
                 else if (_clientRenderOffsetX + selectionWidth < 5)
-                {
                     _clientRenderOffsetX = Math.Min(Size.Width - selectionWidth - Size.Width / 2, 0);
-                }
             }
             else
+            {
                 _clientRenderOffsetX = 0;
+            }
 
             e.Scissor(ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width, ClientRectangle.Height);
             e.Translate(_clientRenderOffsetX, 0);
             e.FillColor(NanoVg.Rgba(ForeColor));
             if (SelectionLength == 0)
+            {
                 e.Text(ClientLocation.X + 2, ClientLocation.Y + 2, Text);
+            }
             else
             {
-                e.Text(ClientLocation.X + 2, ClientLocation.Y + 2, Text.Select(SelectionStart, SelectionLength, SelectionMode.Before));
+                e.Text(ClientLocation.X + 2, ClientLocation.Y + 2,
+                    Text.Select(SelectionStart, SelectionLength, SelectionMode.Before));
                 var w = e.TextBounds(0, 0, Text.Select(SelectionStart, SelectionLength, SelectionMode.Before), null);
                 e.FillColor(NanoVg.Rgba(Color.Blue));
                 var selectedWidth = e.TextBounds(0, 0, Text.Select(SelectionStart, SelectionLength), null);
@@ -114,11 +119,13 @@ namespace Kuat.Control
                 e.Text(ClientLocation.X + 2 + w, ClientLocation.Y + 2, Text.Select(SelectionStart, SelectionLength));
                 w += selectedWidth;
                 e.FillColor(NanoVg.Rgba(ForeColor));
-                e.Text(ClientLocation.X + 2 + w, ClientLocation.Y + 2, Text.Select(SelectionStart, SelectionLength, SelectionMode.After));
+                e.Text(ClientLocation.X + 2 + w, ClientLocation.Y + 2,
+                    Text.Select(SelectionStart, SelectionLength, SelectionMode.After));
             }
 
             var blinkTime = KNativeMethods.GetCaretBlinkTime();
-            if (HasFocus && ((DateTime.Now - _moveTime).TotalMilliseconds < blinkTime || KMath.GetTodayMs() % (2 * blinkTime) < blinkTime))
+            if (HasFocus && ((DateTime.Now - _moveTime).TotalMilliseconds < blinkTime ||
+                             KMath.GetTodayMs() % (2 * blinkTime) < blinkTime))
             {
                 e.BeginPath();
                 e.MoveTo(ClientLocation.X + 2 + selectionWidth, ClientLocation.Y + 2);
@@ -127,6 +134,7 @@ namespace Kuat.Control
                 e.StrokeColor(NanoVg.Rgba(0xFF192025));
                 e.Stroke();
             }
+
             e.ResetScissor();
         }
 
@@ -134,9 +142,7 @@ namespace Kuat.Control
         protected override void OnMouseDown(object sender, MouseButtonEventArgs e)
         {
             base.OnMouseDown(sender, e);
-            SelectionStart = Text.Length;
             _deferMouseCaretPos = e.Position;
-            SelectionLength = 0;
         }
 
         /// <inheritdoc />
@@ -196,6 +202,7 @@ namespace Kuat.Control
                         SelectionStart = Text.Length;
                         SelectionLength = -Text.Length;
                     }
+
                     break;
                 case Key.X:
                     if (e.Control) Clipboard.SetText(DeleteSelection());
@@ -211,6 +218,7 @@ namespace Kuat.Control
 
                         InsertAtCursor(Clipboard.GetText());
                     }
+
                     break;
                 case Key.BackSpace:
                     if (SelectionLength == 0)
@@ -220,7 +228,10 @@ namespace Kuat.Control
                             SelectionStart--;
                     }
                     else
+                    {
                         DeleteSelection();
+                    }
+
                     break;
                 case Key.Delete:
                     if (SelectionLength == 0)
@@ -246,7 +257,9 @@ namespace Kuat.Control
                             SelectionStart--;
                         }
                         else if (!e.Shift)
+                        {
                             SelectionLength = 0;
+                        }
 
                         _freezeSelectionValidation = false;
                         ValidateSelection();
@@ -271,7 +284,9 @@ namespace Kuat.Control
                                 SelectionLength = 0;
                         }
                         else if (!e.Shift)
+                        {
                             SelectionLength = 0;
+                        }
 
                         _freezeSelectionValidation = false;
                         ValidateSelection();

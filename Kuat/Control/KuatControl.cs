@@ -12,9 +12,11 @@ namespace Kuat.Control
         private KuatFont _font;
         private bool _invalid;
         private string _text = string.Empty;
+        public EventHandler<EventArgs> Blur;
 
         public EventHandler<MouseClickEventArgs> Click;
         public EventHandler<MouseClickEventArgs> DoubleClick;
+        public EventHandler<EventArgs> Focus;
         public EventHandler<KeyboardKeyEventArgs> KeyDown;
         public EventHandler<KeyPressEventArgs> KeyPress;
         public EventHandler<KeyboardKeyEventArgs> KeyUp;
@@ -26,8 +28,6 @@ namespace Kuat.Control
         public EventHandler<MouseWheelEventArgs> MouseWheel;
         public EventHandler<NvgContext> Paint;
         public EventHandler<EventArgs> TextChanged;
-        public EventHandler<EventArgs> Focus;
-        public EventHandler<EventArgs> Blur;
 
         /// <summary>
         ///     True if the control is being hovered
