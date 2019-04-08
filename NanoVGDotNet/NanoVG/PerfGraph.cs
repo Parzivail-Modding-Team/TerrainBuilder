@@ -136,7 +136,6 @@ namespace NanoVGDotNet.NanoVG
 			vg.FillColor(NanoVg.Rgba(255, 192, 0, 128));
 			vg.Fill();
 
-
 		    var avgPerc = MathHelper.Clamp((avg - min) / (max - min), 0, 1);
             vg.BeginPath();
 		    vg.MoveTo(x, y + h - avgPerc * h);

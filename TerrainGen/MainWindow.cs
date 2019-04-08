@@ -166,9 +166,9 @@ namespace TerrainGen
             // Swap the graphics buffer
             SwapBuffers();
 
-            var err = GL.GetError();
-            if (err != ErrorCode.NoError)
-                Lumberjack.Error(err.ToString());
+//            var err = GL.GetError();
+//            if (err != ErrorCode.NoError)
+//                Lumberjack.Error(err.ToString());
         }
 
         private void OnMouseWheel(object sender, MouseWheelEventArgs e)

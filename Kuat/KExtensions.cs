@@ -20,6 +20,10 @@ namespace Kuat
                 length = s.Length - start;
             switch (mode)
             {
+                case SelectionMode.Before:
+                    return s.Substring(0, start);
+                case SelectionMode.After:
+                    return s.Substring(start + length);
                 case SelectionMode.Inside:
                     return s.Substring(start, length);
                 case SelectionMode.Outside:
@@ -32,6 +36,8 @@ namespace Kuat
 
     internal enum SelectionMode
     {
+        Before,
+        After,
         Inside,
         Outside
     }
