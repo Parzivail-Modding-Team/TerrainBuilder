@@ -72,37 +72,37 @@ namespace TerrainGen
             _nvg = GlNanoVg.CreateGl(NvgCreateFlags.StencilStrokes | NvgCreateFlags.AntiAlias);
             _ui = new KuatWindow(window, new KuatFont("sans", 16));
 
-            KuatButton b;
-            KuatKnob k;
-            KuatIndicator i;
-            _ui.Controls.Add(b = new KuatButton("bTest")
-            {
-                Location = new Point(50, 50),
-                Size = new Size(60, 23),
-                Text = "Button"
-            });
-            b.Click += (sender, args) => { Lumberjack.Info("Click!"); };
-            _ui.Controls.Add(new KuatCheckbox("cbTest")
-            {
-                Location = new Point(50, 90),
-                Size = new Size(14, 14),
-                Text = "Checkbox"
-            });
-            _ui.Controls.Add(k = new KuatKnob("kTest")
-            {
-                Location = new Point(50, 130)
-            });
-            _ui.Controls.Add(i = new KuatIndicator("iTest")
-            {
-                Location = new Point(120, 130)
-            });
-            k.ValueChanged += (sender, args) => { i.Lit = k.Value > 0; };
-            _ui.Controls.Add(new KuatTextBox("tbTest")
-            {
-                Location = new Point(170, 90),
-                Size = new Size(120, 23),
-                ForeColor = Color.Black
-            });
+            // KuatButton b;
+            // KuatKnob k;
+            // KuatIndicator i;
+            // _ui.Controls.Add(b = new KuatButton("bTest")
+            // {
+            //     Location = new Point(50, 50),
+            //     Size = new Size(60, 23),
+            //     Text = "Button"
+            // });
+            // b.Click += (sender, args) => { Lumberjack.Info("Click!"); };
+            // _ui.Controls.Add(new KuatCheckbox("cbTest")
+            // {
+            //     Location = new Point(50, 90),
+            //     Size = new Size(14, 14),
+            //     Text = "Checkbox"
+            // });
+            // _ui.Controls.Add(k = new KuatKnob("kTest")
+            // {
+            //     Location = new Point(50, 130)
+            // });
+            // _ui.Controls.Add(i = new KuatIndicator("iTest")
+            // {
+            //     Location = new Point(120, 130)
+            // });
+            // k.ValueChanged += (sender, args) => { i.Lit = k.Value > 0; };
+            // _ui.Controls.Add(new KuatTextBox("tbTest")
+            // {
+            //     Location = new Point(170, 90),
+            //     Size = new Size(120, 23),
+            //     ForeColor = Color.Black
+            // });
 
             var rMono = _nvg.CreateFont("mono", EmbeddedFiles.ibmplexmono);
             if (rMono == -1)

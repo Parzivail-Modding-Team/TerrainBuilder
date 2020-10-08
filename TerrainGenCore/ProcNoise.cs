@@ -4,7 +4,7 @@ namespace TerrainGenCore
 {
     public class ProcNoise
     {
-        private static OpenSimplexNoise _noise = new OpenSimplexNoise();
+        private static OpenSimplex2F _noise = new OpenSimplex2F(0);
         private static InfiniteWorleyNoise _worley = new InfiniteWorleyNoise();
         private static long _seed;
 
@@ -78,38 +78,38 @@ namespace TerrainGenCore
 
         public static double Noise(double x, double z)
         {
-            return (_noise.Eval(x, z) + 1) / 2;
+            return (_noise.Noise2(x, z) + 1) / 2;
         }
 
         public static double Noise(double x, double y, double z)
         {
-            return (_noise.Eval(x, y, z) + 1) / 2;
+            return (_noise.noise3_XZBeforeY(x, y, z) + 1) / 2;
         }
 
         public static double Noise(double x, double y, double z, double w)
         {
-            return (_noise.Eval(x, y, z, w) + 1) / 2;
+            return (_noise.noise4_XZBeforeYW(x, y, z, w) + 1) / 2;
         }
 
         public static double RawNoise(double x, double z)
         {
-            return _noise.Eval(x, z);
+            return _noise.Noise2(x, z);
         }
 
         public static double RawNoise(double x, double y, double z)
         {
-            return _noise.Eval(x, y, z);
+            return _noise.noise3_XZBeforeY(x, y, z);
         }
 
         public static double RawNoise(double x, double y, double z, double w)
         {
-            return _noise.Eval(x, y, z, w);
+            return _noise.noise4_XZBeforeYW(x, y, z, w);
         }
 
         public static void SetSeed(long seed)
         {
             _seed = seed;
-            _noise = new OpenSimplexNoise(seed);
+            _noise = new OpenSimplex2F(seed);
             _worley = new InfiniteWorleyNoise(seed);
         }
     }

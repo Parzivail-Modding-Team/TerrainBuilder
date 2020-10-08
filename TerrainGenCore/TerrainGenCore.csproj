@@ -44,7 +44,7 @@
   <ItemGroup>
     <Compile Include="InfiniteWorleyNoise.cs" />
     <Compile Include="MathUtil.cs" />
-    <Compile Include="OpenSimplexNoise.cs" />
+    <Compile Include="OpenSimplex2F.cs" />
     <Compile Include="TerrainProviderAttribute.cs" />
     <Compile Include="TreeType.cs" />
     <Compile Include="ProcNoise.cs" />
